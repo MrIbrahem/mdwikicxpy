@@ -145,6 +145,7 @@ def create_success_response(result: str) -> Tuple[Response, int]:
 
 
 @app.route("/textp", methods=["POST"])
+@app.route("/HtmltoSegments", methods=["POST"])
 def process_text() -> Tuple[Response, int]:
     """
     Process HTML text through the CX pipeline.
