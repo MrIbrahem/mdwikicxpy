@@ -2,13 +2,17 @@
 Utility functions for HTML processing and tag manipulation.
 """
 
+from __future__ import annotations
+
 import re
+from collections.abc import Callable
+from typing import Any
 
 from . import util as cxutil
-from .text_chunk import text_chunk
+from .text_chunk import TextChunk
 
 
-def find_all(text, regex, callback):
+def find_all(text, regex, callback: Callable) -> list:
     """
     Find all matches of regex in text, calling callback with each match object.
 
@@ -57,7 +61,7 @@ def esc_attr(s) -> str:
     return re.sub(r'["\'&<>]', lambda m: f"&#{ord(m.group(0))};", s)
 
 
-def get_open_tag_html(tag):
+def get_open_tag_html(tag: dict[str, Any]) -> str:
     """
     Render a SAX open tag into an HTML string.
 
@@ -77,7 +81,7 @@ def get_open_tag_html(tag):
     return "".join(html)
 
 
-def get_close_tag_html(tag):
+def get_close_tag_html(tag: dict[str, Any]) -> str:
     """
     Render a SAX close tag into an HTML string.
 
@@ -92,7 +96,7 @@ def get_close_tag_html(tag):
     return "</" + esc(tag["name"]) + ">"
 
 
-def clone_open_tag(tag):
+def clone_open_tag(tag: dict[str, Any]) -> dict:
     """
     Clone a SAX open tag.
 
@@ -108,7 +112,7 @@ def clone_open_tag(tag):
     return new_tag
 
 
-def dump_tags(tag_array):
+def dump_tags(tag_array: list[dict[str, Any]]) -> str:
     """
     Represent an inline tag as a single XML attribute, for debugging.
 
@@ -135,7 +139,7 @@ def dump_tags(tag_array):
     return " ".join(tag_dumps)
 
 
-def is_reference(tag):
+def is_reference(tag: dict[str, Any]) -> bool:
     """
     Detect whether this is a mediawiki reference span.
 
@@ -154,7 +158,7 @@ def is_reference(tag):
     return False
 
 
-def is_math(tag):
+def is_math(tag: dict[str, Any]) -> bool:
     """
     Detect whether this is a mediawiki maths span.
 
@@ -169,7 +173,7 @@ def is_math(tag):
     ) == "mw:Extension/math"
 
 
-def is_gallery(tag):
+def is_gallery(tag: dict[str, Any]) -> bool:
     """
     Detect whether this is a mediawiki Gallery.
 
@@ -182,7 +186,7 @@ def is_gallery(tag):
     return tag["name"] == "ul" and tag.get("attributes", {}).get("typeof") == "mw:Extension/gallery"
 
 
-def is_reference_list(tag):
+def is_reference_list(tag: dict[str, Any]) -> bool:
     """Check if tag is a reference list."""
     return (
         tag["name"] == "div"
@@ -191,7 +195,7 @@ def is_reference_list(tag):
     )
 
 
-def is_external_link(tag):
+def is_external_link(tag: dict[str, Any]) -> bool:
     """
     If a tag is MediaWiki external link or not.
 
@@ -205,7 +209,7 @@ def is_external_link(tag):
     return tag["name"] == "a" and f" {rel} ".find(" mw:ExtLink ") != -1
 
 
-def is_segment(tag):
+def is_segment(tag: dict[str, Any]) -> bool:
     """
     Detect whether this is a segment.
 
@@ -218,18 +222,19 @@ def is_segment(tag):
     return tag["name"] == "span" and tag.get("attributes", {}).get("class") == "cx-segment"
 
 
-def is_transclusion(tag):
+def is_transclusion(tag: dict[str, Any]) -> bool:
     """Check if tag is a transclusion."""
     typeof = tag.get("attributes", {}).get("typeof", "")
     return bool(re.search(r"(^|\s)(mw:Transclusion|mw:Placeholder)\b", typeof))
 
 
-def is_transclusion_fragment(tag):
+def is_transclusion_fragment(tag: dict[str, Any]) -> bool:
     """Check if tag is a transclusion fragment."""
-    return cxutil.get_prop(["attributes", "about"], tag) and not cxutil.get_prop(["attributes", "data-mw"], tag)
+    result = cxutil.get_prop(["attributes", "about"], tag) and not cxutil.get_prop(["attributes", "data-mw"], tag)
+    return result  # pyright: ignore[reportReturnType]
 
 
-def is_non_translatable(tag):
+def is_non_translatable(tag: dict[str, Any]) -> bool:
     """
     Check if the tag need to be translated by an MT service.
 
@@ -255,7 +260,7 @@ def is_non_translatable(tag):
     return any(ntr in rdfa for ntr in non_translatable_rdfa)
 
 
-def is_inline_empty_tag(tag_name):
+def is_inline_empty_tag(tag_name) -> bool:
     """
     Determine whether a tag is an inline empty tag.
 
@@ -269,7 +274,7 @@ def is_inline_empty_tag(tag_name):
     return tag_name in inline_empty_tags
 
 
-def get_chunk_boundary_groups(boundaries, chunks, get_length):
+def get_chunk_boundary_groups(boundaries, chunks, get_length) -> list:
     """
     Find the boundaries that lie in each chunk.
 
@@ -312,7 +317,7 @@ def get_chunk_boundary_groups(boundaries, chunks, get_length):
     return groups
 
 
-def add_common_tag(text_chunks, tag):
+def add_common_tag(text_chunks, tag: dict[str, Any]) -> list:
     """
     Add a tag to consecutive text chunks, above common tags but below others.
 
@@ -346,12 +351,12 @@ def add_common_tag(text_chunks, tag):
     for t_chunk in text_chunks:
         new_tags = t_chunk.tags[:]
         new_tags.insert(common_tag_length, tag)
-        new_text_chunks.append(text_chunk(t_chunk.text, new_tags, t_chunk.inline_content))
+        new_text_chunks.append(TextChunk(t_chunk.text, new_tags, t_chunk.inline_content))
 
     return new_text_chunks
 
 
-def set_link_ids_in_place(text_chunks, get_next_id):
+def set_link_ids_in_place(text_chunks, get_next_id: Callable) -> None:
     """
     Set link IDs in-place on text chunks.
 
@@ -383,7 +388,7 @@ def set_link_ids_in_place(text_chunks, get_next_id):
                 tag["attributes"]["href"] = href
 
 
-def is_ignorable_block(section_doc):
+def is_ignorable_block(section_doc) -> bool:
     """
     Check if the passed document is a section containing block level template or reference list.
 
@@ -411,18 +416,7 @@ def is_ignorable_block(section_doc):
         if item_type == "close":
             if block_stack:
                 current_close_tag = block_stack.pop()
-                if (
-                    current_close_tag
-                    and len(block_stack) == 0
-                    and (
-                        (
-                            is_transclusion(current_close_tag)
-                            and current_close_tag.get("attributes", {}).get("about")
-                            == first_block_template.get("attributes", {}).get("about")
-                        )
-                        or is_reference_list(current_close_tag)
-                    )
-                ):
+                if is_closing_template_match(block_stack, first_block_template, current_close_tag):
                     return True
 
         # Also check for textblocks
@@ -436,3 +430,47 @@ def is_ignorable_block(section_doc):
                 return False
 
     return ignorable
+
+
+def is_closing_template_match(
+    block_stack: list[Any],
+    first_block_template: dict[str, Any] | None,
+    current_close_tag: Any,
+) -> bool:
+    first_block_about = first_block_template.get("attributes", {}).get("about") if first_block_template else None
+    return (
+        current_close_tag
+        and len(block_stack) == 0
+        and (
+            (
+                is_transclusion(current_close_tag)
+                and current_close_tag.get("attributes", {}).get("about") == first_block_about
+            )
+            or is_reference_list(current_close_tag)
+        )
+    )
+
+
+__all__ = [
+    "find_all",
+    "esc",
+    "esc_attr",
+    "get_open_tag_html",
+    "get_close_tag_html",
+    "clone_open_tag",
+    "dump_tags",
+    "is_reference",
+    "is_math",
+    "is_gallery",
+    "is_reference_list",
+    "is_external_link",
+    "is_segment",
+    "is_transclusion",
+    "is_transclusion_fragment",
+    "is_non_translatable",
+    "is_inline_empty_tag",
+    "get_chunk_boundary_groups",
+    "add_common_tag",
+    "set_link_ids_in_place",
+    "is_ignorable_block",
+]

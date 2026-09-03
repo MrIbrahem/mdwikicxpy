@@ -1,10 +1,11 @@
 """
 Unit tests for lineardoc/utils.py module.
 """
-import pytest
+
 from pathlib import Path
 
-from python.lib.lineardoc import mw_contextualizer, Parser
+import pytest
+from python.lib.lineardoc import MwContextualizer, Parser
 from python.lib.lineardoc.utils import is_ignorable_block
 
 test_files = [
@@ -19,7 +20,7 @@ test_files = [
 def test_is_ignorable_block(test_file):
     with open(test_file, "r", encoding="utf-8") as f:
         html = f.read()
-    parser = Parser(mw_contextualizer())
+    parser = Parser(MwContextualizer())
 
     parser.init()
     parser.write(html.strip())
