@@ -71,6 +71,35 @@ class SharedParserNormalizer(ABC):
             except Exception as e:
                 raise Exception(f"Failed to parse HTML: {e}") from e
 
+    def write_lxml_html(self, html: str) -> None:
+        """
+        Parse HTML into the document.
+
+        Uses ``lxml.html.fragments_fromstring`` so that HTML *fragments* (such as
+        a bare ``<p>…</p>``) are parsed without the implicit ``<html><body>``
+        wrapper that ``etree.HTMLParser`` would inject. This keeps the behaviour
+        consistent with the upstream (sax-based) parser, which only emits the
+        elements actually present in the input.
+        """
+        try:
+            fragments = lxml_html.fragments_fromstring(html)
+        except Exception as exc:
+            # Fallback: wrap in a div and try again
+            try:
+                fragments = lxml_html.fragments_fromstring(f"<div>{html}</div>")
+            except Exception as exc2:
+                raise Exception(f"Failed to parse HTML: {exc2}") from exc2
+
+        for fragment in fragments:
+            if isinstance(fragment, str):
+                # Leading/trailing text outside any tag (e.g. before the first tag)
+                if fragment.strip():
+                    self.on_text(fragment)
+                continue
+
+            # Pass fragment tag directly
+            self._process_element(fragment, tag_name=fragment.tag)
+
     def extract_tag_name(self, element: Any) -> str | None:
         if isinstance(element, etree._ElementTree):
             tag_name = element.getroot().tag
@@ -159,35 +188,6 @@ class SharedParserNormalizer(ABC):
             text: Text content
         """
         ...
-
-    def write_lxml_html(self, html: str) -> None:
-        """
-        Parse HTML into the document.
-
-        Uses ``lxml.html.fragments_fromstring`` so that HTML *fragments* (such as
-        a bare ``<p>…</p>``) are parsed without the implicit ``<html><body>``
-        wrapper that ``etree.HTMLParser`` would inject. This keeps the behaviour
-        consistent with the upstream (sax-based) parser, which only emits the
-        elements actually present in the input.
-        """
-        try:
-            fragments = lxml_html.fragments_fromstring(html)
-        except Exception as exc:
-            # Fallback: wrap in a div and try again
-            try:
-                fragments = lxml_html.fragments_fromstring(f"<div>{html}</div>")
-            except Exception as exc2:
-                raise Exception(f"Failed to parse HTML: {exc2}") from exc2
-
-        for fragment in fragments:
-            if isinstance(fragment, str):
-                # Leading/trailing text outside any tag (e.g. before the first tag)
-                if fragment.strip():
-                    self.on_text(fragment)
-                continue
-
-            # Pass fragment tag directly
-            self._process_element(fragment, tag_name=fragment.tag)
 
 
 __all__ = [
