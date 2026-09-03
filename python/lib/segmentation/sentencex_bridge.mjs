@@ -14,10 +14,7 @@
  * in the original text via String.prototype.indexOf.
  */
 // Resolve sentencex from js/node_modules regardless of where node is launched.
-import segment from new URL(
-	'../../../js/node_modules/sentencex/dist/esm/index.js',
-	import.meta.url
-);
+import segment from '../../../js/node_modules/sentencex/dist/esm/index.js';
 
 /**
  * Compute sentence start offsets for a piece of plain text.
