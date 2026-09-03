@@ -18,12 +18,12 @@ cxsever/
             │   ├── Parser.js            # HTML SAX parser
             │   ├── Builder.js           # Document builder
             │   ├── Doc.js               # Document model
-            │   ├── text_block.js         # Text block representation
-            │   ├── text_chunk.js         # Text chunk representation
+            │   ├── TextBlock.js         # Text block representation
+            │   ├── TextChunk.js         # Text chunk representation
             │   ├── utils.js             # Utility functions
             │   ├── Normalizer.js        # HTML normalizer
             │   ├── Contextualizer.js    # Base contextualizer
-            │   ├── mw_contextualizer.js  # MediaWiki contextualizer
+            │   ├── MwContextualizer.js  # MediaWiki contextualizer
             │   └── util.js              # Helper utilities
             └── segmentation/            # Segmentation for translation
                 └── CXSegmenter.js       # Content segmentation
@@ -479,12 +479,12 @@ def test_process_whitespace_only():
 | `lib/lineardoc/Parser.js` | `lib/lineardoc/parser.py` | HTML parser |
 | `lib/lineardoc/Builder.js` | `lib/lineardoc/builder.py` | Document builder |
 | `lib/lineardoc/Doc.js` | `lib/lineardoc/doc.py` | Document model |
-| `lib/lineardoc/text_block.js` | `lib/lineardoc/text_block.py` | Text blocks |
-| `lib/lineardoc/text_chunk.js` | `lib/lineardoc/text_chunk.py` | Text chunks |
+| `lib/lineardoc/TextBlock.js` | `lib/lineardoc/text_block.py` | Text blocks |
+| `lib/lineardoc/TextChunk.js` | `lib/lineardoc/text_chunk.py` | Text chunks |
 | `lib/lineardoc/utils.js` | `lib/lineardoc/utils.py` | Utilities |
 | `lib/lineardoc/Normalizer.js` | `lib/lineardoc/normalizer.py` | HTML normalizer |
 | `lib/lineardoc/Contextualizer.js` | `lib/lineardoc/contextualizer.py` | Base contextualizer |
-| `lib/lineardoc/mw_contextualizer.js` | `lib/lineardoc/mw_contextualizer.py` | MW contextualizer |
+| `lib/lineardoc/MwContextualizer.js` | `lib/lineardoc/mw_contextualizer.py` | MW contextualizer |
 | `lib/lineardoc/util.js` | `lib/lineardoc/util.py` | Helper utilities |
 | `lib/segmentation/CXSegmenter.js` | `lib/segmentation/cx_segmenter.py` | Content segmenter |
 

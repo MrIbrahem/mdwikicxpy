@@ -1,7 +1,7 @@
 import Doc from './Doc.js';
 import { is_external_link, isReference, isTransclusion } from './Utils.js';
-import TextBlock from './text_block.js';
-import TextChunk from './text_chunk.js';
+import TextBlock from './TextBlock.js';
+import TextChunk from './TextChunk.js';
 
 /**
  * A document builder

@@ -12,7 +12,7 @@
  *
  * @class
  */
-class text_chunk {
+class TextChunk {
 	/**
 	 * @param {string} text Plaintext in the chunk (can be '')
 	 * @param {Object[]} tags array of SAX open tag objects, for the applicable tags
@@ -25,4 +25,4 @@ class text_chunk {
 	}
 }
 
-export default text_chunk;
+export default TextChunk;

@@ -98,10 +98,10 @@ this branch):
 
 **Previous session**
 - Wrong relative import `./../util.js` → `./util.js` in `Doc.js`,
-  `text_block.js` and `mw_contextualizer.js`.
+  `TextBlock.js` and `MwContextualizer.js`.
 - Case-sensitive filenames: imports referenced `./utils.js`, `./TextBlock.js`
   and `./TextChunk.js` (valid on macOS, broken on Linux CI) → corrected to
-  `Utils.js`, `text_block.js` and `text_chunk.js`.
+  `Utils.js`, `TextBlock.js` and `TextChunk.js`.
 - Missing npm dependency `@wikimedia/language-data` (now declared in
   `js/package.json`).
 - A systemic **snake_case vs camelCase** naming mismatch between method/function
@@ -110,18 +110,18 @@ this branch):
   `get_html`, and the `Utils` exports).
 
 **This fix-up (to make the segmentation pipeline correct, not just loadable)**
-- `text_block.js`: `setLinkIds()` now returns `this` (previously it returned the
+- `TextBlock.js`: `setLinkIds()` now returns `this` (previously it returned the
   `undefined` result of `set_link_ids_in_place`, so segmented text blocks were
   added to the doc as `undefined` items and `Doc.getHtml()` crashed on
   `item.attributes`).
-- `text_block.js`: the constructor stores the segmentability flag as
+- `TextBlock.js`: the constructor stores the segmentability flag as
   `this.canSegment` (was `this.can_segment`), matching the `textBlock.canSegment`
   check used by `Doc.segment()` — otherwise text blocks were never actually
   segmented.
-- `text_block.js`: fixed a variable that shadowed the `text_chunk` (TextChunk)
+- `TextBlock.js`: fixed a variable that shadowed the `text_chunk` (TextChunk)
   class inside `segment()`, so splitting a chunk at a sentence boundary no longer
   tried to instantiate a chunk object.
-- `text_block.js`: the inline-content branch now calls
+- `TextBlock.js`: the inline-content branch now calls
   `text_chunk.inline_content.getHtml()` (was `.get_html()`), so sub-documents
   such as footnotes/references render correctly instead of being treated as empty
   tags (which threw on `tag.name`).

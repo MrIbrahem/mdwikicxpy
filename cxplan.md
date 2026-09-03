@@ -48,14 +48,14 @@ Parser + mw_contextualizer → Doc → wrapSections() → CXSegmenter → HTML
   - `{type: 'blockspace', item: whitespace}`
 - Key methods: `segment()`, `wrapSections()`, `get_html()`
 
-**C. text_block.js** - Annotated inline text container
+**C. TextBlock.js** - Annotated inline text container
 - Manages text chunks with tag annotations
 - Handles sentence segmentation
 - Key method: `segment(getBoundaries, getNextId)`
   - Wraps sentences in `<span class="cx-segment" data-segmentid="X">`
   - Adds link IDs: `<a data-linkid="Y">`
 
-**D. mw_contextualizer.js** - MediaWiki-specific logic
+**D. MwContextualizer.js** - MediaWiki-specific logic
 - Removes sections based on config (MWPageLoader.yaml)
 - Tracks context (removable, media, transclusion)
 - Key method: `isRemovable(tag)`
@@ -113,7 +113,7 @@ class text_block:
     def segment(self, get_boundaries: Callable, get_next_id: Callable) -> 'text_block':
         """
         Critical method - segments text into translation units
-        Lines 347-409 in text_block.js
+        Lines 347-409 in TextBlock.js
         """
         # TODO: Implement sentence boundary splitting
         # TODO: Wrap in <span class="cx-segment" data-segmentid="X">

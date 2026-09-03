@@ -32,15 +32,15 @@ Successfully completed a full conversion of the MediaWiki Content Translation (C
 ### Module Mapping
 
 #### Core Data Structures
-- `text_chunk.js` → `text_chunk.py` - Uniformly-annotated text chunks
-- `text_block.js` → `text_block.py` - Blocks of annotated inline text
+- `TextChunk.js` → `text_chunk.py` - Uniformly-annotated text chunks
+- `TextBlock.js` → `text_block.py` - Blocks of annotated inline text
 - `Doc.js` → `doc.py` - Linear HTML document representation
 
 #### Processing Pipeline
 - `Parser.js` → `parser.py` - SAX-style HTML parser (using lxml)
 - `Builder.js` → `builder.py` - Document builder
 - `Contextualizer.js` → `contextualizer.py` - Base contextualizer
-- `mw_contextualizer.js` → `mw_contextualizer.py` - MediaWiki contextualizer
+- `MwContextualizer.js` → `mw_contextualizer.py` - MediaWiki contextualizer
 
 #### Utilities
 - `utils.js` → `utils.py` - HTML processing utilities

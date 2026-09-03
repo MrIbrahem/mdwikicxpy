@@ -1,5 +1,5 @@
 import Contextualizer from './Contextualizer.js';
-import { getProp } from './util.js';
+import { getProp } from './../util.js';
 const contentBranchNodeNames = ['blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'pre', 'div', 'table', 'ol', 'ul', 'dl', 'figure', 'center', 'section'];
 
 /**
@@ -11,7 +11,7 @@ const contentBranchNodeNames = ['blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
  * @extends Contextualizer
  * @constructor
  */
-class mw_contextualizer extends Contextualizer {
+class MwContextualizer extends Contextualizer {
 	/**
 	 * @param {Object} config
 	 * @param {Object} config.removableSections containing array of classes and rdfa values.
@@ -159,4 +159,4 @@ class mw_contextualizer extends Contextualizer {
 	}
 }
 
-export default mw_contextualizer;
+export default MwContextualizer;
