@@ -4,24 +4,24 @@ Main processing module for HTML transformation.
 
 from __future__ import annotations
 
-import os
 import re
 
 import yaml
-
+from pathlib import Path
 from ..lib.lineardoc import Normalizer, Parser
 from .lineardoc import MwContextualizer
 from .segmentation import CXSegmenter
 
 # Load configuration
-config_path = os.path.join(os.path.dirname(__file__), "..", "config", "MWPageLoader.yaml")
+config_path = Path(__file__).parent.parent / "config" / "MWPageLoader.yaml"
 with open(config_path, "r") as f:
     pageloader_config = yaml.safe_load(f)
 
 removable_sections = pageloader_config.get("removableSections", {})
+if not removable_sections:
+    raise ValueError("removableSections must be defined in config")
 
-
-def normalize(html: str):
+def normalize(html: str) -> str:
     """
     Normalize HTML by parsing and re-serializing.
 
@@ -31,13 +31,13 @@ def normalize(html: str):
     Returns:
         Normalized HTML string
     """
+    html = html.strip()
     normalizer = Normalizer()
     normalizer.init()
     # Remove tabs, carriage returns, and newlines
     html = re.sub(r"[\t\r\n]+", "", html)
     normalizer.write(html)
     return normalizer.get_html()
-
 
 def process_html(source_html: str, lang: str | None = None):
     """

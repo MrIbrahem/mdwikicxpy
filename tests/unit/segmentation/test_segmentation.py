@@ -7,8 +7,9 @@ import re
 from pathlib import Path
 
 import pytest
-from python.lib.lineardoc import MwContextualizer, Normalizer, Parser
+from python.lib.lineardoc import Doc, MwContextualizer, Parser
 from python.lib.segmentation import CXSegmenter
+from python.lib.processor import normalize
 
 cx_segmenter_tests_path = Path(__file__).parent / "SegmentationTests.json"
 
@@ -17,21 +18,13 @@ with open(cx_segmenter_tests_path, "r", encoding="utf-8") as f:
     alltests = json.load(f)
 
 
-def get_parsed_doc(content):
+def get_parsed_doc(content) -> Doc:
     parser = Parser(MwContextualizer())
 
     parser.init()
     parser.write(content.strip())
     parsed_doc = parser.builder.doc
     return parsed_doc
-
-
-def normalize(html):
-    normalizer = Normalizer()
-    normalizer.init()
-    normalizer.write(re.sub(r"[\t\r\n]+", "", html))  # html.replace(/[\t\r\n]+/gm, '' )
-    return normalizer.get_html()
-
 
 test_params = [(lang, test_case) for lang, cases in alltests.items() for test_case in cases]
 
@@ -40,22 +33,28 @@ test_params = [(lang, test_case) for lang, cases in alltests.items() for test_ca
 def test_cx_segmenter(lang, test_case):
     date_path = Path(__file__).parent / "data"
     output_path = Path(__file__).parent / "output"
+    output_path.mkdir(parents=True, exist_ok=True)
 
     with open(date_path / test_case["source"], "r", encoding="utf-8") as f:
         test_data = f.read()
 
-    parsed_doc = get_parsed_doc(test_data)
     segmenter = CXSegmenter()
-    segmented_linear_doc = segmenter.segment(parsed_doc, lang)
 
-    result = segmented_linear_doc.get_html()
+    if not segmenter.is_language_supported(lang):
+        pytest.skip(f"Language {lang} not supported")
+
+    result = segmenter.segment(get_parsed_doc(test_data), lang).get_html()
+
     normalized_result = normalize(result)
 
-    with open(date_path / test_case["result"], "r", encoding="utf-8") as f:
-        expected_result_data = normalize(f.read())
+    with open(output_path / test_case["result"], "w", encoding="utf-8") as f:
+        f.write(result)
 
-    if expected_result_data != normalized_result and output_path.is_dir():
-        with open(output_path / test_case["result"], "w", encoding="utf-8") as f:
-            f.write(result)
+    with open(date_path / test_case["result"], "r", encoding="utf-8") as f:
+        expected_text = f.read()
+
+    # expected
+    expected_result_data = normalize(expected_text)
+
 
     assert normalized_result == expected_result_data, f"{test_case['source']}: {test_case['desc'] or ''}"

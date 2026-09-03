@@ -6,6 +6,10 @@ The document is a list of items, where each item is:
 - a block close tag (e.g. </p>); or
 - a text_block of annotated inline text; or
 - "block whitespace" (a run of whitespace separating two block boundaries)
+
+converted from the LinearDoc javascript library of the Wikimedia Content translation project
+
+https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineardoc/Doc.js
 """
 
 from __future__ import annotations

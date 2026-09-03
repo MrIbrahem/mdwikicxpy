@@ -1,5 +1,9 @@
 """
 Normalizer - Parser to normalize XML.
+
+converted from the LinearDoc javascript library of the Wikimedia Content translation project
+
+https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineardoc/Normalizer.js
 """
 
 from __future__ import annotations
@@ -49,7 +53,7 @@ class Normalizer:
             except Exception as e:
                 raise Exception(f"Failed to parse HTML: {e}") from e
 
-    def _process_element(self, element: etree.Element | Any) -> None:
+    def _process_element(self, element: etree._Element | Any) -> None:
         """Process an element recursively."""
         # Create tag dict
         tag_name = element.tag.lower() if self.lowercase else element.tag

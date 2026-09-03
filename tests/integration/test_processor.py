@@ -1,9 +1,19 @@
 """
 Unit tests for processor.py module.
 """
-
+import re
 from python.lib.processor import normalize, process_html
 
+
+def normalize_test(html: str) -> str:
+    """
+    """
+    html = html.strip()
+    # Remove tabs, carriage returns, and newlines
+    html = re.sub(r"[\t\r\n]+", "", html)
+    html = re.sub(r"\s+", " ", html)
+    html = re.sub(r">\s+<", "><", html)
+    return html
 
 class TestNormalizeFunction:
     """Test normalize function."""

@@ -5,12 +5,15 @@ CXSegmenter - Sentence segmentation for Content Translation.
 from __future__ import annotations
 
 import pysbd
+from pysbd.languages import LANGUAGE_CODES
+
+from ..lineardoc.doc import Doc
 
 
 class CXSegmenter:
     """Segmenter for CX documents."""
 
-    def segment(self, parsed_doc, language: str):
+    def segment(self, parsed_doc: Doc, language: str):
         """
         Segment the given parsed linear document object.
 
@@ -36,6 +39,7 @@ class CXSegmenter:
 
         def segmenter(text):
             """Segment text into sentences."""
+
             seg = pysbd.Segmenter(language=language, clean=False)
             sentences = seg.segment(text)
             boundaries = []
@@ -53,6 +57,9 @@ class CXSegmenter:
             return boundaries
 
         return segmenter
+
+    def is_language_supported(self, language: str) -> bool:
+        return language in LANGUAGE_CODES
 
 
 __all__ = [

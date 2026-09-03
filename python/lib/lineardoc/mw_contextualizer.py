@@ -2,6 +2,10 @@
 Contextualizer for MediaWiki DOM HTML.
 
 See https://www.mediawiki.org/wiki/Specs/HTML
+
+converted from the LinearDoc javascript library of the Wikimedia Content translation project
+
+https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineardoc/MwContextualizer.js
 """
 
 from __future__ import annotations
@@ -91,7 +95,7 @@ class MwContextualizer(Contextualizer):
         Check if the tag need to be ignored while parsing and hence removed.
 
         Args:
-            tag: Tag dict
+            tag: Tag dict with 'name' and 'attributes'
 
         Returns:
             Whether the tag is removable

@@ -1,5 +1,9 @@
 """
 text_block - A block of annotated inline text.
+
+converted from the LinearDoc javascript library of the Wikimedia Content translation project
+
+https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineardoc/TextBlock.js
 """
 
 from __future__ import annotations
@@ -254,7 +258,7 @@ class TextBlock:
 
         return "".join(html)
 
-    def get_root_item(self) -> None | Any:
+    def get_root_item(self) -> None | dict[str, Any]:
         """
         Get a root item in the textblock.
 
@@ -281,7 +285,7 @@ class TextBlock:
 
         return None
 
-    def get_tag_for_id(self):
+    def get_tag_for_id(self) -> None | dict[str, Any]:
         """
         Get a tag that can represent this textblock.
 

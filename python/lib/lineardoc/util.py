@@ -1,5 +1,9 @@
 """
 Utility functions for the lineardoc module.
+
+converted from the LinearDoc javascript library of the Wikimedia Content translation project
+
+https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/util.js
 """
 
 from __future__ import annotations

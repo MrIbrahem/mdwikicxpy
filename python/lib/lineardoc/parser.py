@@ -1,12 +1,16 @@
 """
 Parser to read an HTML stream into a Doc.
+
+converted from the LinearDoc javascript library of the Wikimedia Content translation project
+
+https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineardoc/Parser.js
 """
 
 from __future__ import annotations
 
 from typing import Any
 
-from lxml import html as lxml_html
+from lxml import etree, html as lxml_html
 
 from . import utils
 from .builder import Builder
@@ -166,7 +170,7 @@ class Parser:
                 continue
             self._process_element(fragment)
 
-    def _process_element(self, element: etree.Element) -> None:
+    def _process_element(self, element: etree._Element) -> None:
         """Process an element and its children recursively."""
         # Skip comments and other special nodes
         if not isinstance(element.tag, str):
