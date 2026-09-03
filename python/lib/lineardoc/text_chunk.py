@@ -11,7 +11,7 @@ therefore text with varying markup must be split into multiple chunks.
 """
 
 
-class text_chunk:
+class TextChunk:
     """A chunk of uniformly-annotated inline text."""
 
     def __init__(self, text, tags, inline_content=None):

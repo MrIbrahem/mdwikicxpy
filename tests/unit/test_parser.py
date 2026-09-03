@@ -46,9 +46,9 @@ class TestParserWrite:
 
     def test_write_simple_html(self):
         """Test parsing simple HTML."""
-        from python.lib.lineardoc import mw_contextualizer
+        from python.lib.lineardoc import MwContextualizer
 
-        ctx = mw_contextualizer()
+        ctx = MwContextualizer()
         parser = Parser(ctx)
         parser.init()
         parser.write("<div>Hello</div>")
@@ -57,9 +57,9 @@ class TestParserWrite:
 
     def test_write_nested_html(self):
         """Test parsing nested HTML."""
-        from python.lib.lineardoc import mw_contextualizer
+        from python.lib.lineardoc import MwContextualizer
 
-        ctx = mw_contextualizer()
+        ctx = MwContextualizer()
         parser = Parser(ctx)
         parser.init()
         parser.write("<div><p>Text</p></div>")
@@ -67,9 +67,9 @@ class TestParserWrite:
 
     def test_write_with_attributes(self):
         """Test parsing HTML with attributes."""
-        from python.lib.lineardoc import mw_contextualizer
+        from python.lib.lineardoc import MwContextualizer
 
-        ctx = mw_contextualizer()
+        ctx = MwContextualizer()
         parser = Parser(ctx)
         parser.init()
         parser.write('<div class="test" id="main">Content</div>')
@@ -78,9 +78,9 @@ class TestParserWrite:
 
     def test_write_invalid_html(self):
         """Test parsing invalid HTML - should try wrapping."""
-        from python.lib.lineardoc import mw_contextualizer
+        from python.lib.lineardoc import MwContextualizer
 
-        ctx = mw_contextualizer()
+        ctx = MwContextualizer()
         parser = Parser(ctx)
         parser.init()
         # Just text without wrapper
@@ -94,9 +94,9 @@ class TestParserWrite:
 
     def test_write_unicode(self):
         """Test parsing Unicode HTML."""
-        from python.lib.lineardoc import mw_contextualizer
+        from python.lib.lineardoc import MwContextualizer
 
-        ctx = mw_contextualizer()
+        ctx = MwContextualizer()
         parser = Parser(ctx)
         parser.init()
         parser.write("<div>مرحبا العالم</div>")
@@ -165,9 +165,9 @@ class TestParserIntegration:
 
     def test_parse_complete_document(self):
         """Test parsing a complete HTML document."""
-        from python.lib.lineardoc import mw_contextualizer
+        from python.lib.lineardoc import MwContextualizer
 
-        ctx = mw_contextualizer()
+        ctx = MwContextualizer()
         parser = Parser(ctx)
         parser.init()
 
@@ -191,9 +191,9 @@ class TestParserIntegration:
 
     def test_parse_with_text_content(self):
         """Test parsing with text content."""
-        from python.lib.lineardoc import mw_contextualizer
+        from python.lib.lineardoc import MwContextualizer
 
-        ctx = mw_contextualizer()
+        ctx = MwContextualizer()
         parser = Parser(ctx)
         parser.init()
 

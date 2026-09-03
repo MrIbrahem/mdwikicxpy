@@ -4,8 +4,8 @@ Builder - A document builder for creating linear documents.
 
 from . import utils
 from .doc import Doc
-from .text_block import text_block
-from .text_chunk import text_chunk
+from .text_block import TextBlock
+from .text_chunk import TextChunk
 
 
 class Builder:
@@ -141,7 +141,7 @@ class Builder:
             self.add_inline_content(
                 Doc()
                 .add_item("open", tag)
-                .add_item("textblock", text_block([text_chunk("".join(whitespace), [])]))
+                .add_item("textblock", TextBlock([text_chunk("".join(whitespace), [])]))
                 .add_item("close", tag)
             )
 
@@ -153,7 +153,7 @@ class Builder:
             text: Text content
             can_segment: Whether this can be segmented
         """
-        self.text_chunks.append(text_chunk(text, self.inline_annotation_tags[:]))
+        self.text_chunks.append(TextChunk(text, self.inline_annotation_tags[:]))
         self.inline_annotation_tags_used = len(self.inline_annotation_tags)
         # Inside a textblock, if a textchunk becomes segmentable
         self.is_block_segmentable = can_segment
@@ -171,7 +171,7 @@ class Builder:
             self.doc.categories.append(content)
             return
 
-        self.text_chunks.append(text_chunk("", self.inline_annotation_tags[:], content))
+        self.text_chunks.append(TextChunk("", self.inline_annotation_tags[:], content))
         self.inline_annotation_tags_used = len(self.inline_annotation_tags)
         if not can_segment:
             self.is_block_segmentable = False
@@ -194,7 +194,7 @@ class Builder:
         if whitespace_only:
             self.doc.add_item("blockspace", "".join(whitespace))
         else:
-            self.doc.add_item("textblock", text_block(self.text_chunks, self.is_block_segmentable))
+            self.doc.add_item("textblock", TextBlock(self.text_chunks, self.is_block_segmentable))
 
         self.text_chunks = []
         self.is_block_segmentable = True

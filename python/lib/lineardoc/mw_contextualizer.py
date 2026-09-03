@@ -31,7 +31,7 @@ CONTENT_BRANCH_NODE_NAMES = [
 ]
 
 
-class mw_contextualizer(Contextualizer):
+class MwContextualizer(Contextualizer):
     """Contextualizer for MediaWiki DOM HTML."""
 
     def __init__(self, config=None):

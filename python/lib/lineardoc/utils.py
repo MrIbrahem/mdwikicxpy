@@ -5,7 +5,7 @@ Utility functions for HTML processing and tag manipulation.
 import re
 
 from . import util as cxutil
-from .text_chunk import text_chunk
+from .text_chunk import TextChunk
 
 
 def find_all(text, regex, callback):
@@ -346,7 +346,7 @@ def add_common_tag(text_chunks, tag):
     for t_chunk in text_chunks:
         new_tags = t_chunk.tags[:]
         new_tags.insert(common_tag_length, tag)
-        new_text_chunks.append(text_chunk(t_chunk.text, new_tags, t_chunk.inline_content))
+        new_text_chunks.append(TextChunk(t_chunk.text, new_tags, t_chunk.inline_content))
 
     return new_text_chunks
 
