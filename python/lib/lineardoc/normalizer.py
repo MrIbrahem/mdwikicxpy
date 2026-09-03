@@ -59,9 +59,13 @@ class Normalizer:
                 raise Exception(f"Failed to parse HTML: {e}") from e
 
     def _process_element(self, element: etree._Element | Any) -> None:
-        """Process an element recursively."""
+        """
+        Process an element recursively.
+        """
         # Create tag dict
         tag_name = element.tag.lower() if self.lowercase else element.tag
+
+        # Create tag dict
         tag = {"name": tag_name, "attributes": dict(element.attrib)}
 
         # Mark HTML void elements as self-closing

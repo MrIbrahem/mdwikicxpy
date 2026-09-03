@@ -417,13 +417,13 @@ def is_ignorable_block(section_doc: Doc) -> bool:
     # We start with index 1 since the first tag will be <section>.
     for i in range(1, len(section_doc.items)):
         item = section_doc.items[i]
-        tag = item["item"]
-        item_type = item["type"]
+        tag_dict = item.item_dict
+        item_type = item.item_type
 
         if item_type == "open":
-            block_stack.append(tag)
-            if not first_block_template and (is_transclusion(tag) or is_reference_list(tag)):
-                first_block_template = tag
+            block_stack.append(tag_dict)
+            if not first_block_template and (is_transclusion(tag_dict) or is_reference_list(tag_dict)):
+                first_block_template = tag_dict
 
         if item_type == "close":
             if block_stack:
@@ -434,7 +434,7 @@ def is_ignorable_block(section_doc: Doc) -> bool:
         # Also check for textblocks
         if item_type == "textblock":
             if not first_block_template:
-                root_item = item["item"].get_root_item()
+                root_item = item.item_text_block.get_root_item()
                 if root_item and is_non_translatable(root_item):
                     first_block_template = root_item
                     ignorable = True

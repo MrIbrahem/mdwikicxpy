@@ -3,6 +3,7 @@ Unit tests for lineardoc/doc.py module.
 """
 
 from python.lib.lineardoc import Doc, TextBlock, TextChunk
+from python.lib.lineardoc.doc import Item
 
 
 class TestDocCreation:
@@ -74,6 +75,7 @@ class TestDocItemManagement:
         tag = {"name": "p", "attributes": {}}
         doc.add_item("open", tag)
         current = doc.get_current_item()
+        assert current is not None
         assert current["type"] == "open"
         assert current["item"] == tag
 
@@ -194,12 +196,13 @@ class TestDocClone:
         doc = Doc()
         doc.add_item("open", {"name": "p", "attributes": {}})
 
-        def callback(item):
+        def callback(item: Item):
             # Add a class to all open tags
-            if item["type"] == "open":
+            if item.item_type == "open":
+                item_item = item.item_dict
                 new_item = {
-                    "type": item["type"],
-                    "item": {"name": item["item"]["name"], "attributes": dict(item["item"].get("attributes", {}))},
+                    "type": item.item_type,
+                    "item": {"name": item_item["name"], "attributes": dict(item_item.get("attributes", {}))},
                 }
                 new_item["item"]["attributes"]["class"] = "modified"
                 return new_item

@@ -12,6 +12,8 @@ from typing import Any
 
 from lxml import etree, html as lxml_html
 
+from .contextualizer import Contextualizer
+
 from . import utils
 from .builder import Builder
 
@@ -126,7 +128,7 @@ VOID_ELEMENTS = [
 class Parser:
     """Parser to read an HTML stream into a Doc."""
 
-    def __init__(self, contextualizer, options=None) -> None:
+    def __init__(self, contextualizer: Contextualizer, options=None) -> None:
         """
         Initialize the parser.
 
@@ -175,8 +177,10 @@ class Parser:
 
             self._process_element(fragment)
 
-    def _process_element(self, element: etree._Element) -> None:
-        """Process an element and its children recursively."""
+    def _process_element(self, element: etree._Element | Any) -> None:
+        """
+        Process an element recursively.
+        """
         # Skip comments and other special nodes
         if not isinstance(element.tag, str):
             return
