@@ -72,11 +72,17 @@ def get_open_tag_html(tag: dict[str, Any]) -> str:
         HTML representation of open tag
     """
     html = ["<" + esc(tag["name"])]
-    attributes = sorted(tag.get("attributes", {}).keys())
+    attributes = tag.get("attributes", {}).keys()
+
+    # sort attributes
+    attributes = sorted(attributes)
+
     for attr in attributes:
         html.append(" " + esc(attr) + '="' + esc_attr(tag["attributes"][attr]) + '"')
+
     if tag.get("isSelfClosing"):
         html.append(" /")
+
     html.append(">")
     return "".join(html)
 
