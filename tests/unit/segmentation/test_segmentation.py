@@ -54,7 +54,7 @@ def test_cx_segmenter(lang, test_case):
     with open(date_path / test_case["result"], "r", encoding="utf-8") as f:
         expected_result_data = normalize(f.read())
 
-    if expected_result_data != normalized_result:
+    if expected_result_data != normalized_result and output_path.is_dir():
         with open(output_path / test_case["result"], "w", encoding="utf-8") as f:
             f.write(result)
 
