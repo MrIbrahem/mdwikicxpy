@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from lxml import etree
+from lxml import html as lxml_html
 
 from . import utils
 from .builder import Builder
@@ -143,21 +143,28 @@ class Parser:
         """
         Parse HTML into the document.
 
-        Args:
-            html: HTML string to parse
+        Uses ``lxml.html.fragments_fromstring`` so that HTML *fragments* (such as
+        a bare ``<p>…</p>``) are parsed without the implicit ``<html><body>``
+        wrapper that ``etree.HTMLParser`` would inject. This keeps the behaviour
+        consistent with the upstream (sax-based) parser, which only emits the
+        elements actually present in the input.
         """
-        parser = etree.HTMLParser(encoding="utf-8")
         try:
-            tree = etree.fromstring(html.encode("utf-8"), parser)
-            self._process_element(tree)
-        except Exception:
-            # Try with wrapping
+            fragments = lxml_html.fragments_fromstring(html)
+        except Exception as exc:
+            # Fallback: wrap in a div and try again
             try:
-                tree = etree.fromstring(f"<div>{html}</div>".encode(), parser)
-                for child in tree:
-                    self._process_element(child)
-            except Exception as e:
-                raise Exception(f"Failed to parse HTML: {e}") from e
+                fragments = lxml_html.fragments_fromstring(f"<div>{html}</div>")
+            except Exception as exc2:
+                raise Exception(f"Failed to parse HTML: {exc2}") from exc2
+
+        for fragment in fragments:
+            if isinstance(fragment, str):
+                # Leading/trailing text outside any tag (e.g. before the first tag)
+                if fragment.strip():
+                    self.on_text(fragment)
+                continue
+            self._process_element(fragment)
 
     def _process_element(self, element: etree.Element) -> None:
         """Process an element and its children recursively."""

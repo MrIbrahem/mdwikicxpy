@@ -344,7 +344,7 @@ class TextBlock:
                     current_text_chunks.append(left_part)
                     offset += rel_offset
                     flush_chunks()
-                    text_ct_chunkhunk = right_part
+                    t_chunk = right_part
 
             # Even if the t_chunk is zero-width, it may have references
             current_text_chunks.append(t_chunk)
