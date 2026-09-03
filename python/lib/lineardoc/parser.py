@@ -12,7 +12,7 @@ from typing import Any
 
 from lxml import etree, html as lxml_html
 
-from .contextualizer import Contextualizer
+from .mw_contextualizer import MwContextualizer
 
 from . import utils
 from .builder import Builder
@@ -128,7 +128,7 @@ VOID_ELEMENTS = [
 class Parser:
     """Parser to read an HTML stream into a Doc."""
 
-    def __init__(self, contextualizer: Contextualizer, options=None) -> None:
+    def __init__(self, contextualizer: MwContextualizer, options=None) -> None:
         """
         Initialize the parser.
 
