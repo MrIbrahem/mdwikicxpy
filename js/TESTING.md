@@ -88,12 +88,15 @@ status is visible on each PR. The job:
 3. Installs JS dependencies with `npm ci` (in `js/`).
 4. Runs `node --test ../tests/unit/segmentation/CXSegmenter.test.js`.
 
-## Current status / known issues
+## Current status
 
-The test **now loads and executes** the full pipeline
-(parse → contextualize → segment → serialize). Making it run required fixing
-several porting defects in `js/lib` (see the git history of this branch):
+The suite **passes**: all 40 cases in `tests/unit/segmentation/CXSegmenter.test.js`
+(parse → contextualize → segment → serialize, including references, figures,
+media and transclusion scenarios) run green both locally and in CI. Getting
+there required fixing several porting defects in `js/lib` (see the git history of
+this branch):
 
+**Previous session**
 - Wrong relative import `./../util.js` → `./util.js` in `Doc.js`,
   `text_block.js` and `mw_contextualizer.js`.
 - Case-sensitive filenames: imports referenced `./utils.js`, `./TextBlock.js`
@@ -106,13 +109,28 @@ several porting defects in `js/lib` (see the git history of this branch):
   (e.g. `Contextualizer.getContext`/`get_context`, `text_block.getHtml`/
   `get_html`, and the `Utils` exports).
 
-**Remaining work:** the pipeline still fails at runtime with a logic error in
-`js/lib/lineardoc/Doc.js` (`getHtml` reads `attributes` of an `undefined`
-item). This indicates the JS segmentation code under `js/lib` is reference code
-that has **not been fully ported** to match the Python implementation or the
-upstream cxserver behavior. Completing the JS port — reconciling any remaining
-naming inconsistencies and debugging the segmentation logic — is required
-before these tests turn green.
+**This fix-up (to make the segmentation pipeline correct, not just loadable)**
+- `text_block.js`: `setLinkIds()` now returns `this` (previously it returned the
+  `undefined` result of `set_link_ids_in_place`, so segmented text blocks were
+  added to the doc as `undefined` items and `Doc.getHtml()` crashed on
+  `item.attributes`).
+- `text_block.js`: the constructor stores the segmentability flag as
+  `this.canSegment` (was `this.can_segment`), matching the `textBlock.canSegment`
+  check used by `Doc.segment()` — otherwise text blocks were never actually
+  segmented.
+- `text_block.js`: fixed a variable that shadowed the `text_chunk` (TextChunk)
+  class inside `segment()`, so splitting a chunk at a sentence boundary no longer
+  tried to instantiate a chunk object.
+- `text_block.js`: the inline-content branch now calls
+  `text_chunk.inline_content.getHtml()` (was `.get_html()`), so sub-documents
+  such as footnotes/references render correctly instead of being treated as empty
+  tags (which threw on `tag.name`).
+- `segmentation/CXSegmenter.js`: converted to an ES module (`export default` +
+  `import segment from 'sentencex'`) to match upstream cxserver.
 
-Until then, the commands above are the correct way to **run** the JS tests
-locally and in CI; they will report the current (failing) state of the port.
+### Known limitations
+- `npm test` still runs ESLint first, and `js/` has no ESLint config yet, so
+  `npm run lint` (and therefore `npm test`) fails until a config is added. Use
+  `npm run unittest` / `node --test ...` to run the tests directly.
+- The JS under `js/lib` is a port of upstream cxserver; these tests cover the
+  segmentation pipeline. Other cxserver behaviours are not exercised here.
