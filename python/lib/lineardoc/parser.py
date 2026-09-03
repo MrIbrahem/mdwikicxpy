@@ -3,13 +3,15 @@ Parser to read an HTML stream into a Doc.
 """
 
 from __future__ import annotations
-
+import logging
 from typing import Any
 
-from lxml import html as lxml_html
+from lxml import etree, html as lxml_html
 
 from . import utils
 from .builder import Builder
+
+logger = logging.getLogger(__name__)
 
 BLOCK_TAGS = [
     "html",
@@ -166,12 +168,14 @@ class Parser:
                 continue
             self._process_element(fragment)
 
-    def _process_element(self, element: etree.Element) -> None:
-        """Process an element and its children recursively."""
+    def _process_element(self, element: etree.Element | Any) -> None:
+        """
+        Process an element and its children recursively.
+        """
         # Skip comments and other special nodes
-        if not isinstance(element.tag, str):
-            return
+        # if not isinstance(element.tag, str): return
 
+        # Create tag dict
         tag_name = element.tag.lower() if self.lowercase else element.tag
 
         # Create tag dict
