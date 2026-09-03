@@ -2,7 +2,6 @@
 Unit tests for lineardoc/utils.py module.
 """
 
-
 from python.lib.lineardoc import utils
 
 

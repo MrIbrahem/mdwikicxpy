@@ -2,7 +2,6 @@
 Unit tests for lineardoc/normalizer.py module.
 """
 
-
 from python.lib.lineardoc.normalizer import Normalizer
 
 

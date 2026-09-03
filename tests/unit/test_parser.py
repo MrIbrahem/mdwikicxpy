@@ -2,7 +2,6 @@
 Unit tests for lineardoc/parser.py module.
 """
 
-
 from python.lib.lineardoc import Contextualizer, Parser
 
 

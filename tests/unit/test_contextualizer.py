@@ -2,7 +2,6 @@
 Unit tests for lineardoc/contextualizer.py and lineardoc/mw_contextualizer.py modules.
 """
 
-
 from python.lib.lineardoc.contextualizer import Contextualizer
 from python.lib.lineardoc.mw_contextualizer import MwContextualizer
 

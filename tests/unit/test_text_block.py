@@ -2,7 +2,6 @@
 Unit tests for lineardoc/text_block.py module.
 """
 
-
 from python.lib.lineardoc.text_block import TextBlock
 from python.lib.lineardoc.text_chunk import TextChunk
 

@@ -2,7 +2,6 @@
 Unit tests for lineardoc/util.py module.
 """
 
-
 from python.lib.lineardoc.util import get_prop
 
 

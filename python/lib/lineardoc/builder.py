@@ -15,7 +15,7 @@ from .text_chunk import TextChunk
 class Builder:
     """A document builder."""
 
-    def __init__(self, parent=None, wrapper_tag=None) -> None:
+    def __init__(self, parent=None, wrapper_tag: dict | None = None) -> None:
         """
         Initialize a Builder.
 

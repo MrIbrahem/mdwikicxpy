@@ -2,7 +2,6 @@
 Unit tests for lineardoc/builder.py module.
 """
 
-
 import pytest
 from python.lib.lineardoc import Doc
 from python.lib.lineardoc.builder import Builder

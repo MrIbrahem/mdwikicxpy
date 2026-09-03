@@ -2,7 +2,6 @@
 Unit tests for lineardoc/doc.py module.
 """
 
-
 from python.lib.lineardoc import Doc, TextBlock, TextChunk
 
 

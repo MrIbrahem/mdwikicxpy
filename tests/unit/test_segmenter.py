@@ -2,8 +2,7 @@
 Unit tests for segmentation/cx_segmenter.py module.
 """
 
-
-from python.lib.lineardoc import Doc, TextChunk
+from python.lib.lineardoc import Doc, TextBlock, TextChunk
 from python.lib.segmentation.cx_segmenter import CXSegmenter
 
 
@@ -101,7 +100,7 @@ class TestCXSegmenter:
         doc = Doc()
         # Add a simple text block
         chunks = [TextChunk("Hello. World.", [])]
-        text_block = text_block(chunks, can_segment=True)
+        text_block = TextBlock(chunks, can_segment=True)
         doc.add_item("textblock", text_block)
 
         segmented = segmenter.segment(doc, "en")
@@ -114,7 +113,7 @@ class TestCXSegmenter:
         doc = Doc()
         # Add a non-segmentable text block
         chunks = [TextChunk("Do not segment.", [])]
-        text_block = text_block(chunks, can_segment=False)
+        text_block = TextBlock(chunks, can_segment=False)
         doc.add_item("textblock", text_block)
 
         segmented = segmenter.segment(doc, "en")
