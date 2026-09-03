@@ -7,11 +7,13 @@ from __future__ import annotations
 import pysbd
 from pysbd.languages import LANGUAGE_CODES
 
+from ..lineardoc.doc import Doc
+
 
 class CXSegmenter:
     """Segmenter for CX documents."""
 
-    def segment(self, parsed_doc, language: str):
+    def segment(self, parsed_doc: Doc, language: str):
         """
         Segment the given parsed linear document object.
 

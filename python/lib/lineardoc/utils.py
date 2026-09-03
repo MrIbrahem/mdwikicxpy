@@ -1,5 +1,9 @@
 """
 Utility functions for HTML processing and tag manipulation.
+
+converted from the LinearDoc javascript library of the Wikimedia Content translation project
+
+https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineardoc/Utils.js
 """
 
 from __future__ import annotations
@@ -325,7 +329,7 @@ def get_chunk_boundary_groups(boundaries, chunks, get_length) -> list:
     return groups
 
 
-def add_common_tag(text_chunks, tag: dict[str, Any]) -> list:
+def add_common_tag(text_chunks: list[TextChunk], tag: dict[str, Any]) -> list:
     """
     Add a tag to consecutive text chunks, above common tags but below others.
 
@@ -364,7 +368,7 @@ def add_common_tag(text_chunks, tag: dict[str, Any]) -> list:
     return new_text_chunks
 
 
-def set_link_ids_in_place(text_chunks, get_next_id: Callable) -> None:
+def set_link_ids_in_place(text_chunks: list[TextChunk], get_next_id: Callable) -> None:
     """
     Set link IDs in-place on text chunks.
 
@@ -421,7 +425,7 @@ def is_ignorable_block(section_doc: Doc) -> bool:
             if not first_block_template and (is_transclusion(tag_dict) or is_reference_list(tag_dict)):
                 first_block_template = tag_dict
 
-        elif item_type == "close":
+        if item_type == "close":
             if block_stack:
                 current_close_tag = block_stack.pop()
                 if is_closing_template_match(block_stack, first_block_template, current_close_tag):

@@ -6,6 +6,10 @@ The document is a list of items, where each item is:
 - a block close tag (e.g. </p>); or
 - a text_block of annotated inline text; or
 - "block whitespace" (a run of whitespace separating two block boundaries)
+
+converted from the LinearDoc javascript library of the Wikimedia Content translation project
+
+https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineardoc/Doc.js
 """
 
 from __future__ import annotations
@@ -20,12 +24,12 @@ from . import utils
 from .text_block import TextBlock
 
 ITEM_TYPES = Literal["open", "close", "blockspace", "textblock"]
-ITEM_OBJECT_TYPES = dict[str, Any] | TextBlock | str | Any
+ITEM_OBJECT_TYPES = dict[str, Any] | TextBlock | str
 
 @dataclass
 class Item:
     item_type: ITEM_TYPES
-    item: ITEM_OBJECT_TYPES
+    item: ITEM_OBJECT_TYPES | Any
     item_text_block: TextBlock | None = None
     item_str: str | None = None
     item_dict: dict[str, Any] = field(default_factory=dict)
@@ -89,7 +93,7 @@ class Doc:
             new_doc.add_item(new_item["type"], new_item["item"])
         return new_doc
 
-    def add_item(self, item_type: ITEM_TYPES, item: ITEM_OBJECT_TYPES) -> Doc:
+    def add_item(self, item_type: ITEM_TYPES, item: ITEM_OBJECT_TYPES | Any) -> Doc:
         """
         Add an item to the document.
 

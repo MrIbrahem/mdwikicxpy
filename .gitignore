@@ -27,3 +27,4 @@ tests/fixtures/output_*.html
 /cxsever/www/python/lib/lineardoc1
 /tests/unit/segmentation/output
 .claude/settings.local.json
+mediawiki-services-cxserver-master.zip

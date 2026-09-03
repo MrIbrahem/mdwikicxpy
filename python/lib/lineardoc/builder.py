@@ -1,5 +1,9 @@
 """
 Builder - A document builder for creating linear documents.
+
+converted from the LinearDoc javascript library of the Wikimedia Content translation project
+
+https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineardoc/Builder.js
 """
 
 from __future__ import annotations

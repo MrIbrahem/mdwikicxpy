@@ -1,5 +1,9 @@
 """
 text_block - A block of annotated inline text.
+
+converted from the LinearDoc javascript library of the Wikimedia Content translation project
+
+https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineardoc/TextBlock.js
 """
 
 from __future__ import annotations

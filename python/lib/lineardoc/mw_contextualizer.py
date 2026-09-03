@@ -2,6 +2,10 @@
 Contextualizer for MediaWiki DOM HTML.
 
 See https://www.mediawiki.org/wiki/Specs/HTML
+
+converted from the LinearDoc javascript library of the Wikimedia Content translation project
+
+https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineardoc/MwContextualizer.js
 """
 
 from __future__ import annotations

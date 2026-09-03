@@ -1,5 +1,9 @@
 """
 Normalizer - Parser to normalize XML.
+
+converted from the LinearDoc javascript library of the Wikimedia Content translation project
+
+https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineardoc/Normalizer.js
 """
 
 from __future__ import annotations

@@ -1,5 +1,9 @@
 """
 Lineardoc module - Linear document representation for HTML.
+
+converted from the LinearDoc javascript library of the Wikimedia Content translation project
+
+https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineardoc/index.js
 """
 
 from __future__ import annotations

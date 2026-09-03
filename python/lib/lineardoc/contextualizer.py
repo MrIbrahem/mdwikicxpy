@@ -1,5 +1,9 @@
 """
 Contextualizer for HTML - tracks the segmentation context of the currently open node.
+
+converted from the LinearDoc javascript library of the Wikimedia Content translation project
+
+https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineardoc/Contextualizer.js
 """
 
 from __future__ import annotations
