@@ -32,18 +32,14 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Any, Dict, Tuple
+from typing import Any
 
 from flask import Flask, Response, jsonify, request
 from flask_cors import CORS
-
 from lib.processor import process_html
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Security constants
@@ -73,7 +69,7 @@ class ProcessingError(Exception):
         self.original_error = original_error
 
 
-def validate_request(data: Dict[str, Any] | None) -> Tuple[bool, str]:
+def validate_request(data: dict[str, Any] | None) -> tuple[bool, str]:
     """
     Validate the incoming request data.
 
@@ -117,7 +113,7 @@ def validate_request(data: Dict[str, Any] | None) -> Tuple[bool, str]:
     return True, ""
 
 
-def create_error_response(message: str, status_code: int) -> Tuple[Response, int]:
+def create_error_response(message: str, status_code: int) -> tuple[Response, int]:
     """
     Create a standardized JSON error response.
 
@@ -131,7 +127,7 @@ def create_error_response(message: str, status_code: int) -> Tuple[Response, int
     return jsonify({"result": message, "success": False}), status_code
 
 
-def create_success_response(result: str) -> Tuple[Response, int]:
+def create_success_response(result: str) -> tuple[Response, int]:
     """
     Create a standardized JSON success response.
 
@@ -146,7 +142,7 @@ def create_success_response(result: str) -> Tuple[Response, int]:
 
 @app.route("/textp", methods=["POST"])
 @app.route("/HtmltoSegments", methods=["POST"])
-def process_text() -> Tuple[Response, int]:
+def process_text() -> tuple[Response, int]:
     """
     Process HTML text through the CX pipeline.
 
@@ -190,10 +186,7 @@ def process_text() -> Tuple[Response, int]:
     # Validate content type
     if not request.is_json:
         logger.warning("Request rejected: Content-Type is not application/json")
-        return create_error_response(
-            "Content-Type must be application/json",
-            415
-        )
+        return create_error_response("Content-Type must be application/json", 415)
 
     # Parse and validate JSON
     try:
@@ -224,14 +217,11 @@ def process_text() -> Tuple[Response, int]:
     except Exception as e:
         # Log the full error internally but return a generic message
         logger.error(f"Unexpected error processing HTML: {e}", exc_info=True)
-        return create_error_response(
-            "An internal error occurred while processing the HTML",
-            500
-        )
+        return create_error_response("An internal error occurred while processing the HTML", 500)
 
 
 @app.route("/health", methods=["GET"])
-def health() -> Tuple[Response, int]:
+def health() -> tuple[Response, int]:
     """
     Health check endpoint for monitoring and load balancers.
 

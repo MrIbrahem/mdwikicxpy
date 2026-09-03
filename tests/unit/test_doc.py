@@ -2,11 +2,7 @@
 Unit tests for lineardoc/doc.py module.
 """
 
-import os
-import sys
-
-import pytest
-from python.lib.lineardoc import Doc, text_block, text_chunk
+from python.lib.lineardoc import Doc, TextBlock, TextChunk
 
 
 class TestDocCreation:
@@ -49,8 +45,8 @@ class TestDocAddItem:
     def test_add_textblock(self):
         """Test adding a text block."""
         doc = Doc()
-        chunks = [text_chunk("text", [])]
-        block = text_block(chunks)
+        chunks = [TextChunk("text", [])]
+        block = TextBlock(chunks)
         doc.add_item("textblock", block)
         assert len(doc.items) == 1
         assert doc.items[0]["type"] == "textblock"
@@ -138,8 +134,8 @@ class TestDocGetHtml:
         """Test getting HTML from simple doc."""
         doc = Doc()
         doc.add_item("open", {"name": "p", "attributes": {}})
-        chunks = [text_chunk("Hello", [])]
-        doc.add_item("textblock", text_block(chunks))
+        chunks = [TextChunk("Hello", [])]
+        doc.add_item("textblock", TextBlock(chunks))
         doc.add_item("close", {"name": "p"})
         html = doc.get_html()
         assert "<p>" in html
@@ -150,8 +146,8 @@ class TestDocGetHtml:
         """Test getting HTML with wrapper tag."""
         wrapper = {"name": "div", "attributes": {"class": "wrapper"}}
         doc = Doc(wrapper)
-        chunks = [text_chunk("content", [])]
-        doc.add_item("textblock", text_block(chunks))
+        chunks = [TextChunk("content", [])]
+        doc.add_item("textblock", TextBlock(chunks))
         html = doc.get_html()
         assert "<div" in html
         assert 'class="wrapper"' in html
@@ -168,8 +164,8 @@ class TestDocGetHtml:
         """Test that cx-segment-block divs are skipped."""
         doc = Doc()
         doc.add_item("open", {"name": "div", "attributes": {"class": "cx-segment-block"}})
-        chunks = [text_chunk("text", [])]
-        doc.add_item("textblock", text_block(chunks))
+        chunks = [TextChunk("text", [])]
+        doc.add_item("textblock", TextBlock(chunks))
         doc.add_item("close", {"name": "div"})
         html = doc.get_html()
         # cx-segment-block should not be in output
@@ -221,8 +217,8 @@ class TestDocWrapSections:
         doc = Doc()
         doc.add_item("open", {"name": "body", "attributes": {}})
         doc.add_item("open", {"name": "h2", "attributes": {}})
-        chunks = [text_chunk("Heading", [])]
-        doc.add_item("textblock", text_block(chunks))
+        chunks = [TextChunk("Heading", [])]
+        doc.add_item("textblock", TextBlock(chunks))
         doc.add_item("close", {"name": "h2"})
         doc.add_item("close", {"name": "body"})
 
@@ -246,10 +242,10 @@ class TestDocGetSegments:
     def test_get_segments_simple(self):
         """Test getting segments from doc."""
         doc = Doc()
-        chunks1 = [text_chunk("First", [])]
-        chunks2 = [text_chunk("Second", [])]
-        doc.add_item("textblock", text_block(chunks1))
-        doc.add_item("textblock", text_block(chunks2))
+        chunks1 = [TextChunk("First", [])]
+        chunks2 = [TextChunk("Second", [])]
+        doc.add_item("textblock", TextBlock(chunks1))
+        doc.add_item("textblock", TextBlock(chunks2))
 
         segments = doc.get_segments()
         assert len(segments) == 2
@@ -260,8 +256,8 @@ class TestDocGetSegments:
         """Test that get_segments only returns textblocks."""
         doc = Doc()
         doc.add_item("open", {"name": "p", "attributes": {}})
-        chunks = [text_chunk("Text", [])]
-        doc.add_item("textblock", text_block(chunks))
+        chunks = [TextChunk("Text", [])]
+        doc.add_item("textblock", TextBlock(chunks))
         doc.add_item("close", {"name": "p"})
 
         segments = doc.get_segments()

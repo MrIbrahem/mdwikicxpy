@@ -4,8 +4,11 @@ Contextualizer for MediaWiki DOM HTML.
 See https://www.mediawiki.org/wiki/Specs/HTML
 """
 
+from __future__ import annotations
+
 import json
 import re
+from typing import Any
 
 from . import util as cxutil
 from .contextualizer import Contextualizer
@@ -31,10 +34,10 @@ CONTENT_BRANCH_NODE_NAMES = [
 ]
 
 
-class mw_contextualizer(Contextualizer):
+class MwContextualizer(Contextualizer):
     """Contextualizer for MediaWiki DOM HTML."""
 
-    def __init__(self, config=None):
+    def __init__(self, config=None) -> None:
         """
         Initialize the MW contextualizer.
 
@@ -45,7 +48,7 @@ class mw_contextualizer(Contextualizer):
         # Array holding transclusion fragment ids (about attribute values)
         self.removable_transclusion_fragments = []
 
-    def get_child_context(self, tag):
+    def get_child_context(self, tag: dict[str, Any]) -> str | None:
         """Get the context for a new tag being opened."""
         context = self.get_context()
         tag_type = tag.get("attributes", {}).get("typeof", "") or tag.get("attributes", {}).get("rel", "")
@@ -79,11 +82,11 @@ class mw_contextualizer(Contextualizer):
         # Else same as parent context
         return context
 
-    def can_segment(self):
+    def can_segment(self) -> bool:
         """Determine whether sentences can be segmented."""
         return self.get_context() == "contentBranch"
 
-    def is_removable(self, tag):
+    def is_removable(self, tag: dict[str, Any]) -> bool:
         """
         Check if the tag need to be ignored while parsing and hence removed.
 
@@ -149,3 +152,8 @@ class mw_contextualizer(Contextualizer):
                 return True
 
         return False
+
+
+__all__ = [
+    "MwContextualizer",
+]

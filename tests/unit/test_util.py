@@ -2,10 +2,6 @@
 Unit tests for lineardoc/util.py module.
 """
 
-import os
-import sys
-
-import pytest
 from python.lib.lineardoc.util import get_prop
 
 

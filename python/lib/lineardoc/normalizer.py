@@ -2,6 +2,10 @@
 Normalizer - Parser to normalize XML.
 """
 
+from __future__ import annotations
+
+from typing import Any
+
 from lxml import etree
 
 from . import utils
@@ -16,23 +20,23 @@ def esc(s):
 class Normalizer:
     """Parser to normalize XML."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the normalizer."""
         self.lowercase = True
 
-    def init(self):
+    def init(self) -> None:
         """Initialize state for parsing."""
         self.doc = []
-        self.tags = []
+        self.tags: list[dict] = []
 
-    def write(self, html):
+    def write(self, html: str) -> None:
         """
         Parse and normalize HTML.
 
         Args:
             html: HTML string to normalize
         """
-        parser = etree.HTMLParser()
+        parser = etree.HTMLParser(encoding="utf-8")
         try:
             tree = etree.fromstring(html, parser)
             self._process_element(tree)
@@ -43,11 +47,12 @@ class Normalizer:
                 for child in tree:
                     self._process_element(child)
             except Exception as e:
-                raise Exception(f"Failed to parse HTML: {e}")
+                raise Exception(f"Failed to parse HTML: {e}") from e
 
-    def _process_element(self, element):
+    def _process_element(self, element: etree.Element | Any) -> None:
         """Process an element recursively."""
-        tag_name = element.tag.lower() if self.lowercase else element.tag  # Create tag dict
+        # Create tag dict
+        tag_name = element.tag.lower() if self.lowercase else element.tag
         tag = {"name": tag_name, "attributes": dict(element.attrib)}
 
         # Mark HTML void elements as self-closing
@@ -69,23 +74,25 @@ class Normalizer:
 
         self.on_close_tag(tag_name)
 
-    def on_open_tag(self, tag):
+    def on_open_tag(self, tag: dict[str, Any]) -> None:
         """Handle open tag event."""
         self.tags.append(tag)
         self.doc.append(utils.get_open_tag_html(tag))
 
-    def on_close_tag(self, tag_name):
+    def on_close_tag(self, tag_name) -> None:
         """Handle close tag event."""
         tag = self.tags.pop()
+
         if tag["name"] != tag_name:
             raise Exception(f'Unmatched tags: {tag["name"]} !== {tag_name}')
+
         self.doc.append(utils.get_close_tag_html(tag))
 
-    def on_text(self, text):
+    def on_text(self, text: str) -> None:
         """Handle text event."""
         self.doc.append(esc(text))
 
-    def get_html(self):
+    def get_html(self) -> str:
         """
         Get the normalized HTML.
 
@@ -93,3 +100,9 @@ class Normalizer:
             Normalized HTML string
         """
         return "".join(self.doc)
+
+
+__all__ = [
+    "Normalizer",
+    "esc",
+]
