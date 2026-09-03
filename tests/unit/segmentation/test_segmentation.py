@@ -40,6 +40,7 @@ test_params = [(lang, test_case) for lang, cases in alltests.items() for test_ca
 def test_cx_segmenter(lang, test_case):
     date_path = Path(__file__).parent / "data"
     output_path = Path(__file__).parent / "output"
+    output_path.mkdir(parents=True, exist_ok=True)
 
     with open(date_path / test_case["source"], "r", encoding="utf-8") as f:
         test_data = f.read()
