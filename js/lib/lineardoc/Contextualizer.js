@@ -69,6 +69,23 @@ class Contextualizer {
 		return this.get_context() === undefined;
 	}
 
+	// camelCase aliases for callers such as Parser
+	getContext() {
+		return this.get_context();
+	}
+
+	onOpenTag(open_tag) {
+		return this.on_open_tag(open_tag);
+	}
+
+	onCloseTag() {
+		return this.on_close_tag();
+	}
+
+	canSegment() {
+		return this.can_segment();
+	}
+
 }
 
 export default Contextualizer;

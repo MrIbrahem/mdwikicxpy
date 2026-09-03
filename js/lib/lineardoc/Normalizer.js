@@ -1,5 +1,5 @@
 import sax from 'sax';
-import { get_close_tag_html, get_open_tag_html } from './utils.js';
+import { get_close_tag_html, get_open_tag_html } from './Utils.js';
 
 /**
  * Escape text for inclusion in HTML, not inside a tag.
@@ -49,6 +49,10 @@ class Normalizer extends sax.SAXParser {
 
 	get_html() {
 		return this.doc.join('');
+	}
+
+	getHtml() {
+		return this.get_html();
 	}
 
 }
