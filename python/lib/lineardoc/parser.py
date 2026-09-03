@@ -104,6 +104,7 @@ BLOCK_TAGS = [
     # non-annotation inline tags
     "img",
     "br",
+    "wiki-chart",
 ]
 
 # HTML void elements that cannot have content and should be self-closing

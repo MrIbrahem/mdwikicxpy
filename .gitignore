@@ -28,3 +28,4 @@ tests/fixtures/output_*.html
 /tests/unit/segmentation/output
 .claude/settings.local.json
 mediawiki-services-cxserver-master.zip
+/mediawiki-services-cxserver-master
