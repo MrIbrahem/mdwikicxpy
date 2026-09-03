@@ -26,7 +26,7 @@ def get_parsed_doc(content):
     return parsed_doc
 
 
-def normalize(html):
+def normalize(html) -> str:
     normalizer = Normalizer()
     normalizer.init()
     normalizer.write(re.sub(r"[\t\r\n]+", "", html))  # html.replace(/[\t\r\n]+/gm, '' )
@@ -55,8 +55,7 @@ def test_cx_segmenter(lang, test_case):
     with open(date_path / test_case["result"], "r", encoding="utf-8") as f:
         expected_result_data = normalize(f.read())
 
-    if expected_result_data != normalized_result and output_path.is_dir():
-        with open(output_path / test_case["result"], "w", encoding="utf-8") as f:
-            f.write(result)
+    with open(output_path / test_case["result"], "w", encoding="utf-8") as f:
+        f.write(result)
 
     assert normalized_result == expected_result_data, f"{test_case['source']}: {test_case['desc'] or ''}"

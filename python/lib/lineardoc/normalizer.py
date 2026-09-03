@@ -3,7 +3,7 @@ Normalizer - Parser to normalize XML.
 """
 
 from __future__ import annotations
-
+import logging
 from typing import Any
 
 from lxml import etree
@@ -11,6 +11,7 @@ from lxml import etree
 from . import utils
 from .parser import VOID_ELEMENTS
 
+logger = logging.getLogger(__name__)
 
 def esc(s):
     """Escape text for inclusion in HTML."""
@@ -40,7 +41,8 @@ class Normalizer:
         try:
             tree = etree.fromstring(html, parser)
             self._process_element(tree)
-        except Exception:
+        except Exception as exc:
+            logger.error("Failed to parse HTML error: %s", str(exc))
             # Try with wrapping
             try:
                 tree = etree.fromstring(f"<div>{html}</div>", parser)
