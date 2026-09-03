@@ -47,11 +47,15 @@ class TestProcessHtml:
         assert result is not None
         assert isinstance(result, str)
         assert len(result) > 0
+        # assert result == '<p id="0"><span class="cx-segment" data-segmentid="1">This is a test.</span></p>'
+
 
     def test_process_html_creates_sections(self):
         """Test that processing creates sections."""
         html = "<h2>Heading</h2><p>Content</p>"
         result = process_html(html)
+        # assert result == '<h2 id="0"><span class="cx-segment" data-segmentid="1">Heading</span></h2><p id="2"><span class="cx-segment" data-segmentid="3">Content</span></p>'
+
         assert "<section" in result
         assert 'rel="cx:Section"' in result
 
@@ -59,6 +63,8 @@ class TestProcessHtml:
         """Test that processing creates segments."""
         html = "<p>First sentence. Second sentence.</p>"
         result = process_html(html)
+        assert result == '<p id="0"><span class="cx-segment" data-segmentid="1">First sentence. </span><span class="cx-segment" data-segmentid="2">Second sentence.</span></p>'
+
         assert "cx-segment" in result
         assert "data-segmentid" in result
 
@@ -66,6 +72,7 @@ class TestProcessHtml:
         """Test that processing preserves links."""
         html = '<p>Text with <a href="/wiki/Test">link</a>.</p>'
         result = process_html(html)
+        assert result == '<p id="0"><span class="cx-segment" data-segmentid="1">Text with <a href="/wiki/Test">link</a>.</span></p>'
         assert "link" in result
 
     def test_process_html_empty_input(self):
@@ -73,22 +80,20 @@ class TestProcessHtml:
         result = process_html("")
         # Should handle empty input gracefully
         assert isinstance(result, str)
+        assert result == ''
 
     def test_process_html_with_figure(self):
         """Test processing HTML with figure."""
-        html = """
-        <figure>
-            <img src="test.jpg" />
-            <figcaption>Caption</figcaption>
-        </figure>
-        """
+        html = """ <figure><img src="test.jpg" /><figcaption>Caption</figcaption></figure> """
         result = process_html(html)
+        assert result == '<figure id="0" rel="cx:Figure"><img src="test.jpg" /><figcaption id="1"><span class="cx-segment" data-segmentid="2">Caption</span></figcaption></figure>'
         assert "cx:Figure" in result
 
     def test_process_html_mediawiki_link(self):
         """Test processing MediaWiki link."""
         html = '<p>See <a rel="mw:WikiLink" href="/wiki/Article">article</a>.</p>'
         result = process_html(html)
+        assert result == '<p id="0"><span class="cx-segment" data-segmentid="1">See <a class="cx-link" data-linkid="2" href="/wiki/Article" rel="mw:WikiLink">article</a>.</span></p>'
         # Should add link tracking
         assert "data-linkid" in result or "cx-link" in result
 
@@ -100,6 +105,7 @@ class TestProcessHtml:
         <p>Third paragraph.</p>
         """
         result = process_html(html)
+        assert result == '<p id="0"><span class="cx-segment" data-segmentid="1">First paragraph.</span></p><p id="2"><span class="cx-segment" data-segmentid="3">Second paragraph.</span></p><p id="4"><span class="cx-segment" data-segmentid="5">Third paragraph.</span></p>'
         # Should have multiple segments
         segment_count = result.count("cx-segment")
         assert segment_count >= 2
@@ -113,6 +119,7 @@ class TestProcessHtml:
         <p>Content 2</p>
         """
         result = process_html(html)
+        assert result == '<h2 id="0"><span class="cx-segment" data-segmentid="1">Section 1</span></h2><p id="2"><span class="cx-segment" data-segmentid="3">Content 1</span></p><h2 id="4"><span class="cx-segment" data-segmentid="5">Section 2</span></h2><p id="6"><span class="cx-segment" data-segmentid="7">Content 2</span></p>'
         # Should create sections
         assert result.count("<section") >= 2
 
@@ -141,6 +148,8 @@ class TestProcessHtml:
         """Test processing Unicode content."""
         html = "<p>مرحبا العالم. هذا اختبار.</p>"
         result = process_html(html)
+        assert result == '<p id="0"><span class="cx-segment" data-segmentid="1">مرحبا العالم. </span><span class="cx-segment" data-segmentid="2">هذا اختبار.</span></p>'
+
         # Unicode content should be in output (possibly escaped)
         assert len(result) > len(html)  # Should have added markup
         # Check for presence of Arabic content or escape sequences
@@ -150,6 +159,8 @@ class TestProcessHtml:
         """Test processing special characters."""
         html = "<p>Test &amp; special &lt;chars&gt;.</p>"
         result = process_html(html)
+        assert result == '<p id="0"><span class="cx-segment" data-segmentid="1">Test &#38; special &#60;chars&#62;.</span></p>'
+
         # Should preserve content (may be escaped differently)
         assert len(result) > 0
 
@@ -157,6 +168,7 @@ class TestProcessHtml:
         """Test processing nested formatting."""
         html = "<p>Text with <b>bold and <i>italic</i></b> formatting.</p>"
         result = process_html(html)
+        assert result == '<p id="0"><span class="cx-segment" data-segmentid="1">Text with <b>bold and <i>italic</i></b> formatting.</span></p>'
         # Should preserve formatting
         assert "bold" in result
         assert "italic" in result
@@ -165,16 +177,14 @@ class TestProcessHtml:
         """Test processing blockquote."""
         html = "<blockquote><p>Quoted text.</p></blockquote>"
         result = process_html(html)
+        assert result == '<blockquote id="0"><p id="1"><span class="cx-segment" data-segmentid="2">Quoted text.</span></p></blockquote>'
         assert "Quoted" in result
 
     def test_process_html_table(self):
         """Test processing table."""
-        html = """
-        <table>
-            <tr><td>Cell 1</td><td>Cell 2</td></tr>
-        </table>
-        """
+        html = """ <table><tr><td>Cell 1</td><td>Cell 2</td></tr></table> """
         result = process_html(html)
+        assert result == '<table id="0"><tr id="1"><td id="2"><span class="cx-segment" data-segmentid="3">Cell 1</span></td><td id="4"><span class="cx-segment" data-segmentid="5">Cell 2</span></td></tr></table>'
         assert "Cell 1" in result
         assert "Cell 2" in result
 
