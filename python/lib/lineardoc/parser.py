@@ -128,6 +128,15 @@ class Parser(SharedParserNormalizer):
         # Stack of tags currently open
         self.all_tags = []
 
+    def write_z(self, html: str) -> None:
+        """
+        Parse and normalize HTML.
+
+        Args:
+            html: HTML string to normalize
+        """
+        return self.write_lxml_html(html)
+
     def on_open_tag(self, tag: dict[str, Any]) -> None:
         """
         Handle open tag event.
