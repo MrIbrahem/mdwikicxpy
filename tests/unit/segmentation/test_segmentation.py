@@ -40,6 +40,10 @@ def test_cx_segmenter(lang, test_case):
 
     parsed_doc = get_parsed_doc(test_data)
     segmenter = CXSegmenter()
+
+    if not segmenter.is_language_supported(lang):
+        pytest.skip(f"Language {lang} not supported")
+
     segmented_linear_doc = segmenter.segment(parsed_doc, lang)
 
     result = segmented_linear_doc.get_html()
