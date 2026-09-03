@@ -3,6 +3,7 @@
 ## Current JavaScript Structure (Simplified)
 
 ### Directory Tree
+
 ```
 cxsever/
 └── www/
@@ -30,17 +31,18 @@ cxsever/
 ```
 
 ### Simplified Server (`server.js`)
+
 ```javascript
 var express = require("express");
-var cors = require('cors');
-var bodyParser = require('body-parser');
-var u = require('./lib/d/u.js');
+var cors = require("cors");
+var bodyParser = require("body-parser");
+var u = require("./lib/d/u.js");
 
 var app = express();
 
 app.use(cors());
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: false }));
 
 // Main endpoint - Process HTML for translation
 app.post("/textp", (req, res) => {
@@ -48,7 +50,7 @@ app.post("/textp", (req, res) => {
 
     if (!sourceHtml || sourceHtml.trim().length === 0) {
         res.send({
-            result: 'Content for translate is not given or is empty'
+            result: "Content for translate is not given or is empty",
         });
         res.status(500).end();
         return;
@@ -59,36 +61,44 @@ app.post("/textp", (req, res) => {
     } catch (error) {
         console.error(error);
         res.send({
-            result: error.message
+            result: error.message,
         });
         res.status(500).end();
     }
 });
 
 app.listen(process.env.PORT || 8000, function () {
-    console.log("Node.js app is listening on port " + (process.env.PORT || 8000));
+    console.log(
+        "Node.js app is listening on port " + (process.env.PORT || 8000)
+    );
 });
 ```
 
 ### Core Processing (`lib/d/u.js`)
+
 ```javascript
-'use strict';
+"use strict";
 
-const LinearDoc = require('../lineardoc')
-const fs = require('fs'),
-    yaml = require('js-yaml'),
-    CXSegmenter = require('../segmentation/CXSegmenter');
+const LinearDoc = require("../lineardoc");
+const fs = require("fs"),
+    yaml = require("js-yaml"),
+    CXSegmenter = require("../segmentation/CXSegmenter");
 
-const pageloaderConfig = yaml.load(fs.readFileSync(__dirname + '/MWPageLoader.yaml'));
+const pageloaderConfig = yaml.load(
+    fs.readFileSync(__dirname + "/MWPageLoader.yaml")
+);
 const removableSections = pageloaderConfig.removableSections;
 
 function tet(source_HTML) {
     // 1. Parse HTML with MediaWiki contextualization
-    const parser = new LinearDoc.Parser(new LinearDoc.mw_contextualizer(
-        { removableSections: removableSections }
-    ), {
-        wrapSections: true
-    });
+    const parser = new LinearDoc.Parser(
+        new LinearDoc.mw_contextualizer({
+            removableSections: removableSections,
+        }),
+        {
+            wrapSections: true,
+        }
+    );
 
     parser.init();
     parser.write(source_HTML);
@@ -113,6 +123,7 @@ module.exports = { tet };
 ## Python Structure (Simplified)
 
 ### Directory Tree
+
 ```
 cxserver_py/
 ├── app.py                              # Main Flask/FastAPI application
@@ -153,6 +164,7 @@ cxserver_py/
 ```
 
 ### Main Application (`app.py`)
+
 ```python
 """
 CX Server - Content Translation HTML Processing
@@ -235,6 +247,7 @@ if __name__ == '__main__':
 ```
 
 ### Core Processor (`lib/processor.py`)
+
 ```python
 """
 Main HTML processing module
@@ -317,6 +330,7 @@ def process_html(source_html: str) -> str:
 ```
 
 ### Configuration (`config.py`)
+
 ```python
 """Application configuration"""
 import os
@@ -341,6 +355,7 @@ class Config:
 ```
 
 ### Dependencies (`requirements.txt`)
+
 ```txt
 # Web Framework
 Flask==3.0.0
@@ -362,6 +377,7 @@ gunicorn==21.2.0
 ### Module Structure
 
 #### `lib/__init__.py`
+
 ```python
 """CX Server core library"""
 from lib.processor import process_html
@@ -370,6 +386,7 @@ __all__ = ['process_html']
 ```
 
 #### `lib/lineardoc/__init__.py`
+
 ```python
 """Linear document processing library"""
 from lib.lineardoc.parser import Parser
@@ -396,6 +413,7 @@ __all__ = [
 ```
 
 #### `lib/segmentation/__init__.py`
+
 ```python
 """Content segmentation for translation"""
 from lib.segmentation.cx_segmenter import CXSegmenter
@@ -404,6 +422,7 @@ __all__ = ['CXSegmenter']
 ```
 
 ### Development Runner (`run.py`)
+
 ```python
 """Development server runner"""
 from app import app
@@ -423,6 +442,7 @@ if __name__ == '__main__':
 ```
 
 ### Testing Structure (`tests/test_processor.py`)
+
 ```python
 """Test HTML processor"""
 import pytest
@@ -471,28 +491,29 @@ def test_process_whitespace_only():
 
 ## File-by-File Mapping
 
-| JavaScript | Python | Purpose |
-|-----------|--------|---------|
-| `server.js` | `app.py` | Main application server |
-| `lib/d/u.js` | `lib/processor.py` | Core HTML processing |
-| `lib/d/MWPageLoader.yaml` | `config/MWPageLoader.yaml` | Configuration |
-| `lib/lineardoc/Parser.js` | `lib/lineardoc/parser.py` | HTML parser |
-| `lib/lineardoc/Builder.js` | `lib/lineardoc/builder.py` | Document builder |
-| `lib/lineardoc/Doc.js` | `lib/lineardoc/doc.py` | Document model |
-| `lib/lineardoc/TextBlock.js` | `lib/lineardoc/text_block.py` | Text blocks |
-| `lib/lineardoc/TextChunk.js` | `lib/lineardoc/text_chunk.py` | Text chunks |
-| `lib/lineardoc/utils.js` | `lib/lineardoc/utils.py` | Utilities |
-| `lib/lineardoc/Normalizer.js` | `lib/lineardoc/normalizer.py` | HTML normalizer |
-| `lib/lineardoc/Contextualizer.js` | `lib/lineardoc/contextualizer.py` | Base contextualizer |
-| `lib/lineardoc/MwContextualizer.js` | `lib/lineardoc/mw_contextualizer.py` | MW contextualizer |
-| `lib/lineardoc/util.js` | `lib/lineardoc/util.py` | Helper utilities |
-| `lib/segmentation/CXSegmenter.js` | `lib/segmentation/cx_segmenter.py` | Content segmenter |
+| JavaScript                          | Python                               | Purpose                 |
+| ----------------------------------- | ------------------------------------ | ----------------------- |
+| `server.js`                         | `app.py`                             | Main application server |
+| `lib/d/u.js`                        | `lib/processor.py`                   | Core HTML processing    |
+| `lib/d/MWPageLoader.yaml`           | `config/MWPageLoader.yaml`           | Configuration           |
+| `lib/lineardoc/Parser.js`           | `lib/lineardoc/parser.py`            | HTML parser             |
+| `lib/lineardoc/Builder.js`          | `lib/lineardoc/builder.py`           | Document builder        |
+| `lib/lineardoc/Doc.js`              | `lib/lineardoc/doc.py`               | Document model          |
+| `lib/lineardoc/TextBlock.js`        | `lib/lineardoc/text_block.py`        | Text blocks             |
+| `lib/lineardoc/TextChunk.js`        | `lib/lineardoc/text_chunk.py`        | Text chunks             |
+| `lib/lineardoc/utils.js`            | `lib/lineardoc/utils.py`             | Utilities               |
+| `lib/lineardoc/Normalizer.js`       | `lib/lineardoc/normalizer.py`        | HTML normalizer         |
+| `lib/lineardoc/Contextualizer.js`   | `lib/lineardoc/contextualizer.py`    | Base contextualizer     |
+| `lib/lineardoc/MwContextualizer.js` | `lib/lineardoc/mw_contextualizer.py` | MW contextualizer       |
+| `lib/lineardoc/util.js`             | `lib/lineardoc/util.py`              | Helper utilities        |
+| `lib/segmentation/CXSegmenter.js`   | `lib/segmentation/cx_segmenter.py`   | Content segmenter       |
 
 ---
 
 ## Quick Start
 
 ### Installation
+
 ```bash
 # Create virtual environment
 python -m venv venv
@@ -503,6 +524,7 @@ pip install -r requirements.txt
 ```
 
 ### Run Development Server
+
 ```bash
 python run.py
 # or
@@ -510,6 +532,7 @@ python app.py
 ```
 
 ### Test the Endpoint
+
 ```bash
 curl -X POST http://localhost:8000/textp \
   -H "Content-Type: application/json" \
@@ -517,6 +540,7 @@ curl -X POST http://localhost:8000/textp \
 ```
 
 ### Run Tests
+
 ```bash
 # Run all tests
 pytest -v
@@ -532,14 +556,16 @@ pytest --cov=lib --cov-report=html
 **Ready to proceed with implementation!**
 
 Please provide:
+
 1. **Input HTML examples** (before processing)
 2. **Expected output HTML** (after processing)
 3. **Content of `MWPageLoader.yaml`** configuration file
 
 With these examples, I can:
-- Create exact Python equivalents of all modules
-- Ensure output matches JavaScript version 100%
-- Build comprehensive test suite
-- Verify the entire pipeline works correctly
+
+-   Create exact Python equivalents of all modules
+-   Ensure output matches JavaScript version 100%
+-   Build comprehensive test suite
+-   Verify the entire pipeline works correctly
 
 🚀 Ready when you are!

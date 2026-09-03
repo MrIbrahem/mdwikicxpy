@@ -1,5 +1,5 @@
-
 # 🚀 **REAL-WORLD AI IMPLEMENTATION PLAN**
+
 ## Converting JavaScript MediaWiki HTML Processor to Python
 
 Based on actual code analysis of `WikiAr/mdwikicxpy`
@@ -9,6 +9,7 @@ Based on actual code analysis of `WikiAr/mdwikicxpy`
 ## 📋 **EXECUTIVE SUMMARY**
 
 ### What POST /textp Does:
+
 ```
 Input: MediaWiki HTML (Parsoid format)
      ↓
@@ -22,6 +23,7 @@ Output: Processed HTML ready for Content Translation
 ```
 
 ### Core Pipeline (from `u.tet()`):
+
 ```javascript
 Parser + mw_contextualizer → Doc → wrapSections() → CXSegmenter → HTML
 ```
@@ -35,41 +37,47 @@ Parser + mw_contextualizer → Doc → wrapSections() → CXSegmenter → HTML
 #### **1. LinearDoc System** (`lib/lineardoc/`)
 
 **A. Parser.js** - SAX-based HTML stream processor
-- Uses `sax` library (Python equivalent: `xml.sax` or `lxml.etree.iterparse`)
-- Distinguishes block vs inline tags
-- Handles MediaWiki-specific structures (references, math, transclusions)
-- Key methods: `on_open_tag()`, `on_close_tag()`, `ontext()`
+
+-   Uses `sax` library (Python equivalent: `xml.sax` or `lxml.etree.iterparse`)
+-   Distinguishes block vs inline tags
+-   Handles MediaWiki-specific structures (references, math, transclusions)
+-   Key methods: `on_open_tag()`, `on_close_tag()`, `ontext()`
 
 **B. Doc.js** - Linear document representation
-- Stores HTML as linear array of items:
-  - `{type: 'open', item: tag}`
-  - `{type: 'close', item: tag}`
-  - `{type: 'textblock', item: text_block}`
-  - `{type: 'blockspace', item: whitespace}`
-- Key methods: `segment()`, `wrapSections()`, `get_html()`
+
+-   Stores HTML as linear array of items:
+    -   `{type: 'open', item: tag}`
+    -   `{type: 'close', item: tag}`
+    -   `{type: 'textblock', item: text_block}`
+    -   `{type: 'blockspace', item: whitespace}`
+-   Key methods: `segment()`, `wrapSections()`, `get_html()`
 
 **C. TextBlock.js** - Annotated inline text container
-- Manages text chunks with tag annotations
-- Handles sentence segmentation
-- Key method: `segment(getBoundaries, getNextId)`
-  - Wraps sentences in `<span class="cx-segment" data-segmentid="X">`
-  - Adds link IDs: `<a data-linkid="Y">`
+
+-   Manages text chunks with tag annotations
+-   Handles sentence segmentation
+-   Key method: `segment(getBoundaries, getNextId)`
+    -   Wraps sentences in `<span class="cx-segment" data-segmentid="X">`
+    -   Adds link IDs: `<a data-linkid="Y">`
 
 **D. MwContextualizer.js** - MediaWiki-specific logic
-- Removes sections based on config (MWPageLoader.yaml)
-- Tracks context (removable, media, transclusion)
-- Key method: `isRemovable(tag)`
+
+-   Removes sections based on config (MWPageLoader.yaml)
+-   Tracks context (removable, media, transclusion)
+-   Key method: `isRemovable(tag)`
 
 **E. Builder.js** - Constructs Doc during parsing
-- Manages inline annotation tag stack
-- Creates nested TextBlocks
+
+-   Manages inline annotation tag stack
+-   Creates nested TextBlocks
 
 #### **2. Segmentation System** (`lib/segmentation/`)
 
 **CXSegmenter.js** - Sentence boundary detection
-- Uses `sentencex` library (Python equivalent: `pySBD` or custom regex)
-- Creates segmenter function per language
-- Returns boundary offsets in plaintext
+
+-   Uses `sentencex` library (Python equivalent: `pySBD` or custom regex)
+-   Creates segmenter function per language
+-   Returns boundary offsets in plaintext
 
 ---
 
@@ -77,13 +85,13 @@ Parser + mw_contextualizer → Doc → wrapSections() → CXSegmenter → HTML
 
 ### **Technology Stack Recommendations:**
 
-| Component | JavaScript | Python Equivalent |
-|-----------|-----------|-------------------|
-| HTML Parser | `sax` (SAX parser) | `lxml.etree.iterparse()` or `html.parser` |
-| Sentence Segmenter | `sentencex` | `pySBD` or `sentence-splitter` |
-| YAML Config | `js-yaml` | `PyYAML` |
-| Web Framework | `express.js` | `FastAPI` or `Flask` |
-| Data Classes | ES6 classes | Python `dataclasses` or classes |
+| Component          | JavaScript         | Python Equivalent                         |
+| ------------------ | ------------------ | ----------------------------------------- |
+| HTML Parser        | `sax` (SAX parser) | `lxml.etree.iterparse()` or `html.parser` |
+| Sentence Segmenter | `sentencex`        | `pySBD` or `sentence-splitter`            |
+| YAML Config        | `js-yaml`          | `PyYAML`                                  |
+| Web Framework      | `express.js`       | `FastAPI` or `Flask`                      |
+| Data Classes       | ES6 classes        | Python `dataclasses` or classes           |
 
 ---
 
@@ -354,6 +362,7 @@ if __name__ == "__main__":
 ## ⚠️ **CRITICAL IMPLEMENTATION DETAILS**
 
 ### **1. ID Assignment** (Doc.js `wrapSections()` lines 319-444)
+
 ```python
 def wrap_sections(self):
     """
@@ -385,6 +394,7 @@ def wrap_sections(self):
 ```
 
 ### **2. Link ID Assignment** (utils.js `set_link_ids_in_place()`)
+
 ```python
 def set_link_ids_in_place(text_chunks: List[text_chunk], get_next_id: Callable):
     """
@@ -405,6 +415,7 @@ def set_link_ids_in_place(text_chunks: List[text_chunk], get_next_id: Callable):
 ```
 
 ### **3. HTML Attribute Encoding** (utils.js `esc_attr()`)
+
 ```python
 def escape_attr(value: str) -> str:
     """
@@ -425,6 +436,7 @@ def escape_attr(value: str) -> str:
 ## 🧪 **TESTING STRATEGY**
 
 ### **Test Cases:**
+
 1. **Unit Tests** - Each class (Doc, text_block, Parser)
 2. **Integration Tests** - Full pipeline with real MediaWiki HTML
 3. **Comparison Tests** - Run JS and Python on same input, diff outputs
@@ -463,6 +475,7 @@ pydantic==2.5.0
 ## 🎯 **IMPLEMENTATION PRIORITIES**
 
 ### **MVP (Minimum Viable Product):**
+
 1. ✅ Doc, text_block, text_chunk classes
 2. ✅ Basic Parser (without all edge cases)
 3. ✅ Simple segmentation (regex-based)
@@ -470,6 +483,7 @@ pydantic==2.5.0
 5. ✅ FastAPI endpoint
 
 ### **Full Feature Parity:**
+
 1. Complete mw_contextualizer with all rules
 2. Handle references, math, transclusions
 3. Advanced sentence boundary detection
@@ -480,11 +494,11 @@ pydantic==2.5.0
 
 ## 🚨 **RISKS & MITIGATION**
 
-| Risk | Mitigation |
-|------|------------|
-| SAX parsing differences | Use comprehensive test fixtures |
-| Sentence segmentation accuracy | Compare outputs with JS version |
-| MediaWiki edge cases | Gradual rollout, A/B testing |
+| Risk                            | Mitigation                          |
+| ------------------------------- | ----------------------------------- |
+| SAX parsing differences         | Use comprehensive test fixtures     |
+| Sentence segmentation accuracy  | Compare outputs with JS version     |
+| MediaWiki edge cases            | Gradual rollout, A/B testing        |
 | Performance (Python vs Node.js) | Profile and optimize critical paths |
 
 ---
