@@ -8,6 +8,8 @@ import re
 from collections.abc import Callable
 from typing import Any
 
+from .doc import Doc
+
 from . import util as cxutil
 from .text_chunk import TextChunk
 
@@ -92,7 +94,7 @@ def get_close_tag_html(tag: dict[str, Any]) -> str:
     Render a SAX close tag into an HTML string.
 
     Args:
-        tag: Tag dict with 'name'
+            tag: Tag dict with 'name' and 'attributes'
 
     Returns:
         HTML representation of close tag
@@ -102,7 +104,7 @@ def get_close_tag_html(tag: dict[str, Any]) -> str:
     return "</" + esc(tag["name"]) + ">"
 
 
-def clone_open_tag(tag: dict[str, Any]) -> dict:
+def clone_open_tag(tag: dict[str, Any]) -> dict[str, Any]:
     """
     Clone a SAX open tag.
 
@@ -394,7 +396,7 @@ def set_link_ids_in_place(text_chunks, get_next_id: Callable) -> None:
                 tag["attributes"]["href"] = href
 
 
-def is_ignorable_block(section_doc) -> bool:
+def is_ignorable_block(section_doc: Doc) -> bool:
     """
     Check if the passed document is a section containing block level template or reference list.
 
@@ -411,29 +413,30 @@ def is_ignorable_block(section_doc) -> bool:
     # We start with index 1 since the first tag will be <section>.
     for i in range(1, len(section_doc.items)):
         item = section_doc.items[i]
-        tag = item["item"]
-        item_type = item["type"]
+        tag_dict = item.item_dict
+        item_type = item.item_type
 
         if item_type == "open":
-            block_stack.append(tag)
-            if not first_block_template and (is_transclusion(tag) or is_reference_list(tag)):
-                first_block_template = tag
+            block_stack.append(tag_dict)
+            if not first_block_template and (is_transclusion(tag_dict) or is_reference_list(tag_dict)):
+                first_block_template = tag_dict
 
-        if item_type == "close":
+        elif item_type == "close":
             if block_stack:
                 current_close_tag = block_stack.pop()
                 if is_closing_template_match(block_stack, first_block_template, current_close_tag):
                     return True
 
         # Also check for textblocks
-        if not first_block_template and item_type == "textblock":
-            root_item = item["item"].get_root_item()
-            if root_item and is_non_translatable(root_item):
-                first_block_template = root_item
-                ignorable = True
-            else:
-                # There is non ignorable content to translate
-                return False
+        if item_type == "textblock":
+            if not first_block_template:
+                root_item = item.item_text_block.get_root_item()
+                if root_item and is_non_translatable(root_item):
+                    first_block_template = root_item
+                    ignorable = True
+                else:
+                    # There is non ignorable content to translate
+                    return False
 
     return ignorable
 

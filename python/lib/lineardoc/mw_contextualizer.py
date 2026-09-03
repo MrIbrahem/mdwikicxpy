@@ -91,7 +91,7 @@ class MwContextualizer(Contextualizer):
         Check if the tag need to be ignored while parsing and hence removed.
 
         Args:
-            tag: Tag dict
+            tag: Tag dict with 'name' and 'attributes'
 
         Returns:
             Whether the tag is removable

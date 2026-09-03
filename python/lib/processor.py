@@ -31,13 +31,13 @@ def normalize(html: str) -> str:
     Returns:
         Normalized HTML string
     """
+    html = html.strip()
     normalizer = Normalizer()
     normalizer.init()
     # Remove tabs, carriage returns, and newlines
     html = re.sub(r"[\t\r\n]+", "", html)
     normalizer.write(html)
     return normalizer.get_html()
-
 
 def process_html(source_html: str, lang: str | None = None):
     """

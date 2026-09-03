@@ -6,11 +6,10 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from lxml import etree, html as lxml_html
-
 from . import utils
 from .builder import Builder
 
+from .parser_and_normalizer_shared import SharedParserNormalizer
 logger = logging.getLogger(__name__)
 
 BLOCK_TAGS = [
@@ -100,26 +99,7 @@ BLOCK_TAGS = [
     "br",
 ]
 
-# HTML void elements that cannot have content and should be self-closing
-VOID_ELEMENTS = [
-    "area",
-    "base",
-    "br",
-    "col",
-    "embed",
-    "hr",
-    "img",
-    "input",
-    "link",
-    "meta",
-    "param",
-    "source",
-    "track",
-    "wbr",
-]
-
-
-class Parser:
+class Parser(SharedParserNormalizer):
     """Parser to read an HTML stream into a Doc."""
 
     def __init__(self, contextualizer, options=None) -> None:
@@ -133,79 +113,23 @@ class Parser:
         self.contextualizer = contextualizer
         self.options = options or {}
         self.lowercase = True
+        super().__init__(lowercase=self.lowercase)
 
     def init(self) -> None:
-        """Initialize parser state."""
+        """
+        Initialize state for parsing.
+        """
         self.root_builder = Builder()
         self.builder = self.root_builder
         # Stack of tags currently open
         self.all_tags = []
-
-    def write(self, html: str) -> None:
-        """
-        Parse HTML into the document.
-
-        Uses ``lxml.html.fragments_fromstring`` so that HTML *fragments* (such as
-        a bare ``<p>…</p>``) are parsed without the implicit ``<html><body>``
-        wrapper that ``etree.HTMLParser`` would inject. This keeps the behaviour
-        consistent with the upstream (sax-based) parser, which only emits the
-        elements actually present in the input.
-        """
-        try:
-            fragments = lxml_html.fragments_fromstring(html)
-        except Exception as exc:
-            # Fallback: wrap in a div and try again
-            try:
-                fragments = lxml_html.fragments_fromstring(f"<div>{html}</div>")
-            except Exception as exc2:
-                raise Exception(f"Failed to parse HTML: {exc2}") from exc2
-
-        for fragment in fragments:
-            if isinstance(fragment, str):
-                # Leading/trailing text outside any tag (e.g. before the first tag)
-                if fragment.strip():
-                    self.on_text(fragment)
-                continue
-            self._process_element(fragment)
-
-    def _process_element(self, element: etree.Element | Any) -> None:
-        """
-        Process an element and its children recursively.
-        """
-        # Skip comments and other special nodes
-        # if not isinstance(element.tag, str): return
-
-        # Create tag dict
-        tag_name = element.tag.lower() if self.lowercase else element.tag
-
-        # Create tag dict
-        tag = {"name": tag_name, "attributes": dict(element.attrib)}
-
-        # Mark HTML void elements as self-closing
-        if tag_name in VOID_ELEMENTS:
-            tag["isSelfClosing"] = True
-
-        self.on_open_tag(tag)
-
-        # Process text content
-        if element.text:
-            self.on_text(element.text)
-
-        # Process children
-        for child in element:
-            self._process_element(child)
-            # Process tail text after child
-            if child.tail:
-                self.on_text(child.tail)
-
-        self.on_close_tag(tag_name)
 
     def on_open_tag(self, tag: dict[str, Any]) -> None:
         """
         Handle open tag event.
 
         Args:
-            tag: Tag dict
+            tag: Tag dict with 'name' and 'attributes'
         """
         if self.contextualizer.get_context() == "removable" or self.contextualizer.is_removable(tag):
             self.all_tags.append(tag)

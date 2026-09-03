@@ -3,12 +3,12 @@ Unit tests for lineardoc/utils.py module.
 """
 
 import json
-import re
 from pathlib import Path
 
 import pytest
-from python.lib.lineardoc import MwContextualizer, Normalizer, Parser
+from python.lib.lineardoc import MwContextualizer, Parser
 from python.lib.segmentation import CXSegmenter
+from python.lib.processor import normalize
 
 cx_segmenter_tests_path = Path(__file__).parent / "SegmentationTests.json"
 
@@ -25,18 +25,11 @@ def get_parsed_doc(content):
     parsed_doc = parser.builder.doc
     return parsed_doc
 
-
-def normalize(html) -> str:
-    normalizer = Normalizer()
-    normalizer.init()
-    normalizer.write(re.sub(r"[\t\r\n]+", "", html))  # html.replace(/[\t\r\n]+/gm, '' )
-    return normalizer.get_html()
-
-
 test_params = [(lang, test_case) for lang, cases in alltests.items() for test_case in cases]
 
 
 @pytest.mark.parametrize("lang, test_case", test_params)
+@pytest.mark.integration
 def test_cx_segmenter(lang, test_case):
     date_path = Path(__file__).parent / "data"
     output_path = Path(__file__).parent / "output"

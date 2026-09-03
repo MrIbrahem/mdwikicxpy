@@ -254,7 +254,7 @@ class TextBlock:
 
         return "".join(html)
 
-    def get_root_item(self) -> None | Any:
+    def get_root_item(self) -> None | dict[str, Any]:
         """
         Get a root item in the textblock.
 
@@ -281,7 +281,7 @@ class TextBlock:
 
         return None
 
-    def get_tag_for_id(self):
+    def get_tag_for_id(self) -> None | dict[str, Any]:
         """
         Get a tag that can represent this textblock.
 

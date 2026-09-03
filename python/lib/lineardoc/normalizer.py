@@ -6,10 +6,8 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from lxml import etree
-
 from . import utils
-from .parser import VOID_ELEMENTS
+from .parser_and_normalizer_shared import SharedParserNormalizer
 
 logger = logging.getLogger(__name__)
 
@@ -18,74 +16,29 @@ def esc(s):
     return s.replace("&", "&#38;").replace("<", "&#60;").replace(">", "&#62;")
 
 
-class Normalizer:
+class Normalizer(SharedParserNormalizer):
     """Parser to normalize XML."""
 
     def __init__(self) -> None:
-        """Initialize the normalizer."""
+        """
+        Initialize the parser.
+        """
         self.lowercase = True
+        super().__init__(lowercase=self.lowercase)
 
     def init(self) -> None:
-        """Initialize state for parsing."""
+        """
+        Initialize state for parsing.
+        """
         self.doc = []
         self.tags: list[dict] = []
-
-    def write(self, html: str) -> None:
-        """
-        Parse and normalize HTML.
-
-        Args:
-            html: HTML string to normalize
-        """
-        parser = etree.HTMLParser(encoding="utf-8")
-        try:
-            tree = etree.fromstring(html, parser)
-            self._process_element(tree)
-        except Exception as exc:
-            logger.error("Failed to parse HTML error: %s", str(exc))
-            # Try with wrapping
-            try:
-                tree = etree.fromstring(f"<div>{html}</div>", parser)
-                for child in tree:
-                    self._process_element(child)
-            except Exception as e:
-                raise Exception(f"Failed to parse HTML: {e}") from e
-
-    def _process_element(self, element: etree.Element | Any) -> None:
-        """
-        Process an element and its children recursively.
-        """
-        # Create tag dict
-        tag_name = element.tag.lower() if self.lowercase else element.tag
-
-        # Create tag dict
-        tag = {"name": tag_name, "attributes": dict(element.attrib)}
-
-        # Mark HTML void elements as self-closing
-        if tag_name in VOID_ELEMENTS:
-            tag["isSelfClosing"] = True
-
-        self.on_open_tag(tag)
-
-        # Process text content
-        if element.text:
-            self.on_text(element.text)
-
-        # Process children
-        for child in element:
-            self._process_element(child)
-            # Process tail text after child
-            if child.tail:
-                self.on_text(child.tail)
-
-        self.on_close_tag(tag_name)
 
     def on_open_tag(self, tag: dict[str, Any]) -> None:
         """
         Handle open tag event.
 
         Args:
-            tag: Tag dict
+            tag: Tag dict with 'name' and 'attributes'
         """
         self.tags.append(tag)
         self.doc.append(utils.get_open_tag_html(tag))
