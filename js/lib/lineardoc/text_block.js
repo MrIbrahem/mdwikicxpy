@@ -12,11 +12,11 @@ class text_block {
 	 * @constructor
 	 *
 	 * @param {string} text_chunks Annotated inline text
-	 * @param {boolean} can_segment This is a block which can be segmented
+	 * @param {boolean} canSegment This is a block which can be segmented
 	 */
-	constructor(text_chunks, can_segment) {
+	constructor(text_chunks, canSegment) {
 		this.text_chunks = text_chunks;
-		this.can_segment = can_segment;
+		this.canSegment = canSegment;
 		this.offsets = [];
 		let cursor = 0;
 		for (let i = 0, len = this.text_chunks.length; i < len; i++) {
@@ -271,9 +271,9 @@ class text_block {
 			// Now add text and inline content
 			html.push(esc(text_chunk.text));
 			if (text_chunk.inline_content) {
-				if (text_chunk.inline_content.get_html) {
+				if (text_chunk.inline_content.getHtml) {
 					// a sub-doc
-					html.push(text_chunk.inline_content.get_html());
+					html.push(text_chunk.inline_content.getHtml());
 				} else {
 					// an empty inline tag
 					html.push(get_open_tag_html(text_chunk.inline_content));
@@ -377,7 +377,7 @@ class text_block {
 		let offset = 0;
 		for (let i = 0, iLen = groups.length; i < iLen; i++) {
 			const group = groups[i];
-			let text_chunk = group.chunk;
+			let chunk = group.chunk;
 			const boundaries = group.boundaries;
 			for (let j = 0, jLen = boundaries.length; j < jLen; j++) {
 				const relOffset = boundaries[j] - offset;
@@ -385,22 +385,22 @@ class text_block {
 					flushChunks();
 				} else {
 					const leftPart = new text_chunk(
-						text_chunk.text.slice(0, relOffset), text_chunk.tags.slice()
+						chunk.text.slice(0, relOffset), chunk.tags.slice()
 					);
 					const rightPart = new text_chunk(
-						text_chunk.text.slice(relOffset),
-						text_chunk.tags.slice(),
-						text_chunk.inline_content
+						chunk.text.slice(relOffset),
+						chunk.tags.slice(),
+						chunk.inline_content
 					);
 					currentTextChunks.push(leftPart);
 					offset += relOffset;
 					flushChunks();
-					text_chunk = rightPart;
+					chunk = rightPart;
 				}
 			}
-			// Even if the text_chunk is zero-width, it may have references
-			currentTextChunks.push(text_chunk);
-			offset += text_chunk.text.length;
+			// Even if the chunk is zero-width, it may have references
+			currentTextChunks.push(chunk);
+			offset += chunk.text.length;
 		}
 		flushChunks();
 		return new text_block(allTextChunks);
@@ -520,7 +520,8 @@ class text_block {
 	}
 
 	setLinkIds(getNextId) {
-		return set_link_ids_in_place(this.text_chunks, getNextId);
+		set_link_ids_in_place(this.text_chunks, getNextId);
+		return this;
 	}
 
 }
