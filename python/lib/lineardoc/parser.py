@@ -7,13 +7,15 @@ https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineard
 """
 
 from __future__ import annotations
-
+import logging
 from typing import Any
 
 from lxml import etree, html as lxml_html
 
 from . import utils
 from .builder import Builder
+
+logger = logging.getLogger(__name__)
 
 BLOCK_TAGS = [
     "html",
@@ -137,7 +139,9 @@ class Parser:
         self.lowercase = True
 
     def init(self) -> None:
-        """Initialize parser state."""
+        """
+        Initialize state for parsing.
+        """
         self.root_builder = Builder()
         self.builder = self.root_builder
         # Stack of tags currently open
@@ -168,6 +172,7 @@ class Parser:
                 if fragment.strip():
                     self.on_text(fragment)
                 continue
+
             self._process_element(fragment)
 
     def _process_element(self, element: etree._Element) -> None:
@@ -205,7 +210,7 @@ class Parser:
         Handle open tag event.
 
         Args:
-            tag: Tag dict
+            tag: Tag dict with 'name' and 'attributes'
         """
         if self.contextualizer.get_context() == "removable" or self.contextualizer.is_removable(tag):
             self.all_tags.append(tag)

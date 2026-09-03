@@ -432,14 +432,15 @@ def is_ignorable_block(section_doc: Doc) -> bool:
                     return True
 
         # Also check for textblocks
-        if not first_block_template and item_type == "textblock":
-            root_item = item["item"].get_root_item()
-            if root_item and is_non_translatable(root_item):
-                first_block_template = root_item
-                ignorable = True
-            else:
-                # There is non ignorable content to translate
-                return False
+        if item_type == "textblock":
+            if not first_block_template:
+                root_item = item["item"].get_root_item()
+                if root_item and is_non_translatable(root_item):
+                    first_block_template = root_item
+                    ignorable = True
+                else:
+                    # There is non ignorable content to translate
+                    return False
 
     return ignorable
 

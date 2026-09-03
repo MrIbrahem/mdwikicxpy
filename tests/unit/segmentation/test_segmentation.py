@@ -3,7 +3,6 @@ Unit tests for lineardoc/utils.py module.
 """
 
 import json
-import re
 from pathlib import Path
 
 import pytest

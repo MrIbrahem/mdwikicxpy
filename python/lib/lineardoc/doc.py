@@ -16,11 +16,14 @@ from __future__ import annotations
 
 import hashlib
 from collections.abc import Callable
-from typing import Any
+from typing import Any, Literal
 
 from . import util as cxutil
 from . import utils
 from .text_block import TextBlock
+
+ITEM_TYPES = Literal["open", "close", "blockspace", "textblock"]
+ITEM_OBJECT_TYPES = dict[str, Any] | TextBlock | str
 
 
 class Doc:
@@ -53,7 +56,7 @@ class Doc:
             new_doc.add_item(new_item["type"], new_item["item"])
         return new_doc
 
-    def add_item(self, item_type, item: dict[str, Any] | TextBlock | str) -> Doc:
+    def add_item(self, item_type: ITEM_TYPES, item: ITEM_OBJECT_TYPES) -> Doc:
         """
         Add an item to the document.
 
