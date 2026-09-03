@@ -2,7 +2,11 @@
 text_block - A block of annotated inline text.
 """
 
+from __future__ import annotations
+
 import re
+from collections.abc import Callable
+from typing import Any
 
 from . import utils
 from .text_chunk import TextChunk
@@ -11,7 +15,7 @@ from .text_chunk import TextChunk
 class TextBlock:
     """A block of annotated inline text."""
 
-    def __init__(self, text_chunks, can_segment=True):
+    def __init__(self, text_chunks: list[TextChunk], can_segment: bool = True) -> None:
         """
         Initialize a text_block.
 
@@ -28,7 +32,7 @@ class TextBlock:
             self.offsets.append({"start": cursor, "length": len(t_chunk.text), "tags": t_chunk.tags})
             cursor += len(t_chunk.text)
 
-    def get_tag_offsets(self):
+    def get_tag_offsets(self) -> list:
         """
         Get the start and length of each non-common annotation.
 
@@ -43,7 +47,7 @@ class TextBlock:
                 result.append(offset)
         return result
 
-    def get_text_chunk_at(self, char_offset):
+    def get_text_chunk_at(self, char_offset) -> TextChunk:
         """
         Get the (last) text chunk at a given char offset.
 
@@ -57,9 +61,10 @@ class TextBlock:
         for i in range(len(self.text_chunks) - 1):
             if self.offsets[i + 1]["start"] > char_offset:
                 break
+
         return self.text_chunks[i]
 
-    def get_common_tags(self):
+    def get_common_tags(self) -> list:
         """
         Returns the list of SAX tags that apply to the whole text block.
 
@@ -82,7 +87,7 @@ class TextBlock:
 
         return common_tags
 
-    def translate_tags(self, target_text, range_mappings):
+    def translate_tags(self, target_text: str, range_mappings) -> TextBlock:
         """
         Create a new text_block, applying our annotations to a translation.
 
@@ -193,7 +198,7 @@ class TextBlock:
 
         return TextBlock([x["text_chunk"] for x in text_chunks])
 
-    def get_plain_text(self):
+    def get_plain_text(self) -> str:
         """
         Return plain text representation of the text block.
 
@@ -202,7 +207,7 @@ class TextBlock:
         """
         return "".join(chunk.text for chunk in self.text_chunks)
 
-    def get_html(self):
+    def get_html(self) -> str:
         """
         Return HTML representation of the text block.
 
@@ -249,7 +254,7 @@ class TextBlock:
 
         return "".join(html)
 
-    def get_root_item(self):
+    def get_root_item(self) -> None | Any:
         """
         Get a root item in the textblock.
 
@@ -285,7 +290,7 @@ class TextBlock:
         """
         return self.get_root_item()
 
-    def segment(self, get_boundaries, get_next_id):
+    def segment(self, get_boundaries: Callable, get_next_id: Callable) -> TextBlock:
         """
         Segment the text block into sentences.
 
@@ -319,7 +324,9 @@ class TextBlock:
 
         # for each chunk, split at any boundaries that occur inside the chunk
         groups = utils.get_chunk_boundary_groups(
-            get_boundaries(self.get_plain_text()), self.text_chunks, lambda t_chunk: len(t_chunk.text)
+            get_boundaries(self.get_plain_text()),
+            self.text_chunks,
+            lambda t_chunk: len(t_chunk.text),
         )
 
         offset = 0
@@ -346,7 +353,7 @@ class TextBlock:
         flush_chunks()
         return TextBlock(all_text_chunks)
 
-    def set_link_ids(self, get_next_id):
+    def set_link_ids(self, get_next_id: Callable) -> TextBlock:
         """
         Set the link Ids for the links in all the textchunks in the textblock instance.
 
@@ -359,7 +366,7 @@ class TextBlock:
         utils.set_link_ids_in_place(self.text_chunks, get_next_id)
         return self
 
-    def dump_xml_array(self, pad):
+    def dump_xml_array(self, pad: str) -> list:
         """
         Dump an XML Array version of the linear representation, for debugging.
 
@@ -389,3 +396,8 @@ class TextBlock:
                 dump.append(f"{pad}</cxinlineelement>")
 
         return dump
+
+
+__all__ = [
+    "TextBlock",
+]

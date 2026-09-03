@@ -2,6 +2,10 @@
 Parser to read an HTML stream into a Doc.
 """
 
+from __future__ import annotations
+
+from typing import Any
+
 from lxml import etree
 
 from . import utils
@@ -116,7 +120,7 @@ VOID_ELEMENTS = [
 class Parser:
     """Parser to read an HTML stream into a Doc."""
 
-    def __init__(self, contextualizer, options=None):
+    def __init__(self, contextualizer, options=None) -> None:
         """
         Initialize the parser.
 
@@ -128,34 +132,34 @@ class Parser:
         self.options = options or {}
         self.lowercase = True
 
-    def init(self):
+    def init(self) -> None:
         """Initialize parser state."""
         self.root_builder = Builder()
         self.builder = self.root_builder
         # Stack of tags currently open
         self.all_tags = []
 
-    def write(self, html):
+    def write(self, html: str) -> None:
         """
         Parse HTML into the document.
 
         Args:
             html: HTML string to parse
         """
-        parser = etree.HTMLParser()
+        parser = etree.HTMLParser(encoding="utf-8")
         try:
             tree = etree.fromstring(html.encode("utf-8"), parser)
             self._process_element(tree)
         except Exception:
             # Try with wrapping
             try:
-                tree = etree.fromstring(f"<div>{html}</div>".encode("utf-8"), parser)
+                tree = etree.fromstring(f"<div>{html}</div>".encode(), parser)
                 for child in tree:
                     self._process_element(child)
             except Exception as e:
-                raise Exception(f"Failed to parse HTML: {e}")
+                raise Exception(f"Failed to parse HTML: {e}") from e
 
-    def _process_element(self, element):
+    def _process_element(self, element: etree.Element) -> None:
         """Process an element and its children recursively."""
         # Skip comments and other special nodes
         if not isinstance(element.tag, str):
@@ -185,7 +189,7 @@ class Parser:
 
         self.on_close_tag(tag_name)
 
-    def on_open_tag(self, tag):
+    def on_open_tag(self, tag: dict[str, Any]) -> None:
         """
         Handle open tag event.
 
@@ -203,8 +207,10 @@ class Parser:
         if utils.is_reference(tag) or utils.is_math(tag):
             # Start a reference: create a child builder, and move into it
             self.builder = self.builder.create_child_builder(tag)
+
         elif utils.is_inline_empty_tag(tag["name"]):
             self.builder.add_inline_content(tag, self.contextualizer.can_segment())
+
         elif self.is_inline_annotation_tag(tag["name"], utils.is_transclusion(tag)):
             self.builder.push_inline_annotation_tag(tag)
         else:
@@ -213,7 +219,7 @@ class Parser:
         self.all_tags.append(tag)
         self.contextualizer.on_open_tag(tag)
 
-    def on_close_tag(self, tag_name):
+    def on_close_tag(self, tag_name) -> None:
         """
         Handle close tag event.
 
@@ -255,7 +261,7 @@ class Parser:
         else:
             raise Exception(f"Unexpected close tag: {tag_name}")
 
-    def on_text(self, text):
+    def on_text(self, text: str) -> None:
         """
         Handle text event.
 
@@ -266,11 +272,11 @@ class Parser:
             return
         self.builder.add_text_chunk(text, self.contextualizer.can_segment())
 
-    def on_script(self, text):
+    def on_script(self, text: str) -> None:
         """Handle script text."""
         self.builder.add_text_chunk(text, self.contextualizer.can_segment())
 
-    def is_inline_annotation_tag(self, tag_name, is_transclusion):
+    def is_inline_annotation_tag(self, tag_name, is_transclusion) -> bool:
         """
         Determine whether a tag is an inline annotation or not.
 
@@ -297,3 +303,8 @@ class Parser:
 
         # All tags that are not block tags are inline annotation tags
         return tag_name not in BLOCK_TAGS
+
+
+__all__ = [
+    "Parser",
+]

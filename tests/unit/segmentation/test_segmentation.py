@@ -1,12 +1,15 @@
 """
 Unit tests for lineardoc/utils.py module.
 """
-import pytest
-import re
+
 import json
+import re
 from pathlib import Path
-from python.lib.segmentation import CXSegmenter
+
+import pytest
 from python.lib.lineardoc import MwContextualizer, Normalizer, Parser
+from python.lib.segmentation import CXSegmenter
+
 cx_segmenter_tests_path = Path(__file__).parent / "SegmentationTests.json"
 
 alltests = {}
@@ -26,15 +29,11 @@ def get_parsed_doc(content):
 def normalize(html):
     normalizer = Normalizer()
     normalizer.init()
-    normalizer.write(re.sub(r'[\t\r\n]+', '', html))  # html.replace(/[\t\r\n]+/gm, '' )
+    normalizer.write(re.sub(r"[\t\r\n]+", "", html))  # html.replace(/[\t\r\n]+/gm, '' )
     return normalizer.get_html()
 
 
-test_params = [
-    (lang, test_case)
-    for lang, cases in alltests.items()
-    for test_case in cases
-]
+test_params = [(lang, test_case) for lang, cases in alltests.items() for test_case in cases]
 
 
 @pytest.mark.parametrize("lang, test_case", test_params)
@@ -56,7 +55,7 @@ def test_cx_segmenter(lang, test_case):
         expected_result_data = normalize(f.read())
 
     if expected_result_data != normalized_result:
-        with open(output_path / test_case['result'], "w", encoding="utf-8") as f:
+        with open(output_path / test_case["result"], "w", encoding="utf-8") as f:
             f.write(result)
 
     assert normalized_result == expected_result_data, f"{test_case['source']}: {test_case['desc'] or ''}"

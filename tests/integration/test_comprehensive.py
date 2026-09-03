@@ -3,13 +3,9 @@
 Comprehensive test suite for the CX HTML processing pipeline.
 """
 
-import json
-import os
 import sys
 
-from python.lib.lineardoc import Doc, Parser, MwContextualizer, TextBlock
 from python.lib.processor import process_html
-from python.lib.segmentation import CXSegmenter
 
 
 def test_basic_html_processing():

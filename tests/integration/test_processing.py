@@ -2,8 +2,6 @@
 Test the HTML processing pipeline.
 """
 
-import os
-import sys
 from pathlib import Path
 
 from python.lib.processor import process_html

@@ -8,16 +8,21 @@ The document is a list of items, where each item is:
 - "block whitespace" (a run of whitespace separating two block boundaries)
 """
 
+from __future__ import annotations
+
 import hashlib
+from collections.abc import Callable
+from typing import Any
 
 from . import util as cxutil
 from . import utils
+from .text_block import TextBlock
 
 
 class Doc:
     """An HTML document in linear representation."""
 
-    def __init__(self, wrapper_tag=None):
+    def __init__(self, wrapper_tag=None) -> None:
         """
         Initialize a Doc.
 
@@ -28,7 +33,7 @@ class Doc:
         self.wrapper_tag = wrapper_tag
         self.categories = []
 
-    def clone(self, callback):
+    def clone(self, callback: Callable) -> Doc:
         """
         Clone the Doc, modifying as we go.
 
@@ -44,7 +49,7 @@ class Doc:
             new_doc.add_item(new_item["type"], new_item["item"])
         return new_doc
 
-    def add_item(self, item_type, item):
+    def add_item(self, item_type, item: dict[str, Any] | TextBlock | str) -> Doc:
         """
         Add an item to the document.
 
@@ -58,7 +63,7 @@ class Doc:
         self.items.append({"type": item_type, "item": item})
         return self
 
-    def undo_add_item(self):
+    def undo_add_item(self) -> None:
         """Remove the top item from the linear array of items."""
         self.items.pop()
 
@@ -71,7 +76,7 @@ class Doc:
         """
         return self.items[-1] if self.items else None
 
-    def get_root_item(self):
+    def get_root_item(self) -> None | Any:
         """
         Get the root item in the doc.
 
@@ -87,7 +92,7 @@ class Doc:
                 return item["item"]
         return None
 
-    def segment(self, get_boundaries):
+    def segment(self, get_boundaries: Callable) -> Doc:
         """
         Segment the document into sentences.
 
@@ -164,19 +169,21 @@ class Doc:
                 new_doc.add_item(item["type"], item["item"])
 
             else:
-                text_block = item["item"]
+                text_block: TextBlock = item["item"]
+                segmented_text_block = (
+                    text_block.segment(get_boundaries, get_next_id)
+                    if (text_block.can_segment and not transclusion_context)
+                    else text_block.set_link_ids(get_next_id)
+                )
+
                 new_doc.add_item(
                     "textblock",
-                    (
-                        text_block.segment(get_boundaries, get_next_id)
-                        if (text_block.can_segment and not transclusion_context)
-                        else text_block.set_link_ids(get_next_id)
-                    ),
+                    segmented_text_block,
                 )
 
         return new_doc
 
-    def dump_xml(self):
+    def dump_xml(self) -> str:
         """
         Dump an XML version of the linear representation, for debugging.
 
@@ -185,7 +192,7 @@ class Doc:
         """
         return "\n".join(self.dump_xml_array(""))
 
-    def get_html(self):
+    def get_html(self) -> str:
         """
         Dump the document in HTML format.
 
@@ -211,7 +218,7 @@ class Doc:
             elif item_type == "blockspace":
                 html.append(item_obj)
             elif item_type == "textblock":
-                html.append(item_obj.get_html())
+                html.append(item_obj.get_html())  # pyright: ignore[reportAttributeAccessIssue]
             else:
                 raise Exception(f"Unknown item type: {item_type}")
 
@@ -220,7 +227,7 @@ class Doc:
 
         return "".join(html)
 
-    def wrap_sections(self):
+    def wrap_sections(self) -> Doc:
         """
         Wrap the content into sections.
 
@@ -253,7 +260,8 @@ class Doc:
 
         def insert_to_prev_section(item, doc):
             nonlocal curr_section, prev_section
-            if new_doc.get_current_item()["item"]["name"] != "section":
+            new_item = new_doc.get_current_item()
+            if new_item and new_item["item"]["name"] != "section":
                 raise Exception(f"Sectionwrap: Attempting to remove a non-section tag: {item['name']}")
             # Undo last section close
             doc.undo_add_item()
@@ -296,7 +304,8 @@ class Doc:
                     close_section(new_doc)
 
             elif item_type == "blockspace":
-                if prev_section and new_doc.get_current_item()["item"]["name"] == "section":
+                new_item = new_doc.get_current_item()
+                if prev_section and new_item and new_item["item"]["name"] == "section":
                     insert_to_prev_section(item, new_doc)
                 else:
                     new_doc.add_item(item_type, item_obj)
@@ -333,7 +342,7 @@ class Doc:
 
         return new_doc
 
-    def dump_xml_array(self, pad):
+    def dump_xml_array(self, pad: str) -> list:
         """
         Dump an XML Array version of the linear representation, for debugging.
 
@@ -382,7 +391,7 @@ class Doc:
 
         return dump
 
-    def get_segments(self):
+    def get_segments(self) -> list:
         """
         Extract the text segments from the document.
 
@@ -398,3 +407,8 @@ class Doc:
             segments.append(text_block.get_html())
 
         return segments
+
+
+__all__ = [
+    "Doc",
+]

@@ -2,10 +2,7 @@
 Unit tests for lineardoc/text_chunk.py module.
 """
 
-import os
-import sys
 
-import pytest
 from python.lib.lineardoc.text_chunk import TextChunk
 
 

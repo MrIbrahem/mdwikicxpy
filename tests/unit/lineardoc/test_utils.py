@@ -1,9 +1,10 @@
 """
 Unit tests for lineardoc/utils.py module.
 """
-import pytest
+
 from pathlib import Path
 
+import pytest
 from python.lib.lineardoc import MwContextualizer, Parser
 from python.lib.lineardoc.utils import is_ignorable_block
 

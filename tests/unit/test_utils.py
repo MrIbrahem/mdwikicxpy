@@ -2,12 +2,8 @@
 Unit tests for lineardoc/utils.py module.
 """
 
-import os
-import sys
 
-import pytest
 from python.lib.lineardoc import utils
-from python.lib.lineardoc.text_chunk import TextChunk
 
 
 class TestEscapeFunctions:
