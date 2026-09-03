@@ -139,7 +139,7 @@ class TestBuilderIsCategory:
     def test_is_category_not_dict(self):
         """Test is_category with non-dict."""
         builder = Builder()
-        assert builder.is_category("not a tag") is False
+        assert builder.is_category("not a tag") is False  # pyright: ignore[reportArgumentType]
 
 
 class TestBuilderIsSection:

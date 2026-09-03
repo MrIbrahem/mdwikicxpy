@@ -201,7 +201,7 @@ def process_text() -> tuple[Response, int]:
         logger.warning(f"Request validation failed: {error_message}")
         return create_error_response(error_message, 400)
 
-    source_html = data["html"]
+    source_html = data["html"] if data else {}
 
     # Process the HTML
     try:
