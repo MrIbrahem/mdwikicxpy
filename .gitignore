@@ -6,6 +6,7 @@ cxsever/www/js/se2.js
 /cxsever/www/new_js
 /cxsever/www/js2
 /node_modules
+js/node_modules/
 
 # Python
 __pycache__/

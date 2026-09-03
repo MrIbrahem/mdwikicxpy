@@ -1,6 +1,6 @@
 import text_chunk from './text_chunk.js';
-import { add_common_tag, dump_tags, esc, get_chunk_boundary_groups, get_close_tag_html, get_open_tag_html, is_transclusion, is_transclusion_fragment, set_link_ids_in_place } from './utils.js';
-import { getProp } from './../util.js';
+import { add_common_tag, dump_tags, esc, get_chunk_boundary_groups, get_close_tag_html, get_open_tag_html, is_transclusion, is_transclusion_fragment, set_link_ids_in_place } from './Utils.js';
+import { getProp } from './util.js';
 
 /**
  * A block of annotated inline text
@@ -509,6 +509,20 @@ class text_block {
 		}
 		return dump;
 	}
+
+	// camelCase aliases for callers such as Doc
+	getHtml() {
+		return this.get_html();
+	}
+
+	getPlainText() {
+		return this.get_plain_text();
+	}
+
+	setLinkIds(getNextId) {
+		return set_link_ids_in_place(this.text_chunks, getNextId);
+	}
+
 }
 
 export default text_block;

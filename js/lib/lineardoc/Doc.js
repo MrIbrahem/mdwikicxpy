@@ -4,7 +4,7 @@
 
 import { createHash } from 'crypto';
 import { cloneOpenTag, getCloseTagHtml, getOpenTagHtml, is_gallery, is_math, isNonTranslatable } from './Utils.js';
-import { getProp } from './../util.js';
+import { getProp } from './util.js';
 
 /**
  * An HTML document in linear representation.

@@ -1,11 +1,15 @@
-'use strict';
+import { describe, it } from 'node:test';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import assert from '../utils/assert.js';
+import * as LinearDoc from '../../lib/lineardoc/index.js';
+import Segmenter from '../../lib/segmentation/CXSegmenter.js';
 
-const { describe, it } = require( 'node:test' );
-const fs = require( 'fs' ),
-	assert = require( '../utils/assert.js' ),
-	LinearDoc = require( '../../lib/lineardoc' ),
-	Segmenter = require( '../../lib/segmentation/CXSegmenter' ),
-	allTests = require( './SegmentationTests.json' );
+const __dirname = fileURLToPath( new URL( '.', import.meta.url ) );
+
+const allTests = JSON.parse(
+	fs.readFileSync( new URL( './SegmentationTests.json', import.meta.url ), 'utf8' )
+);
 
 function normalize( html ) {
 	const normalizer = new LinearDoc.Normalizer();

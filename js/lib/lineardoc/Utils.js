@@ -2,8 +2,8 @@
  * @external Doc
  */
 
-const TextChunk = require('./text_chunk');
-const cxutil = require('./util');
+import TextChunk from './text_chunk.js';
+import * as cxutil from './util.js';
 
 /**
  * Find all matches of regex in text, calling callback with each match object
@@ -447,21 +447,29 @@ function is_ignorable_block(sectionDoc) {
 export {
 	add_common_tag,
 	clone_open_tag,
+	clone_open_tag as cloneOpenTag,
 	dump_tags,
 	esc,
 	find_all,
 	get_chunk_boundary_groups,
 	get_close_tag_html,
+	get_close_tag_html as getCloseTagHtml,
 	get_open_tag_html,
+	get_open_tag_html as getOpenTagHtml,
 	is_ignorable_block,
 	is_external_link,
 	is_gallery,
 	is_inline_empty_tag,
+	is_inline_empty_tag as isInlineEmptyTag,
 	is_math,
 	is_reference,
+	is_reference as isReference,
 	is_segment,
+	is_segment as isSegment,
 	is_transclusion,
+	is_transclusion as isTransclusion,
 	is_transclusion_fragment,
 	is_non_translatable,
+	is_non_translatable as isNonTranslatable,
 	set_link_ids_in_place
 };

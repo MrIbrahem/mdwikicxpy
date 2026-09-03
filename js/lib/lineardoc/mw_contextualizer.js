@@ -1,5 +1,5 @@
 import Contextualizer from './Contextualizer.js';
-import { getProp } from './../util.js';
+import { getProp } from './util.js';
 const contentBranchNodeNames = ['blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'pre', 'div', 'table', 'ol', 'ul', 'dl', 'figure', 'center', 'section'];
 
 /**

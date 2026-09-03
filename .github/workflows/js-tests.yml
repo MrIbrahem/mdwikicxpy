@@ -1,0 +1,38 @@
+name: JS Tests
+
+# Run the JavaScript (node:test) segmentation suite on every PR so the JS test
+# status is visible. See js/TESTING.md for details and the current known issues.
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+  push:
+    branches:
+      - main
+      - master
+      - develop
+
+jobs:
+  js-tests:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: js
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Run JS unit tests
+        run: node --test ../tests/unit/segmentation/CXSegmenter.test.js
