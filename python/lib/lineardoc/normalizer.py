@@ -49,7 +49,8 @@ class Normalizer:
         try:
             tree = etree.fromstring(html, parser)
             self._process_element(tree)
-        except Exception:
+        except Exception as exc:
+            logger.error("Failed to parse HTML error: %s", str(exc))
             # Try with wrapping
             try:
                 tree = etree.fromstring(f"<div>{html}</div>", parser)
@@ -58,12 +59,32 @@ class Normalizer:
             except Exception as e:
                 raise Exception(f"Failed to parse HTML: {e}") from e
 
-    def _process_element(self, element: etree._Element | Any) -> None:
+    def extract_tag_name(self, element: Any) -> str | None:
+        if isinstance(element, etree._ElementTree):
+            tag_name = element.getroot().tag
+        elif isinstance(element, etree._Element):
+            tag_name = element.tag
+        elif isinstance(element, etree.QName):
+            tag_name = element.localname
+        else:
+            tag_name = getattr(element, "tag", None)
+
+        # Handle Cython comment/processing instruction function objects
+        if callable(tag_name):
+            return None
+
+        return tag_name
+
+    def _process_element(self, element: etree._ElementTree | etree._Element | Any, tag_name: str | None = None) -> None:
         """
-        Process an element recursively.
+        Process an element and its children recursively.
         """
         # Create tag dict
-        tag_name = element.tag.lower() if self.lowercase else element.tag
+        if tag_name is None:
+            tag_name = element.tag
+
+        if self.lowercase:
+            tag_name = tag_name.lower()
 
         # Create tag dict
         tag = {"name": tag_name, "attributes": dict(element.attrib)}

@@ -19,7 +19,6 @@ with open(cx_segmenter_tests_path, "r", encoding="utf-8") as f:
 
 def get_parsed_doc(content) -> Doc:
     parser = Parser(MwContextualizer())
-
     parser.init()
     parser.write(content.strip())
     parsed_doc = parser.builder.doc

@@ -2,8 +2,8 @@
  * @external Doc
  */
 
-import TextChunk from './text_chunk.js';
-import * as cxutil from './util.js';
+import TextChunk from './TextChunk.js';
+import * as cxutil from './../util.js';
 
 /**
  * Find all matches of regex in text, calling callback with each match object

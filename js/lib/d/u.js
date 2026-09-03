@@ -19,7 +19,7 @@ function normalize(html) {
 
 function tet(source_HTML) {
 
-	const parser = new LinearDoc.Parser(new LinearDoc.mw_contextualizer(
+	const parser = new LinearDoc.Parser(new LinearDoc.MwContextualizer(
 		{ removableSections: removableSections }
 	), {
 		wrapSections: true
