@@ -10,6 +10,8 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from .mw_contextualizer import MwContextualizer
+
 from . import utils
 from .builder import Builder
 
@@ -106,7 +108,7 @@ BLOCK_TAGS = [
 class Parser(SharedParserNormalizer):
     """Parser to read an HTML stream into a Doc."""
 
-    def __init__(self, contextualizer, options=None) -> None:
+    def __init__(self, contextualizer: MwContextualizer, options=None) -> None:
         """
         Initialize the parser.
 
