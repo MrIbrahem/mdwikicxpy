@@ -1,19 +1,21 @@
 """
 Unit tests for processor.py module.
 """
+
 import re
+
 from python.lib.processor import normalize, process_html
 
 
 def normalize_test(html: str) -> str:
-    """
-    """
+    """ """
     html = html.strip()
     # Remove tabs, carriage returns, and newlines
     html = re.sub(r"[\t\r\n]+", "", html)
     html = re.sub(r"\s+", " ", html)
     html = re.sub(r">\s+<", "><", html)
     return html
+
 
 class TestNormalizeFunction:
     """Test normalize function."""
@@ -62,6 +64,7 @@ class TestProcessHtml:
         """Test that processing creates sections."""
         html = "<h2>Heading</h2><p>Content</p>"
         result = process_html(html)
+
         assert "<section" in result
         assert 'rel="cx:Section"' in result
 
@@ -83,15 +86,11 @@ class TestProcessHtml:
         result = process_html("")
         # Should handle empty input gracefully
         assert isinstance(result, str)
+        assert result == ""
 
     def test_process_html_with_figure(self):
         """Test processing HTML with figure."""
-        html = """
-        <figure>
-            <img src="test.jpg" />
-            <figcaption>Caption</figcaption>
-        </figure>
-        """
+        html = """<figure><img src="test.jpg" /><figcaption>Caption</figcaption></figure>"""
         result = process_html(html)
         assert "cx:Figure" in result
 
@@ -116,12 +115,7 @@ class TestProcessHtml:
 
     def test_process_html_headings(self):
         """Test processing headings."""
-        html = """
-        <h2>Section 1</h2>
-        <p>Content 1</p>
-        <h2>Section 2</h2>
-        <p>Content 2</p>
-        """
+        html = """<h2>Section 1</h2>\n<p>Content 1</p>\n<h2>Section 2</h2>\n<p>Content 2</p>"""
         result = process_html(html)
         # Should create sections
         assert result.count("<section") >= 2
@@ -179,11 +173,7 @@ class TestProcessHtml:
 
     def test_process_html_table(self):
         """Test processing table."""
-        html = """
-        <table>
-            <tr><td>Cell 1</td><td>Cell 2</td></tr>
-        </table>
-        """
+        html = """ <table><tr><td>Cell 1</td><td>Cell 2</td></tr></table> """
         result = process_html(html)
         assert "Cell 1" in result
         assert "Cell 2" in result
