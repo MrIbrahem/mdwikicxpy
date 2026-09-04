@@ -1,22 +1,22 @@
-import TextChunk from './TextChunk.js';
+import Text_chunk from './Text_chunk.js';
 import { add_common_tag, dump_tags, esc, get_chunk_boundary_groups, get_close_tag_html, get_open_tag_html, is_transclusion, is_transclusion_fragment, set_link_ids_in_place } from './Utils.js';
-import { getProp } from './../util.js';
+import { get_prop } from './../util.js';
 
 /**
  * A block of annotated inline text
  *
  * @class
  */
-class TextBlock {
+class Text_block {
 	/**
 	 * @constructor
 	 *
 	 * @param {string} text_chunks Annotated inline text
-	 * @param {boolean} canSegment This is a block which can be segmented
+	 * @param {boolean} can_segment This is a block which can be segmented
 	 */
-	constructor(text_chunks, canSegment) {
+	constructor(text_chunks, can_segment) {
 		this.text_chunks = text_chunks;
-		this.canSegment = canSegment;
+		this.can_segment = can_segment;
 		this.offsets = [];
 		let cursor = 0;
 		for (let i = 0, len = this.text_chunks.length; i < len; i++) {
@@ -37,11 +37,11 @@ class TextBlock {
 	 * @return {number} [i].length {number} Length of each text chunk
 	 */
 	get_tag_offsets() {
-		const textBlock = this,
-			commonTags = this.get_common_tags();
+		const text_block = this,
+			common_tags = this.get_common_tags();
 		return this.offsets.filter((offset, i) => {
-			const text_chunk = textBlock.text_chunks[i];
-			return text_chunk.tags.length > commonTags.length && text_chunk.text.length > 0;
+			const text_chunk = text_block.text_chunks[i];
+			return text_chunk.tags.length > common_tags.length && text_chunk.text.length > 0;
 		});
 	}
 
@@ -49,14 +49,14 @@ class TextBlock {
 	 * Get the (last) text chunk at a given char offset
 	 *
 	 * @method
-	 * @param {number} charOffset The char offset of the text_chunk
-	 * @return {TextChunk} The text chunk
+	 * @param {number} char_offset The char offset of the text_chunk
+	 * @return {Text_chunk} The text chunk
 	 */
-	get_text_chunk_at(charOffset) {
+	get_text_chunk_at(char_offset) {
 		let i, len;
 		// TODO: bisecting instead of linear search
 		for (i = 0, len = this.text_chunks.length - 1; i < len; i++) {
-			if (this.offsets[i + 1].start > charOffset) {
+			if (this.offsets[i + 1].start > char_offset) {
 				break;
 			}
 		}
@@ -72,40 +72,40 @@ class TextBlock {
 		if (this.text_chunks.length === 0) {
 			return [];
 		}
-		const commonTags = this.text_chunks[0].tags.slice();
-		for (let i = 0, iLen = this.text_chunks.length; i < iLen; i++) {
+		const common_tags = this.text_chunks[0].tags.slice();
+		for (let i = 0, i_len = this.text_chunks.length; i < i_len; i++) {
 			const tags = this.text_chunks[i].tags;
-			if (tags.length < commonTags.length) {
-				commonTags.splice(tags.length);
+			if (tags.length < common_tags.length) {
+				common_tags.splice(tags.length);
 			}
-			for (let j = 0, jLen = commonTags.length; j < jLen; j++) {
-				if (commonTags[j].name !== tags[j].name) {
+			for (let j = 0, j_len = common_tags.length; j < j_len; j++) {
+				if (common_tags[j].name !== tags[j].name) {
 					// truncate
-					commonTags.splice(j);
+					common_tags.splice(j);
 					break;
 				}
 			}
 		}
-		return commonTags;
+		return common_tags;
 	}
 
 	/**
-	 * Create a new TextBlock, applying our annotations to a translation
+	 * Create a new Text_block, applying our annotations to a translation
 	 *
 	 * @method
-	 * @param {string} targetText Translated plain text
-	 * @param {Object[]} rangeMappings Array of source-target range index mappings
-	 * @return {TextBlock} Translated textblock with tags applied
+	 * @param {string} target_text Translated plain text
+	 * @param {Object[]} range_mappings Array of source-target range index mappings
+	 * @return {Text_block} Translated textblock with tags applied
 	 */
-	translate_tags(targetText, rangeMappings) {
+	translate_tags(target_text, range_mappings) {
 		// map of { offset: x, text_chunks: [...] }
-		const emptyTextChunks = {};
-		const emptyTextChunkOffsets = [];
+		const empty_text_chunks = {};
+		const empty_text_chunk_offsets = [];
 		// list of { start: x, length: x, text_chunk: x }
 		const text_chunks = [];
 
-		function pushEmptyTextChunks(offset, chunks) {
-			for (let c = 0, cLen = chunks.length; c < cLen; c++) {
+		function push_empty_text_chunks(offset, chunks) {
+			for (let c = 0, c_len = chunks.length; c < c_len; c++) {
 				text_chunks.push({
 					start: offset,
 					length: 0,
@@ -115,34 +115,34 @@ class TextBlock {
 		}
 
 		// Create map of empty text chunks, by offset
-		for (let i = 0, iLen = this.text_chunks.length; i < iLen; i++) {
+		for (let i = 0, i_len = this.text_chunks.length; i < i_len; i++) {
 			const text_chunk = this.text_chunks[i];
 			const offset = this.offsets[i].start;
 			if (text_chunk.text.length > 0) {
 				continue;
 			}
-			if (!emptyTextChunks[offset]) {
-				emptyTextChunks[offset] = [];
+			if (!empty_text_chunks[offset]) {
+				empty_text_chunks[offset] = [];
 			}
-			emptyTextChunks[offset].push(text_chunk);
+			empty_text_chunks[offset].push(text_chunk);
 		}
-		for (const offset in emptyTextChunks) {
-			emptyTextChunkOffsets.push(offset);
+		for (const offset in empty_text_chunks) {
+			empty_text_chunk_offsets.push(offset);
 		}
-		emptyTextChunkOffsets.sort((a, b) => a - b);
+		empty_text_chunk_offsets.sort((a, b) => a - b);
 
-		for (let i = 0, iLen = rangeMappings.length; i < iLen; i++) {
+		for (let i = 0, i_len = range_mappings.length; i < i_len; i++) {
 			// Copy tags from source text start offset
-			const rangeMapping = rangeMappings[i];
-			const sourceRangeEnd = rangeMapping.source.start + rangeMapping.source.length;
-			const targetRangeEnd = rangeMapping.target.start + rangeMapping.target.length;
-			const sourceTextChunk = this.get_text_chunk_at(rangeMapping.source.start);
-			const text = targetText.slice(rangeMapping.target.start, rangeMapping.target.start + rangeMapping.target.length);
+			const range_mapping = range_mappings[i];
+			const source_range_end = range_mapping.source.start + range_mapping.source.length;
+			const target_range_end = range_mapping.target.start + range_mapping.target.length;
+			const source_text_chunk = this.get_text_chunk_at(range_mapping.source.start);
+			const text = target_text.slice(range_mapping.target.start, range_mapping.target.start + range_mapping.target.length);
 			text_chunks.push({
-				start: rangeMapping.target.start,
-				length: rangeMapping.target.length,
-				text_chunk: new TextChunk(
-					text, sourceTextChunk.tags, sourceTextChunk.inline_content
+				start: range_mapping.target.start,
+				length: range_mapping.target.length,
+				text_chunk: new Text_chunk(
+					text, source_text_chunk.tags, source_text_chunk.inline_content
 				)
 			});
 
@@ -150,28 +150,28 @@ class TextBlock {
 			// (because they have no plaintext representation). Therefore we must clone each
 			// one manually into the target rich text.
 
-			// Iterate through all remaining emptyTextChunks
-			for (let j = 0; j < emptyTextChunkOffsets.length; j++) {
-				const offset = emptyTextChunkOffsets[j];
+			// Iterate through all remaining empty_text_chunks
+			for (let j = 0; j < empty_text_chunk_offsets.length; j++) {
+				const offset = empty_text_chunk_offsets[j];
 				// Check whether chunk is in range
-				if (offset < rangeMapping.source.start || offset > sourceRangeEnd) {
+				if (offset < range_mapping.source.start || offset > source_range_end) {
 					continue;
 				}
 				// Push chunk into target text at the current point
-				pushEmptyTextChunks(targetRangeEnd, emptyTextChunks[offset]);
+				push_empty_text_chunks(target_range_end, empty_text_chunks[offset]);
 				// Remove chunk from remaining list
-				delete emptyTextChunks[offset];
-				emptyTextChunkOffsets.splice(j, 1);
+				delete empty_text_chunks[offset];
+				empty_text_chunk_offsets.splice(j, 1);
 				// Decrement pointer to match removal
 				j--;
 			}
 		}
 		// Sort by start position
-		text_chunks.sort((textChunk1, textChunk2) => textChunk1.start - textChunk2.start);
-		// Fill in any text_chunk gaps using text with commonTags
+		text_chunks.sort((text_chunk1, text_chunk2) => text_chunk1.start - text_chunk2.start);
+		// Fill in any text_chunk gaps using text with common_tags
 		let pos = 0;
-		const commonTags = this.get_common_tags();
-		for (let i = 0, iLen = text_chunks.length; i < iLen; i++) {
+		const common_tags = this.get_common_tags();
+		for (let i = 0, i_len = text_chunks.length; i < i_len; i++) {
 			const text_chunk = text_chunks[i];
 			if (text_chunk.start < pos) {
 				throw new Error('Overlappping chunks at pos=' + pos + ', text_chunks=' + i + ' start=' + text_chunk.start);
@@ -180,48 +180,48 @@ class TextBlock {
 				text_chunks.splice(i, 0, {
 					start: pos,
 					length: text_chunk.start - pos,
-					text_chunk: new TextChunk(
-						targetText.slice(pos, text_chunk.start), commonTags
+					text_chunk: new Text_chunk(
+						target_text.slice(pos, text_chunk.start), common_tags
 					)
 				});
 				i++;
-				iLen++;
+				i_len++;
 			}
 			pos = text_chunk.start + text_chunk.length;
 		}
 
 		// Get trailing text and trailing whitespace
-		let tail = targetText.slice(pos);
-		const tailSpace = tail.match(/\s*$/)[0];
-		if (tailSpace) {
-			tail = tail.slice(0, tail.length - tailSpace.length);
+		let tail = target_text.slice(pos);
+		const tail_space = tail.match(/\s*$/)[0];
+		if (tail_space) {
+			tail = tail.slice(0, tail.length - tail_space.length);
 		}
 
 		if (tail) {
-			// Append tail as text with commonTags
+			// Append tail as text with common_tags
 			text_chunks.push({
 				start: pos,
 				length: tail.length,
-				text_chunk: new TextChunk(tail, commonTags)
+				text_chunk: new Text_chunk(tail, common_tags)
 			});
 			pos += tail.length;
 		}
 
 		// Copy any remaining text_chunks that have no text
-		for (let i = 0, iLen = emptyTextChunkOffsets.length; i < iLen; i++) {
-			const offset = emptyTextChunkOffsets[i];
-			pushEmptyTextChunks(pos, emptyTextChunks[offset]);
+		for (let i = 0, i_len = empty_text_chunk_offsets.length; i < i_len; i++) {
+			const offset = empty_text_chunk_offsets[i];
+			push_empty_text_chunks(pos, empty_text_chunks[offset]);
 		}
-		if (tailSpace) {
-			// Append tailSpace as text with commonTags
+		if (tail_space) {
+			// Append tail_space as text with common_tags
 			text_chunks.push({
 				start: pos,
-				length: tailSpace.length,
-				text_chunk: new TextChunk(tailSpace, commonTags)
+				length: tail_space.length,
+				text_chunk: new Text_chunk(tail_space, common_tags)
 			});
 			pos += tail.length;
 		}
-		return new TextBlock(text_chunks.map((x) => x.text_chunk));
+		return new Text_block(text_chunks.map((x) => x.text_chunk));
 	}
 
 	/**
@@ -245,35 +245,35 @@ class TextBlock {
 	get_html() {
 		const html = [];
 		// Start with no tags open
-		let oldTags = [];
-		for (let i = 0, iLen = this.text_chunks.length; i < iLen; i++) {
+		let old_tags = [];
+		for (let i = 0, i_len = this.text_chunks.length; i < i_len; i++) {
 			const text_chunk = this.text_chunks[i];
 
 			// Compare tag stacks; render close tags and open tags as necessary
 			// Find the highest offset up to which the tags match on
-			let matchTop = -1;
-			const minLength = Math.min(oldTags.length, text_chunk.tags.length);
-			for (let j = 0, jLen = minLength; j < jLen; j++) {
-				if (oldTags[j] === text_chunk.tags[j]) {
-					matchTop = j;
+			let match_top = -1;
+			const min_length = Math.min(old_tags.length, text_chunk.tags.length);
+			for (let j = 0, j_len = min_length; j < j_len; j++) {
+				if (old_tags[j] === text_chunk.tags[j]) {
+					match_top = j;
 				} else {
 					break;
 				}
 			}
-			for (let j = oldTags.length - 1; j > matchTop; j--) {
-				html.push(get_close_tag_html(oldTags[j]));
+			for (let j = old_tags.length - 1; j > match_top; j--) {
+				html.push(get_close_tag_html(old_tags[j]));
 			}
-			for (let j = matchTop + 1, jLen = text_chunk.tags.length; j < jLen; j++) {
+			for (let j = match_top + 1, j_len = text_chunk.tags.length; j < j_len; j++) {
 				html.push(get_open_tag_html(text_chunk.tags[j]));
 			}
-			oldTags = text_chunk.tags;
+			old_tags = text_chunk.tags;
 
 			// Now add text and inline content
 			html.push(esc(text_chunk.text));
 			if (text_chunk.inline_content) {
-				if (text_chunk.inline_content.getHtml) {
+				if (text_chunk.inline_content.get_html) {
 					// a sub-doc
-					html.push(text_chunk.inline_content.getHtml());
+					html.push(text_chunk.inline_content.get_html());
 				} else {
 					// an empty inline tag
 					html.push(get_open_tag_html(text_chunk.inline_content));
@@ -282,8 +282,8 @@ class TextBlock {
 			}
 		}
 		// Finally, close any remaining tags
-		for (let j = oldTags.length - 1; j >= 0; j--) {
-			html.push(get_close_tag_html(oldTags[j]));
+		for (let j = old_tags.length - 1; j >= 0; j--) {
+			html.push(get_close_tag_html(old_tags[j]));
 		}
 		return html.join('');
 	}
@@ -293,8 +293,8 @@ class TextBlock {
 	 *
 	 * @return {Object}
 	 */
-	getRootItem() {
-		for (let i = 0, iLen = this.text_chunks.length; i < iLen; i++) {
+	get_root_item() {
+		for (let i = 0, i_len = this.text_chunks.length; i < i_len; i++) {
 			const text_chunk = this.text_chunks[i];
 
 			if (text_chunk.tags.length === 0 && text_chunk.text && text_chunk.text.match(/[^\s]/)) {
@@ -302,19 +302,19 @@ class TextBlock {
 				return null;
 			}
 
-			for (let j = 0, jLen = text_chunk.tags.length; j < jLen; j++) {
+			for (let j = 0, j_len = text_chunk.tags.length; j < j_len; j++) {
 				if (text_chunk.tags[j]) {
 					return text_chunk.tags[j];
 				}
 			}
 			if (text_chunk.inline_content) {
-				const inlineDoc = text_chunk.inline_content;
-				// Presence of inlineDoc.getRootItem confirms that inlineDoc is a Doc instance.
-				if (inlineDoc && inlineDoc.getRootItem) {
-					const rootItem = inlineDoc.getRootItem();
-					return rootItem || null;
+				const inline_doc = text_chunk.inline_content;
+				// Presence of inline_doc.get_root_item confirms that inline_doc is a Doc instance.
+				if (inline_doc && inline_doc.get_root_item) {
+					const root_item = inline_doc.get_root_item();
+					return root_item || null;
 				} else {
-					return inlineDoc;
+					return inline_doc;
 				}
 			}
 		}
@@ -326,156 +326,156 @@ class TextBlock {
 	 * Textblock can have multiple tags. The first tag is returned.
 	 * If there is no tags, but inline_content present, then that is returned.
 	 * This is used to extract a unique identifier for the textblock at
-	 * Doc#wrapSections.
+	 * Doc#wrap_sections.
 	 *
 	 * @return {Object}
 	 */
-	getTagForId() {
-		return this.getRootItem();
+	get_tag_for_id() {
+		return this.get_root_item();
 	}
 
 	/**
 	 * Segment the text block into sentences
 	 *
 	 * @method
-	 * @param {Function} getBoundaries Function taking plaintext, returning offset array
-	 * @param {Function} getNextId Function taking 'segment'|'link', returning next ID
-	 * @return {TextBlock} Segmented version, with added span tags
+	 * @param {Function} get_boundaries Function taking plaintext, returning offset array
+	 * @param {Function} get_next_id Function taking 'segment'|'link', returning next ID
+	 * @return {Text_block} Segmented version, with added span tags
 	 */
-	segment(getBoundaries, getNextId) {
-		// Setup: currentTextChunks for current segment, and allTextChunks for all segments
-		const allTextChunks = [];
-		let currentTextChunks = [];
-		function flushChunks() {
-			if (currentTextChunks.length === 0) {
+	segment(get_boundaries, get_next_id) {
+		// Setup: current_text_chunks for current segment, and all_text_chunks for all segments
+		const all_text_chunks = [];
+		let current_text_chunks = [];
+		function flush_chunks() {
+			if (current_text_chunks.length === 0) {
 				return;
 			}
-			const modifiedTextChunks = add_common_tag(currentTextChunks, {
+			const modified_text_chunks = add_common_tag(current_text_chunks, {
 				name: 'span',
 				attributes: {
 					class: 'cx-segment',
-					'data-segmentid': getNextId('segment')
+					'data-segmentid': get_next_id('segment')
 				}
 			});
-			set_link_ids_in_place(modifiedTextChunks, getNextId);
-			allTextChunks.push.apply(allTextChunks, modifiedTextChunks);
-			currentTextChunks = [];
+			set_link_ids_in_place(modified_text_chunks, get_next_id);
+			all_text_chunks.push.apply(all_text_chunks, modified_text_chunks);
+			current_text_chunks = [];
 		}
 
-		const rootItem = this.getRootItem();
-		if (rootItem && is_transclusion(rootItem)) {
+		const root_item = this.get_root_item();
+		if (root_item && is_transclusion(root_item)) {
 			// Avoid segmenting inside transclusions.
 			return this;
 		}
 
 		// for each chunk, split at any boundaries that occur inside the chunk
 		const groups = get_chunk_boundary_groups(
-			getBoundaries(this.get_plain_text()),
+			get_boundaries(this.get_plain_text()),
 			this.text_chunks,
 			(text_chunk) => text_chunk.text.length
 		);
 		let offset = 0;
-		for (let i = 0, iLen = groups.length; i < iLen; i++) {
+		for (let i = 0, i_len = groups.length; i < i_len; i++) {
 			const group = groups[i];
 			let chunk = group.chunk;
 			const boundaries = group.boundaries;
-			for (let j = 0, jLen = boundaries.length; j < jLen; j++) {
-				const relOffset = boundaries[j] - offset;
-				if (relOffset === 0) {
-					flushChunks();
+			for (let j = 0, j_len = boundaries.length; j < j_len; j++) {
+				const rel_offset = boundaries[j] - offset;
+				if (rel_offset === 0) {
+					flush_chunks();
 				} else {
-					const leftPart = new TextChunk(
-						chunk.text.slice(0, relOffset), chunk.tags.slice()
+					const left_part = new Text_chunk(
+						chunk.text.slice(0, rel_offset), chunk.tags.slice()
 					);
-					const rightPart = new TextChunk(
-						chunk.text.slice(relOffset),
+					const right_part = new Text_chunk(
+						chunk.text.slice(rel_offset),
 						chunk.tags.slice(),
 						chunk.inline_content
 					);
-					currentTextChunks.push(leftPart);
-					offset += relOffset;
-					flushChunks();
-					chunk = rightPart;
+					current_text_chunks.push(left_part);
+					offset += rel_offset;
+					flush_chunks();
+					chunk = right_part;
 				}
 			}
 			// Even if the chunk is zero-width, it may have references
-			currentTextChunks.push(chunk);
+			current_text_chunks.push(chunk);
 			offset += chunk.text.length;
 		}
-		flushChunks();
-		return new TextBlock(allTextChunks);
+		flush_chunks();
+		return new Text_block(all_text_chunks);
 	}
 
 	/**
 	 * Set the link Ids for the links in all the textchunks in the textblock instance.
 	 *
-	 * @param {Function} getNextId Function taking 'segment'|'link', returning next ID
-	 * @return {TextBlock} Segmented version, with added span tags
+	 * @param {Function} get_next_id Function taking 'segment'|'link', returning next ID
+	 * @return {Text_block} Segmented version, with added span tags
 	 */
-	setLinkIds(getNextId) {
-		set_link_ids_in_place(this.text_chunks, getNextId);
+	set_link_ids(get_next_id) {
+		set_link_ids_in_place(this.text_chunks, get_next_id);
 		return this;
 	}
 
 	/**
 	 * Adapt a text block.
 	 *
-	 * @param {Function} getAdapter A function that returns an adapter for the given node item
-	 * @return {Promise} Promise that resolves the adapted TextBlock instance
+	 * @param {Function} get_adapter A function that returns an adapter for the given node item
+	 * @return {Promise} Promise that resolves the adapted Text_block instance
 	 */
-	adapt(getAdapter) {
-		const textChunkPromises = [];
+	adapt(get_adapter) {
+		const text_chunk_promises = [];
 
 		// Note that we are not using `await` for the better readable code here. `await` will pause
 		// the execution till the `async` call is resolved. For us, while looping over these text
 		// chunks and tags, this will create a problem. Adaptations often perform asynchrounous API
-		// calls to a MediaWiki instance. If we do API calls for each and every item like a link
+		// calls to a Media_wiki instance. If we do API calls for each and every item like a link
 		// title, it is inefficient. The API accepts a batched list of titles. We do have a batched
 		// API mechanism in cxserver, but that works by debouncing the incoming requests with a
 		// timeout. Pausing execution here will cause that debounce handler to be called.
 		// So we avoid that pausing by just using an array of promises.
-		this.text_chunks.forEach((chunk) => {
-			const tagPromises = [],
+		this.text_chunks.for_each((chunk) => {
+			const tag_promises = [],
 				tags = chunk.tags;
-			tags.forEach((tag) => {
-				const dataCX = getProp(['attributes', 'data-cx'], tag);
+			tags.for_each((tag) => {
+				const dataCX = get_prop(['attributes', 'data-cx'], tag);
 				if (dataCX && Object.keys(JSON.parse(dataCX)).length) {
 					// Already adapted
 					return;
 				}
-				const adapter = getAdapter(tag);
+				const adapter = get_adapter(tag);
 				if (adapter && !is_transclusion_fragment(tag)) {
 					// This loop get executed for open and close for the tag.
 					// Use data-cx to mark this tag processed. The actual adaptation
 					// process below will update this value.
 					tag.attributes['data-cx'] = JSON.stringify({ adapted: false });
-					tagPromises.push(adapter.adapt());
+					tag_promises.push(adapter.adapt());
 				}
 			});
-			textChunkPromises.push(Promise.all(tagPromises));
-			let adaptPromise;
+			text_chunk_promises.push(Promise.all(tag_promises));
+			let adapt_promise;
 			if (chunk.inline_content) {
 				if (chunk.inline_content.adapt) {
 					// Inline content is a sub document.
-					adaptPromise = chunk.inline_content.adapt(getAdapter);
+					adapt_promise = chunk.inline_content.adapt(get_adapter);
 				} else {
 					// Inline content is inline empty tag. Examples are link, meta etc.
-					const adapter = getAdapter(chunk.inline_content);
+					const adapter = get_adapter(chunk.inline_content);
 					if (adapter && !is_transclusion_fragment(chunk.inline_content)) {
-						adaptPromise = adapter.adapt();
+						adapt_promise = adapter.adapt();
 					}
 				}
 
-				if (adaptPromise) {
-					textChunkPromises.push(((chk) => adaptPromise
-						.then((adaptedInlineContent) => {
-							chk.inline_content = adaptedInlineContent;
+				if (adapt_promise) {
+					text_chunk_promises.push(((chk) => adapt_promise
+						.then((adapted_inline_content) => {
+							chk.inline_content = adapted_inline_content;
 						}))(chunk));
 				}
 			}
 		});
 
-		return Promise.all(textChunkPromises).then(() => this);
+		return Promise.all(text_chunk_promises).then(() => this);
 	}
 
 	/**
@@ -489,15 +489,15 @@ class TextBlock {
 		const dump = [];
 		for (let i = 0, len = this.text_chunks.length; i < len; i++) {
 			const chunk = this.text_chunks[i];
-			const tagsDump = dump_tags(chunk.tags);
-			const tagsAttr = tagsDump ? ' tags="' + tagsDump + '"' : '';
+			const tags_dump = dump_tags(chunk.tags);
+			const tags_attr = tags_dump ? ' tags="' + tags_dump + '"' : '';
 			if (chunk.text) {
-				dump.push(pad + '<cxtextchunk' + tagsAttr + '>' +
+				dump.push(pad + '<cxtextchunk' + tags_attr + '>' +
 					esc(chunk.text).replace(/\n/g, '&#10;') +
 					'</cxtextchunk>');
 			}
 			if (chunk.inline_content) {
-				dump.push(pad + '<cxinlineelement' + tagsAttr + '>');
+				dump.push(pad + '<cxinlineelement' + tags_attr + '>');
 				if (chunk.inline_content.dump_xml_array) {
 					// sub-doc: concatenate
 					dump.push.apply(dump, chunk.inline_content.dump_xml_array(pad + '  '));
@@ -510,20 +510,20 @@ class TextBlock {
 		return dump;
 	}
 
-	// camelCase aliases for callers such as Doc
-	getHtml() {
+	// camel_case aliases for callers such as Doc
+	get_html() {
 		return this.get_html();
 	}
 
-	getPlainText() {
+	get_plain_text() {
 		return this.get_plain_text();
 	}
 
-	setLinkIds(getNextId) {
-		set_link_ids_in_place(this.text_chunks, getNextId);
+	set_link_ids(get_next_id) {
+		set_link_ids_in_place(this.text_chunks, get_next_id);
 		return this;
 	}
 
 }
 
-export default TextBlock;
+export default Text_block;

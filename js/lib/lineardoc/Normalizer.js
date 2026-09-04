@@ -9,7 +9,7 @@ import { get_close_tag_html, get_open_tag_html } from './Utils.js';
  * @return {string} Escaped version of the string
  */
 function esc(str) {
-	return str.replace(/[&<>]/g, (ch) => '&#' + ch.charCodeAt(0) + ';');
+	return str.replace(/[&<>]/g, (ch) => '&#' + ch.char_code_at(0) + ';');
 }
 
 /**
@@ -51,7 +51,7 @@ class Normalizer extends sax.SAXParser {
 		return this.doc.join('');
 	}
 
-	getHtml() {
+	get_html() {
 		return this.get_html();
 	}
 

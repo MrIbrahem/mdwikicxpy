@@ -4,9 +4,9 @@
  * @external Router
  */
 
-import { readFileSync } from 'fs';
+import { read_file_sync } from 'fs';
 import { load } from 'js-yaml';
-import languageData from '@wikimedia/language-data';
+import language_data from '@wikimedia/language-data';
 
 /**
  * Error instance wrapping HTTP error responses
@@ -15,7 +15,7 @@ class HTTPError extends Error {
 
 	constructor(response) {
 		super();
-		Error.captureStackTrace(this, HTTPError);
+		Error.capture_stack_trace(this, HTTPError);
 
 		this.name = this.constructor.name;
 		this.message = `${response.status}`;
@@ -31,21 +31,21 @@ class HTTPError extends Error {
 	}
 
 	/**
-	 * @param {Response} httpResponse
+	 * @param {Response} http_response
 	 * @return {HTTPError}
 	 */
-	static fromResponse(httpResponse) {
+	static from_response(http_response) {
 		return new HTTPError({
-			status: httpResponse.status,
+			status: http_response.status,
 			type: 'api_error',
-			detail: `Error from URL: ${httpResponse.url}; status: ${httpResponse.statusText}`
+			detail: `Error from URL: ${http_response.url}; status: ${http_response.status_text}`
 		});
 	}
 }
 
-function responseTimeMetricsMiddleware(app) {
+function response_time_metrics_middleware(app) {
 	// Create a histogram metric for HTTP request duration
-	const requestDuration = {
+	const request_duration = {
 		type: 'Histogram',
 		name: `${app.conf.name}_express_router_request_duration_seconds`,
 		help: 'request duration handled by router in seconds',
@@ -56,11 +56,11 @@ function responseTimeMetricsMiddleware(app) {
 	};
 	// Create the metric
 	// This will return the existing metric if it already exists
-	const responseTimeMetric = app.metrics.makeMetric(requestDuration);
-	app.logger.info('responseTimeMetric', responseTimeMetric.labels);
+	const response_time_metric = app.metrics.make_metric(request_duration);
+	app.logger.info('response_time_metric', response_time_metric.labels);
 	return (req, res, next) => {
 		const start = process.hrtime();
-		const originalEnd = res.end;
+		const original_end = res.end;
 
 		res.end = (...args) => {
 			// Calculate the duration
@@ -69,16 +69,16 @@ function responseTimeMetricsMiddleware(app) {
 
 			const path = req.route ? req.route.path : req.path;
 			// Observe the duration
-			responseTimeMetric.observe(
+			response_time_metric.observe(
 				{
 					method: req.method,
 					path: path,
-					status: res.statusCode
+					status: res.status_code
 				},
 				duration
 			);
 			// Call the original end function
-			originalEnd.apply(res, args);
+			original_end.apply(res, args);
 		};
 		// Continue processing the request
 		next();
@@ -103,36 +103,36 @@ function Deferred() {
  * @param {string} content The content to test
  * @return {boolean} Return true if the content is plain text
  */
-function isPlainText(content) {
+function is_plain_text(content) {
 	return !content || !content.trim() || !/<[a-zA-Z][\s\S]*>/i.test(content);
 }
 
 /**
  * Null safe object getter
  * Example: To access obj.a.b.c[0].d in null safe way,
- * use getProp(['a', 'b', 'c', 0, 'd'], obj )
+ * use get_prop(['a', 'b', 'c', 0, 'd'], obj )
  *
  * @param {string|number} path access path
  * @param {Object} obj Object
  * @return {Object|string|number|null}
  */
-function getProp(path, obj) {
+function get_prop(path, obj) {
 	return path.reduce(
-		(accumulator, currentValue) => (accumulator && accumulator[currentValue]) ?
-			accumulator[currentValue] :
+		(accumulator, current_value) => (accumulator && accumulator[current_value]) ?
+			accumulator[current_value] :
 			null,
 		obj
 	);
 }
 
-function getConfig(confPath) {
-	if (!confPath) {
+function get_config(conf_path) {
+	if (!conf_path) {
 		const dirname = new URL('.', import.meta.url).pathname;
-		confPath = `${dirname}/../config.dev.yaml`;
+		conf_path = `${dirname}/../config.dev.yaml`;
 	}
-	const config = load(readFileSync(confPath));
+	const config = load(read_file_sync(conf_path));
 	if (!config) {
-		throw new Error('Failed to load config from path: ' + confPath);
+		throw new Error('Failed to load config from path: ' + conf_path);
 	}
 	return config;
 }
@@ -143,13 +143,13 @@ function getConfig(confPath) {
  * @param {Response} res Response object
  * @param {...string} languages Language codes
  */
-function assertValidLanguageCodes(res, ...languages) {
+function assert_valid_language_codes(res, ...languages) {
 	for (const language of languages) {
 		if (language === undefined) {
 			continue;
 		}
 
-		if (!languageData.isKnown(language)) {
+		if (!language_data.is_known(language)) {
 			res.status(400).end(`Invalid language code ${language}`);
 			return false;
 		}
@@ -160,10 +160,10 @@ function assertValidLanguageCodes(res, ...languages) {
 
 export {
 	HTTPError,
-	getConfig,
-	responseTimeMetricsMiddleware,
-	getProp,
+	get_config,
+	response_time_metrics_middleware,
+	get_prop,
 	Deferred,
-	isPlainText,
-	assertValidLanguageCodes
+	is_plain_text,
+	assert_valid_language_codes
 };

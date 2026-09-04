@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = {
-	LinearDoc: require( './lineardoc' )
+	Linear_doc: require( './lineardoc' )
 };
