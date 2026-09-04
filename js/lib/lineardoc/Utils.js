@@ -2,7 +2,7 @@
  * @external Doc
  */
 
-import Text_chunk from './TextChunk.js';
+import TextChunk from './TextChunk.js';
 import * as cxutil from './../util.js';
 
 /**
@@ -341,7 +341,7 @@ function add_common_tag(text_chunks, tag) {
 		const text_chunk = text_chunks[i];
 		const new_tags = text_chunk.tags.slice();
 		new_tags.splice(common_tag_length, 0, tag);
-		new_text_chunks.push(new Text_chunk(
+		new_text_chunks.push(new TextChunk(
 			text_chunk.text,
 			new_tags,
 			text_chunk.inline_content

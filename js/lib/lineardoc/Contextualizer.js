@@ -68,24 +68,6 @@ class Contextualizer {
 	can_segment() {
 		return this.get_context() === undefined;
 	}
-
-	// camel_case aliases for callers such as Parser
-	get_context() {
-		return this.get_context();
-	}
-
-	on_open_tag(open_tag) {
-		return this.on_open_tag(open_tag);
-	}
-
-	on_close_tag() {
-		return this.on_close_tag();
-	}
-
-	can_segment() {
-		return this.can_segment();
-	}
-
 }
 
 export default Contextualizer;

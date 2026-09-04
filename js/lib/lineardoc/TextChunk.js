@@ -11,7 +11,7 @@
  * therefore text with varying markup must be split into multiple chunks.
  *
  */
-class Text_chunk {
+class TextChunk {
 	/**
 	 * @param {string} text Plaintext in the chunk (can be '')
 	 * @param {Object[]} tags array of SAX open tag objects, for the applicable tags
@@ -24,4 +24,4 @@ class Text_chunk {
 	}
 }
 
-export default Text_chunk;
+export default TextChunk;
