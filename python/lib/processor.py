@@ -5,10 +5,9 @@ Main processing module for HTML transformation.
 from __future__ import annotations
 
 import re
-from pathlib import Path
 
 import yaml
-
+from pathlib import Path
 from ..lib.lineardoc import Normalizer, Parser
 from .lineardoc import MwContextualizer
 from .segmentation import CXSegmenter
@@ -21,7 +20,6 @@ with open(config_path, "r") as f:
 removable_sections = pageloader_config.get("removableSections", {})
 if not removable_sections:
     raise ValueError("removableSections must be defined in config")
-
 
 def normalize(html: str) -> str:
     """
@@ -40,7 +38,6 @@ def normalize(html: str) -> str:
     html = re.sub(r"[\t\r\n]+", "", html)
     normalizer.write(html)
     return normalizer.get_html()
-
 
 def process_html(source_html: str, lang: str | None = None):
     """

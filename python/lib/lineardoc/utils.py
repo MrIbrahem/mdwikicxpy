@@ -12,6 +12,8 @@ import re
 from collections.abc import Callable
 from typing import Any
 
+from .doc import Doc
+
 from . import util as cxutil
 from .doc import Doc
 from .text_chunk import TextChunk

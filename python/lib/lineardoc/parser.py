@@ -7,16 +7,15 @@ https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineard
 """
 
 from __future__ import annotations
-
 import logging
 from typing import Any
 
-from lxml import etree
-from lxml import html as lxml_html
+from lxml import etree, html as lxml_html
+
+from .mw_contextualizer import MwContextualizer
 
 from . import utils
 from .builder import Builder
-from .mw_contextualizer import MwContextualizer
 
 logger = logging.getLogger(__name__)
 
