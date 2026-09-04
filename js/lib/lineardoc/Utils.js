@@ -3,7 +3,7 @@
  */
 
 import TextChunk from './TextChunk.js';
-import * as cxutil from './../util.js';
+import { get_prop } from './../util.js';
 
 /**
  * Find all matches of regex in text, calling callback with each match object
@@ -221,8 +221,8 @@ function is_transclusion(tag) {
 }
 
 function is_transclusion_fragment(tag) {
-	return cxutil.get_prop(['attributes', 'about'], tag) &&
-		!cxutil.get_prop(['attributes', 'data-mw'], tag);
+	return get_prop(['attributes', 'about'], tag) &&
+		!get_prop(['attributes', 'data-mw'], tag);
 }
 
 /**
@@ -311,9 +311,9 @@ function get_chunk_boundary_groups(boundaries, chunks, get_length) {
  * Add a tag to consecutive text chunks, above common tags but below others
  *
  * @private
- * @param {text_chunk[]} text_chunks Consecutive text chunks
+ * @param {TextChunk[]} text_chunks Consecutive text chunks
  * @param {Object} tag Tag to add
- * @return {text_chunk[]} Copy of the text chunks with the tag inserted
+ * @return {TextChunk[]} Copy of the text chunks with the tag inserted
  */
 function add_common_tag(text_chunks, tag) {
 	if (text_chunks.length === 0) {
@@ -354,7 +354,7 @@ function add_common_tag(text_chunks, tag) {
  * Set link IDs in-place on text chunks
  *
  * @private
- * @param {text_chunk[]} text_chunks Consecutive text chunks
+ * @param {TextChunk[]} text_chunks Consecutive text chunks
  * @param {Function} get_next_id function accepting 'link' and returning next ID
  */
 function set_link_ids_in_place(text_chunks, get_next_id) {
@@ -393,6 +393,28 @@ function set_link_ids_in_place(text_chunks, get_next_id) {
 }
 
 /**
+ * Check if a textblock has any text that should be machine translated, i.e.
+ * non-whitespace text that is not part of a transclusion. A textblock can begin
+ * with an inline transclusion (for example the {{Nihongo}} template) and still
+ * carry translatable prose around it, so the mere presence of a transclusion
+ * does not make the whole block ignorable.
+ *
+ * @param {Text_block} text_block
+ * @return {boolean}
+ */
+function has_translatable_text(text_block) {
+	return text_block.text_chunks.some((chunk) => {
+		if (!chunk.text || !chunk.text.match(/[^\s]/)) {
+			return false;
+		}
+		// Text belonging to a transclusion is either inside a non-translatable
+		// tag or carries the transclusion's `about` grouping attribute.
+		return !chunk.tags.some(
+			(tag) => is_non_translatable(tag) || get_prop(['attributes', 'about'], tag)
+		);
+	});
+}
+/**
  * Check if the passed document is a section containing block level template or reference list
  * so that we can ignore from passing to MT engines
  *
@@ -429,6 +451,10 @@ function is_ignorable_block(section_doc) {
 
 		// Also check for textblocks
 		if (!first_block_template && item.type === 'textblock') {
+			if (has_translatable_text(item.item)) {
+				// The block carries prose outside any transclusion.
+				return false;
+			}
 			const root_item = item.item.get_root_item();
 			if (root_item && is_non_translatable(root_item)) {
 				first_block_template = root_item;
