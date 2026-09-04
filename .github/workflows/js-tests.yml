@@ -35,4 +35,4 @@ jobs:
         run: npm ci
 
       - name: Run JS unit tests
-        run: node --test ../tests/unit/segmentation/CXSegmenter.test.js
+        run: node --test ../tests/unit/lib/segmentation/CXSegmenter.test.js

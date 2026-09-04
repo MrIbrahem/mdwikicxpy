@@ -2,8 +2,8 @@ import { describe, it } from 'node:test';
 import fs from 'fs';
 import { fileURLTo_path } from 'url';
 import assert from '../../utils/assert.js';
-import * as Linear_doc from '../../lib/lineardoc/index.js';
-import Segmenter from '../../lib/segmentation/CXSegmenter.js';
+import * as Linear_doc from '../../../../js/lib/lineardoc/index.js';
+import Segmenter from '../../../../js/lib/segmentation/CXSegmenter.js';
 
 const __dirname = fileURLTo_path( new URL( '.', import.meta.url ) );
 
