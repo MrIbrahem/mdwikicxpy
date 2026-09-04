@@ -66,13 +66,7 @@ class TestProcessHtml:
 
         assert normalize_test(result) == normalize_test(
             """
-        <html id="0">
-            <body id="1">
-                <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
-                    <p id="2"><span class="cx-segment" data-segmentid="3">This is a test.</span></p>
-                </section>
-            </body>
-        </html>
+        <p id="0"><span class="cx-segment" data-segmentid="1">This is a test.</span></p>
         """
         )
 
@@ -86,16 +80,7 @@ class TestProcessHtml:
 
         assert normalize_test(result) == normalize_test(
             """
-        <html id="0">
-            <body id="1">
-                <section data-mw-section-number="1" id="cxSourceSection0" rel="cx:Section">
-                    <h2 id="2"><span class="cx-segment" data-segmentid="3">Heading</span></h2>
-                </section>
-                <section data-mw-section-number="1" id="cxSourceSection1" rel="cx:Section">
-                    <p id="4"><span class="cx-segment" data-segmentid="5">Content</span></p>
-                </section>
-            </body>
-        </html>
+            <h2 id="0"><span class="cx-segment" data-segmentid="1">Heading</span></h2><p id="2"><span class="cx-segment" data-segmentid="3">Content</span></p>
         """
         )
 
@@ -106,14 +91,7 @@ class TestProcessHtml:
 
         assert normalize_test(result) == normalize_test(
             """
-        <html id="0">
-            <body id="1">
-                <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
-                    <p id="2"><span class="cx-segment" data-segmentid="3">First sentence. </span><span class="cx-segment"
-                            data-segmentid="4">Second sentence.</span></p>
-                </section>
-            </body>
-        </html>
+        <p id="0"><span class="cx-segment" data-segmentid="1">First sentence. </span><span class="cx-segment" data-segmentid="2">Second sentence.</span></p>
         """
         )
         assert "cx-segment" in result
@@ -127,13 +105,7 @@ class TestProcessHtml:
 
         assert normalize_test(result) == normalize_test(
             """
-        <html id="0">
-            <body id="1">
-                <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
-                    <p id="2"><span class="cx-segment" data-segmentid="3">Text with <a href="/wiki/Test">link</a>.</span></p>
-                </section>
-            </body>
-        </html>
+        <p id="0"><span class="cx-segment" data-segmentid="1">Text with <a href="/wiki/Test">link</a>.</span></p>
         """
         )
 
@@ -152,15 +124,7 @@ class TestProcessHtml:
 
         assert normalize_test(result) == normalize_test(
             """
-            <html id="0">
-            <body id="1">
-                <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
-                    <figure id="2" rel="cx:Figure"><img src="test.jpg" />
-                        <figcaption id="3"><span class="cx-segment" data-segmentid="4">Caption</span></figcaption>
-                    </figure>
-                </section>
-            </body>
-            </html>
+            <figure id="0" rel="cx:Figure"><img src="test.jpg" /><figcaption id="1"><span class="cx-segment" data-segmentid="2">Caption</span></figcaption></figure>
         """
         )
 
@@ -171,14 +135,7 @@ class TestProcessHtml:
 
         assert normalize_test(result) == normalize_test(
             """
-        <html id="0">
-            <body id="1">
-                <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
-                    <p id="2"><span class="cx-segment" data-segmentid="3">See <a class="cx-link" data-linkid="4"
-                                href="/wiki/Article" rel="mw:WikiLink">article</a>.</span></p>
-                </section>
-            </body>
-        </html>
+        <p id="0"><span class="cx-segment" data-segmentid="1">See <a class="cx-link" data-linkid="2" href="/wiki/Article" rel="mw:WikiLink">article</a>.</span></p>
         """
         )
         # Should add link tracking
@@ -194,16 +151,7 @@ class TestProcessHtml:
         result = process_html(html)
 
         assert normalize_test(result) == normalize_test(
-            """<html id="0">
-            <body id="1">
-                <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
-                    <p id="2"><span class="cx-segment" data-segmentid="3">First paragraph.</span></p>
-                    <p id="4"><span class="cx-segment" data-segmentid="5">Second paragraph.</span></p>
-                    <p id="6"><span class="cx-segment" data-segmentid="7">Third paragraph.</span></p>
-                </section>
-            </body>
-
-            </html>
+            """<p id="0"><span class="cx-segment" data-segmentid="1">First paragraph.</span></p><p id="2"><span class="cx-segment" data-segmentid="3">Second paragraph.</span></p><p id="4"><span class="cx-segment" data-segmentid="5">Third paragraph.</span></p>
         """
         )
 
@@ -218,22 +166,7 @@ class TestProcessHtml:
 
         assert normalize_test(result) == normalize_test(
             """
-        <html id="0">
-            <body id="1">
-                <section data-mw-section-number="1" id="cxSourceSection0" rel="cx:Section">
-                    <h2 id="2"><span class="cx-segment" data-segmentid="3">Section 1</span></h2>
-                </section>
-                <section data-mw-section-number="1" id="cxSourceSection1" rel="cx:Section">
-                    <p id="4"><span class="cx-segment" data-segmentid="5">Content 1</span></p>
-                </section>
-                <section data-mw-section-number="2" id="cxSourceSection2" rel="cx:Section">
-                    <h2 id="6"><span class="cx-segment" data-segmentid="7">Section 2</span></h2>
-                </section>
-                <section data-mw-section-number="2" id="cxSourceSection3" rel="cx:Section">
-                    <p id="8"><span class="cx-segment" data-segmentid="9">Content 2</span></p>
-                </section>
-            </body>
-        </html>
+        <h2 id="0"><span class="cx-segment" data-segmentid="1">Section 1</span></h2><p id="2"><span class="cx-segment" data-segmentid="3">Content 1</span></p><h2 id="4"><span class="cx-segment" data-segmentid="5">Section 2</span></h2><p id="6"><span class="cx-segment" data-segmentid="7">Content 2</span></p>
         """
         )
 
@@ -263,31 +196,9 @@ class TestProcessHtml:
 
         assert normalize_test(result) == normalize_test(
             """
-        <html id="0">
-            <body id="1">
-                <section data-mw-section-number="1" id="cxSourceSection0" rel="cx:Section">
-                    <h2 id="2"><span class="cx-segment" data-segmentid="3">Introduction</span></h2>
-                </section>
-                <section data-mw-section-number="1" id="cxSourceSection1" rel="cx:Section">
-                    <p id="4"><span class="cx-segment" data-segmentid="5">This is the intro. </span><span class="cx-segment"
-                            data-segmentid="6">It has multiple sentences.</span></p>
-                </section>
-                <section data-mw-section-number="2" id="cxSourceSection2" rel="cx:Section">
-                    <h2 id="7"><span class="cx-segment" data-segmentid="8">Details</span></h2>
-                </section>
-                <section data-mw-section-number="2" id="cxSourceSection3" rel="cx:Section">
-                    <p id="9"><span class="cx-segment" data-segmentid="10">More details here.</span></p>
-                </section>
-                <section data-mw-section-number="2" id="cxSourceSection4" rel="cx:Section">
-                    <ul id="11">
-                        <li id="12"><span class="cx-segment" data-segmentid="13">Item 1</span></li>
-                        <li id="14"><span class="cx-segment" data-segmentid="15">Item 2</span></li>
-                    </ul>
-                </section>
-            </body>
-        </html>
-        """
-        )
+            <h2 id="0"><span class="cx-segment" data-segmentid="1">Section 1</span></h2><p id="2"><span class="cx-segment" data-segmentid="3">Content 1</span></p><h2 id="4"><span class="cx-segment" data-segmentid="5">Section 2</span></h2><p id="6"><span class="cx-segment" data-segmentid="7">Content 2</span></p>
+            """
+            )
 
     def test_process_html_unicode(self):
         """Test processing Unicode content."""
@@ -296,14 +207,7 @@ class TestProcessHtml:
 
         assert normalize_test(result) == normalize_test(
             """
-        <html id="0">
-            <body id="1">
-                <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
-                    <p id="2"><span class="cx-segment" data-segmentid="3">مرحبا العالم. </span><span class="cx-segment"
-                            data-segmentid="4">هذا اختبار.</span></p>
-                </section>
-            </body>
-        </html>
+        <p id="0"><span class="cx-segment" data-segmentid="1">مرحبا العالم. </span><span class="cx-segment" data-segmentid="2">هذا اختبار.</span></p>
         """
         )
         # Unicode content should be in output (possibly escaped)
@@ -318,13 +222,7 @@ class TestProcessHtml:
 
         assert normalize_test(result) == normalize_test(
             """
-        <html id="0">
-            <body id="1">
-                <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
-                    <p id="2"><span class="cx-segment" data-segmentid="3">Test &#38; special &#60;chars&#62;.</span></p>
-                </section>
-            </body>
-        </html>
+        <p id="0"><span class="cx-segment" data-segmentid="1">Test &#38; special &#60;chars&#62;.</span></p>
         """
         )
         # Should preserve content (may be escaped differently)
@@ -340,14 +238,7 @@ class TestProcessHtml:
 
         assert normalize_test(result) == normalize_test(
             """
-        <html id="0">
-            <body id="1">
-                <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
-                    <p id="2"><span class="cx-segment" data-segmentid="3">Text with <b>bold and <i>italic</i></b> formatting.</span>
-                    </p>
-                </section>
-            </body>
-        </html>
+        <p id="0"><span class="cx-segment" data-segmentid="1">Text with <b>bold and <i>italic</i></b> formatting.</span></p>
         """
         )
 
@@ -359,15 +250,7 @@ class TestProcessHtml:
 
         assert normalize_test(result) == normalize_test(
             """
-        <html id="0">
-            <body id="1">
-                <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
-                    <blockquote id="2">
-                        <p id="3"><span class="cx-segment" data-segmentid="4">Quoted text.</span></p>
-                    </blockquote>
-                </section>
-            </body>
-        </html>
+        <blockquote id="0"><p id="1"><span class="cx-segment" data-segmentid="2">Quoted text.</span></p></blockquote>
         """
         )
 
@@ -378,18 +261,7 @@ class TestProcessHtml:
 
         assert normalize_test(result) == normalize_test(
             """
-        <html id="0">
-            <body id="1">
-                <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
-                    <table id="2">
-                        <tr id="3">
-                            <td id="4"><span class="cx-segment" data-segmentid="5">Cell 1</span></td>
-                            <td id="6"><span class="cx-segment" data-segmentid="7">Cell 2</span></td>
-                        </tr>
-                    </table>
-                </section>
-            </body>
-        </html>
+        <table id="0"><tr id="1"><td id="2"><span class="cx-segment" data-segmentid="3">Cell 1</span></td><td id="4"><span class="cx-segment" data-segmentid="5">Cell 2</span></td></tr></table>
         """
         )
         assert "Cell 1" in result
