@@ -7,6 +7,7 @@ https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineard
 """
 
 from __future__ import annotations
+
 import logging
 from typing import Any
 
@@ -16,6 +17,7 @@ from . import utils
 from .parser import VOID_ELEMENTS
 
 logger = logging.getLogger(__name__)
+
 
 def esc(s):
     """Escape text for inclusion in HTML."""

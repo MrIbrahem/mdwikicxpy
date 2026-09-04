@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 from python.lib.lineardoc import Doc, MwContextualizer, Parser
-from python.lib.segmentation import CXSegmenter
 from python.lib.processor import normalize
+from python.lib.segmentation import CXSegmenter
 
 cx_segmenter_tests_path = Path(__file__).parent / "SegmentationTests.json"
 
@@ -24,10 +24,12 @@ def get_parsed_doc(content) -> Doc:
     parsed_doc = parser.builder.doc
     return parsed_doc
 
+
 test_params = [(lang, test_case) for lang, cases in alltests.items() for test_case in cases]
 
 
 @pytest.mark.parametrize("lang, test_case", test_params)
+@pytest.mark.integration
 def test_cx_segmenter(lang, test_case):
     date_path = Path(__file__).parent / "data"
     output_path = Path(__file__).parent / "output"
@@ -52,7 +54,8 @@ def test_cx_segmenter(lang, test_case):
         expected_text = f.read()
 
     # expected
-    expected_result_data = normalize(expected_text)
+    # expected_result_data = normalize(segmenter.segment(get_parsed_doc(expected_text), lang).get_html())
 
+    expected_result_data = normalize(expected_text)
 
     assert normalized_result == expected_result_data, f"{test_case['source']}: {test_case['desc'] or ''}"
