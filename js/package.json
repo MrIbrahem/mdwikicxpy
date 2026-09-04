@@ -25,7 +25,7 @@
 		"express": "^4.17.3",
 		"http-shutdown": "^1.2.2",
 		"js-yaml": "^4.1.0",
-		"jsdom": "^29.0.0",
+		"jsdom": "^29.1.1",
 		"jsonwebtoken": "^9.0.0",
 		"lru-cache": "^10.0.1",
 		"mediawiki-title": "^0.7.5",
