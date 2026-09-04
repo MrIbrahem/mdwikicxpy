@@ -10,9 +10,8 @@
  * reference span). The tags and/or reference apply to the whole text;
  * therefore text with varying markup must be split into multiple chunks.
  *
- * @class
  */
-class TextChunk {
+class Text_chunk {
 	/**
 	 * @param {string} text Plaintext in the chunk (can be '')
 	 * @param {Object[]} tags array of SAX open tag objects, for the applicable tags
@@ -25,4 +24,4 @@ class TextChunk {
 	}
 }
 
-export default TextChunk;
+export default Text_chunk;

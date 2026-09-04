@@ -2,14 +2,14 @@
  * @external Doc
  */
 
-import TextChunk from './TextChunk.js';
+import Text_chunk from './Text_chunk.js';
 import * as cxutil from './../util.js';
 
 /**
  * Find all matches of regex in text, calling callback with each match object
  *
  * @param {string} text The text to search
- * @param {RegExp} regex The regex to search; should be created for this function call
+ * @param {Reg_exp} regex The regex to search; should be created for this function call
  * @param {Function} callback Function to call with each match
  * @return {Array} The return values from the callback
  */
@@ -36,7 +36,7 @@ function find_all(text, regex, callback) {
  * @return {string} Escaped version of the string
  */
 function esc(str) {
-	return str.replace(/[&<>]/g, (ch) => '&#' + ch.charCodeAt(0) + ';');
+	return str.replace(/[&<>]/g, (ch) => '&#' + ch.char_code_at(0) + ';');
 }
 
 /**
@@ -47,7 +47,7 @@ function esc(str) {
  * @return {string} Escaped version of the string
  */
 function esc_attr(str) {
-	return str.replace(/["'&<>]/g, (ch) => '&#' + ch.charCodeAt(0) + ';');
+	return str.replace(/["'&<>]/g, (ch) => '&#' + ch.char_code_at(0) + ';');
 }
 
 /**
@@ -68,7 +68,7 @@ function get_open_tag_html(tag) {
 		const attr = attributes[i];
 		html.push(' ' + esc(attr) + '="' + esc_attr(String(tag.attributes[attr])) + '"');
 	}
-	if (tag.isSelfClosing) {
+	if (tag.is_self_closing) {
 		html.push(' /');
 	}
 	html.push('>');
@@ -83,14 +83,14 @@ function get_open_tag_html(tag) {
  * @return {Object} Cloned tag
  */
 function clone_open_tag(tag) {
-	const newTag = {
+	const new_tag = {
 		name: tag.name,
 		attributes: {}
 	};
 	for (const attr in tag.attributes) {
-		newTag.attributes[attr] = tag.attributes[attr];
+		new_tag.attributes[attr] = tag.attributes[attr];
 	}
-	return newTag;
+	return new_tag;
 }
 
 /**
@@ -101,7 +101,7 @@ function clone_open_tag(tag) {
  * @return {string} Html representation of close tag
  */
 function get_close_tag_html(tag) {
-	if (tag.isSelfClosing) {
+	if (tag.is_self_closing) {
 		return '';
 	}
 	return '</' + esc(tag.name) + '>';
@@ -111,29 +111,29 @@ function get_close_tag_html(tag) {
  * Represent an inline tag as a single XML attribute, for debugging purposes
  *
  * @private
- * @param {Object[]} tagArray SAX open tags
+ * @param {Object[]} tag_array SAX open tags
  * @return {string[]} Tag names
  */
-function dump_tags(tagArray) {
-	const tagDumps = [];
+function dump_tags(tag_array) {
+	const tag_dumps = [];
 
-	if (!tagArray) {
+	if (!tag_array) {
 		return '';
 	}
-	for (let i = 0, len = tagArray.length; i < len; i++) {
-		const tag = tagArray[i];
-		const attrDumps = [];
+	for (let i = 0, len = tag_array.length; i < len; i++) {
+		const tag = tag_array[i];
+		const attr_dumps = [];
 		for (const attr in tag.attributes) {
-			attrDumps.push(attr + '=' + esc_attr(tag.attributes[attr]));
+			attr_dumps.push(attr + '=' + esc_attr(tag.attributes[attr]));
 		}
-		tagDumps.push(
-			tag.name + (attrDumps.length ? ':' : '') + attrDumps.join(',')
+		tag_dumps.push(
+			tag.name + (attr_dumps.length ? ':' : '') + attr_dumps.join(',')
 		);
 	}
-	if (!tagDumps) {
+	if (!tag_dumps) {
 		return '';
 	}
-	return tagDumps.join(' ');
+	return tag_dumps.join(' ');
 }
 
 /**
@@ -178,13 +178,13 @@ function is_gallery(tag) {
 	return (tag.name === 'ul') && tag.attributes.typeof === 'mw:Extension/gallery';
 }
 
-function isReferenceList(tag) {
+function is_reference_list(tag) {
 	// See https://www.mediawiki.org/wiki/Specs/HTML/2.1.0/Extensions/Cite#Auto-generated_references_blocks
 	return tag.name === 'div' && tag.attributes.typeof === 'mw:Extension/references' && tag.attributes['data-mw'];
 }
 
 /**
- * If a tag is MediaWiki external link or not.
+ * If a tag is Media_wiki external link or not.
  *
  * @param {Object} tag SAX open tag object
  * @return {boolean} Whether the tag is a external link or not.
@@ -192,11 +192,11 @@ function isReferenceList(tag) {
 function is_external_link(tag) {
 	return tag.name === 'a' && tag.attributes &&
 		tag.attributes.rel &&
-		// We add the spaces before and after to ensure matching on the "word" mw:ExtLink
+		// We add the spaces before and after to ensure matching on the "word" mw:Ext_link
 		// without additional content. This is technically not necessary (we don't generate
-		// mw:ExtLinkSomethingElse) nor entirely correct (attributes values could be separated by other
+		// mw:Ext_link_something_else) nor entirely correct (attributes values could be separated by other
 		// characters than 0x20), but provides a bit of future-proofing.
-		(' ' + tag.attributes.rel + ' ').includes(' mw:ExtLink ');
+		(' ' + tag.attributes.rel + ' ').includes(' mw:Ext_link ');
 }
 
 /**
@@ -221,8 +221,8 @@ function is_transclusion(tag) {
 }
 
 function is_transclusion_fragment(tag) {
-	return cxutil.getProp(['attributes', 'about'], tag) &&
-		!cxutil.getProp(['attributes', 'data-mw'], tag);
+	return cxutil.get_prop(['attributes', 'about'], tag) &&
+		!cxutil.get_prop(['attributes', 'data-mw'], tag);
 }
 
 /**
@@ -232,17 +232,17 @@ function is_transclusion_fragment(tag) {
  * @return {boolean} Whether the tag is a segment or not
  */
 function is_non_translatable(tag) {
-	const nonTranslatableTags = ['style', 'svg', 'script'];
-	const nonTranslatableRdfa = ['mw:Entity', 'mw:Extension/math', 'mw:Extension/references', 'mw:Transclusion'];
+	const non_translatable_tags = ['style', 'svg', 'script'];
+	const non_translatable_rdfa = ['mw:Entity', 'mw:Extension/math', 'mw:Extension/references', 'mw:Transclusion'];
 
-	const matchRdfaTypes = (source, target) => source.some((r) => target.includes(r));
+	const match_rdfa_types = (source, target) => source.some((r) => target.includes(r));
 	const rel = tag.attributes && tag.attributes.rel;
-	const typeOfAttr = tag.attributes && tag.attributes.typeof;
+	const type_of_attr = tag.attributes && tag.attributes.typeof;
 
-	return nonTranslatableTags.includes(tag.name) ||
+	return non_translatable_tags.includes(tag.name) ||
 		(tag.attributes && (
-			matchRdfaTypes(nonTranslatableRdfa,
-				[...(rel ? rel.split(/\s/) : []), ...(typeOfAttr ? typeOfAttr.split(/\s/) : [])]))
+			match_rdfa_types(non_translatable_rdfa,
+				[...(rel ? rel.split(/\s/) : []), ...(type_of_attr ? type_of_attr.split(/\s/) : [])]))
 		);
 }
 
@@ -256,8 +256,8 @@ function is_non_translatable(tag) {
 function is_inline_empty_tag(tag_name) {
 	// link/meta as they're allowed anywhere in HTML5+RDFa, and must be treated as void
 	// flow content. See http://www.w3.org/TR/rdfa-in-html/#extensions-to-the-html5-syntax
-	const inlineEmptyTags = ['br', 'img', 'source', 'track', 'link', 'meta'];
-	return inlineEmptyTags.includes(tag_name);
+	const inline_empty_tags = ['br', 'img', 'source', 'track', 'link', 'meta'];
+	return inline_empty_tags.includes(tag_name);
 }
 
 /**
@@ -269,38 +269,38 @@ function is_inline_empty_tag(tag_name) {
  *
  * @param {number[]} boundaries Boundary offsets
  * @param {Object[]} chunks Chunks to which the boundaries apply
- * @param {Function} getLength Function returning the length of a chunk
+ * @param {Function} get_length Function returning the length of a chunk
  * @return {Object[]} Array of {chunk: ch, boundaries: [...]}
  */
-function get_chunk_boundary_groups(boundaries, chunks, getLength) {
+function get_chunk_boundary_groups(boundaries, chunks, get_length) {
 	const groups = [];
 	let offset = 0,
-		boundaryPtr = 0;
+		boundary_ptr = 0;
 
 	// Get boundaries in order, disregarding the start of the first chunk
 	boundaries = boundaries.slice();
 	boundaries.sort((a, b) => a - b);
-	while (boundaries[boundaryPtr] === 0) {
-		boundaryPtr++;
+	while (boundaries[boundary_ptr] === 0) {
+		boundary_ptr++;
 	}
 	for (let i = 0, len = chunks.length; i < len; i++) {
-		const groupBoundaries = [];
+		const group_boundaries = [];
 		const chunk = chunks[i];
-		const chunkLength = getLength(chunk);
+		const chunk_length = get_length(chunk);
 		while (true) {
-			const boundary = boundaries[boundaryPtr];
-			if (boundary === undefined || boundary > offset + chunkLength - 1) {
+			const boundary = boundaries[boundary_ptr];
+			if (boundary === undefined || boundary > offset + chunk_length - 1) {
 				// beyond the interior of this chunk
 				break;
 			}
 			// inside the interior of this chunk
-			groupBoundaries.push(boundary);
-			boundaryPtr++;
+			group_boundaries.push(boundary);
+			boundary_ptr++;
 		}
-		offset += chunkLength;
+		offset += chunk_length;
 		groups.push({
 			chunk: chunk,
-			boundaries: groupBoundaries
+			boundaries: group_boundaries
 		});
 		// Continue even if past boundaries: need to add remaining chunks
 	}
@@ -320,34 +320,34 @@ function add_common_tag(text_chunks, tag) {
 		return [];
 	}
 	// Find length of common tags
-	const commonTags = text_chunks[0].tags.slice();
-	for (let i = 1, iLen = text_chunks.length; i < iLen; i++) {
+	const common_tags = text_chunks[0].tags.slice();
+	for (let i = 1, i_len = text_chunks.length; i < i_len; i++) {
 		const tags = text_chunks[i].tags;
-		let j, jLen;
-		for (j = 0, jLen = Math.min(commonTags.length, tags.length); j < jLen; j++) {
-			if (commonTags[j] !== tags[j]) {
+		let j, j_len;
+		for (j = 0, j_len = Math.min(common_tags.length, tags.length); j < j_len; j++) {
+			if (common_tags[j] !== tags[j]) {
 				break;
 			}
 		}
-		if (commonTags.length > j) {
+		if (common_tags.length > j) {
 			// truncate to matched length
-			commonTags.length = j;
+			common_tags.length = j;
 		}
 	}
-	const commonTagLength = commonTags.length;
+	const common_tag_length = common_tags.length;
 	// Build new chunks with segment span inserted
-	const newTextChunks = [];
-	for (let i = 0, iLen = text_chunks.length; i < iLen; i++) {
+	const new_text_chunks = [];
+	for (let i = 0, i_len = text_chunks.length; i < i_len; i++) {
 		const text_chunk = text_chunks[i];
-		const newTags = text_chunk.tags.slice();
-		newTags.splice(commonTagLength, 0, tag);
-		newTextChunks.push(new TextChunk(
+		const new_tags = text_chunk.tags.slice();
+		new_tags.splice(common_tag_length, 0, tag);
+		new_text_chunks.push(new Text_chunk(
 			text_chunk.text,
-			newTags,
+			new_tags,
 			text_chunk.inline_content
 		));
 	}
-	return newTextChunks;
+	return new_text_chunks;
 }
 
 /**
@@ -355,27 +355,27 @@ function add_common_tag(text_chunks, tag) {
  *
  * @private
  * @param {text_chunk[]} text_chunks Consecutive text chunks
- * @param {Function} getNextId function accepting 'link' and returning next ID
+ * @param {Function} get_next_id function accepting 'link' and returning next ID
  */
-function set_link_ids_in_place(text_chunks, getNextId) {
-	for (let i = 0, iLen = text_chunks.length; i < iLen; i++) {
+function set_link_ids_in_place(text_chunks, get_next_id) {
+	for (let i = 0, i_len = text_chunks.length; i < i_len; i++) {
 		const tags = text_chunks[i].tags;
-		for (let j = 0, jLen = tags.length; j < jLen; j++) {
+		for (let j = 0, j_len = tags.length; j < j_len; j++) {
 			const tag = tags[j];
 			if (
 				tag.name === 'a' &&
 				tag.attributes.href !== undefined &&
 				tag.attributes.rel &&
-				// We add the spaces before and after to ensure matching on the "word" mw:WikiLink
-				// without additional content to avoid matching on mw:WikiLink/Interwiki and mw:WikiLink/ISBN.
-				(' ' + tag.attributes.rel + ' ').includes(' mw:WikiLink ') &&
+				// We add the spaces before and after to ensure matching on the "word" mw:Wiki_link
+				// without additional content to avoid matching on mw:Wiki_link/Interwiki and mw:Wiki_link/ISBN.
+				(' ' + tag.attributes.rel + ' ').includes(' mw:Wiki_link ') &&
 				tag.attributes['data-linkid'] === undefined
 			) {
 				// Hack: copy href, then remove it, then re-add it, so that
 				// attributes appear in alphabetical order (ugh)
 				var href = tag.attributes.href;
 				// split href before ?
-				if (href.indexOf('?') !== -1) {
+				if (href.index_of('?') !== -1) {
 					href = href.split('?')[0];
 				}
 
@@ -385,7 +385,7 @@ function set_link_ids_in_place(text_chunks, getNextId) {
 				// tag.attributes.class = [ tag.attributes.class, 'cx-link' ].join( ' ' ).trim();
 				tag.attributes.class = "cx-link";
 
-				tag.attributes['data-linkid'] = getNextId('link');
+				tag.attributes['data-linkid'] = get_next_id('link');
 				tag.attributes.href = href;
 			}
 		}
@@ -396,42 +396,42 @@ function set_link_ids_in_place(text_chunks, getNextId) {
  * Check if the passed document is a section containing block level template or reference list
  * so that we can ignore from passing to MT engines
  *
- * @param {Doc} sectionDoc
+ * @param {Doc} section_doc
  * @return {boolean}
  */
-function is_ignorable_block(sectionDoc) {
+function is_ignorable_block(section_doc) {
 	let ignorable = false;
-	const blockStack = [];
-	let firstBlockTemplate = null;
+	const block_stack = [];
+	let first_block_template = null;
 	// We start with index 1 since the first tag will be <section>.
-	for (let i = 1, len = sectionDoc.items.length; i < len; i++) {
-		const item = sectionDoc.items[i];
+	for (let i = 1, len = section_doc.items.length; i < len; i++) {
+		const item = section_doc.items[i];
 		const tag = item.item;
 		const type = item.type;
 
 		if (type === 'open') {
-			blockStack.push(tag);
-			if (!firstBlockTemplate && (is_transclusion(tag) || isReferenceList(tag))) {
-				firstBlockTemplate = tag;
+			block_stack.push(tag);
+			if (!first_block_template && (is_transclusion(tag) || is_reference_list(tag))) {
+				first_block_template = tag;
 			}
 		}
 		if (type === 'close') {
-			const currentCloseTag = blockStack.pop();
-			if (currentCloseTag &&
-				blockStack.length === 0 &&
-				((is_transclusion(currentCloseTag) &&
-					currentCloseTag.attributes.about === firstBlockTemplate.attributes.about) ||
-					isReferenceList(currentCloseTag))
+			const current_close_tag = block_stack.pop();
+			if (current_close_tag &&
+				block_stack.length === 0 &&
+				((is_transclusion(current_close_tag) &&
+					current_close_tag.attributes.about === first_block_template.attributes.about) ||
+					is_reference_list(current_close_tag))
 			) {
 				return true;
 			}
 		}
 
 		// Also check for textblocks
-		if (!firstBlockTemplate && item.type === 'textblock') {
-			const rootItem = item.item.getRootItem();
-			if (rootItem && is_non_translatable(rootItem)) {
-				firstBlockTemplate = rootItem;
+		if (!first_block_template && item.type === 'textblock') {
+			const root_item = item.item.get_root_item();
+			if (root_item && is_non_translatable(root_item)) {
+				first_block_template = root_item;
 				// Textblock is a transclusion. Do not translate.
 				// But do not return yet. Check if there is any other textblocks translatable
 				ignorable = true;
@@ -447,29 +447,29 @@ function is_ignorable_block(sectionDoc) {
 export {
 	add_common_tag,
 	clone_open_tag,
-	clone_open_tag as cloneOpenTag,
+	clone_open_tag as clone_open_tag,
 	dump_tags,
 	esc,
 	find_all,
 	get_chunk_boundary_groups,
 	get_close_tag_html,
-	get_close_tag_html as getCloseTagHtml,
+	get_close_tag_html as get_close_tag_html,
 	get_open_tag_html,
-	get_open_tag_html as getOpenTagHtml,
+	get_open_tag_html as get_open_tag_html,
 	is_ignorable_block,
 	is_external_link,
 	is_gallery,
 	is_inline_empty_tag,
-	is_inline_empty_tag as isInlineEmptyTag,
+	is_inline_empty_tag as is_inline_empty_tag,
 	is_math,
 	is_reference,
-	is_reference as isReference,
+	is_reference as is_reference,
 	is_segment,
-	is_segment as isSegment,
+	is_segment as is_segment,
 	is_transclusion,
-	is_transclusion as isTransclusion,
+	is_transclusion as is_transclusion,
 	is_transclusion_fragment,
 	is_non_translatable,
-	is_non_translatable as isNonTranslatable,
+	is_non_translatable as is_non_translatable,
 	set_link_ids_in_place
 };

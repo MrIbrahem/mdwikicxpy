@@ -1,19 +1,19 @@
 var express = require("express");
 var cors = require('cors');
-var bodyParser = require('body-parser');
+var body_parser = require('body-parser');
 var u = require('./lib/d/u.js');
 
 var app = express();
 
 app.use(cors())
 
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
+app.use(body_parser.json({ limit: '50mb' }));
+app.use(body_parser.urlencoded({ limit: '50mb', extended: false }));
 
 app.post("/textp", (req, res) => {
-	const sourceHtml = req.body.html;
+	const source_html = req.body.html;
 
-	if (!sourceHtml || sourceHtml.trim().length === 0) {
+	if (!source_html || source_html.trim().length === 0) {
 		res.send({
 			result: 'Content for translate is not given or is empty'
 		});
@@ -21,8 +21,8 @@ app.post("/textp", (req, res) => {
 		return;
 	}
 	try {
-		const processedText = u.tet(sourceHtml);
-		res.send({ result: processedText });
+		const processed_text = u.tet(source_html);
+		res.send({ result: processed_text });
 	} catch (error) {
 		console.error(error);
 		res.send({
@@ -30,7 +30,7 @@ app.post("/textp", (req, res) => {
 		});
 		res.status(500).end();
 	}
-	// res.send(processedText);
+	// res.send(processed_text);
 
 });
 

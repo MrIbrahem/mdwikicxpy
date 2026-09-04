@@ -9,13 +9,12 @@ import { get_close_tag_html, get_open_tag_html } from './Utils.js';
  * @return {string} Escaped version of the string
  */
 function esc(str) {
-	return str.replace(/[&<>]/g, (ch) => '&#' + ch.charCodeAt(0) + ';');
+	return str.replace(/[&<>]/g, (ch) => '&#' + ch.char_code_at(0) + ';');
 }
 
 /**
  * Parser to normalize XML.
  *
- * @class
  * @constructor
  */
 class Normalizer extends sax.SAXParser {
@@ -49,10 +48,6 @@ class Normalizer extends sax.SAXParser {
 
 	get_html() {
 		return this.doc.join('');
-	}
-
-	getHtml() {
-		return this.get_html();
 	}
 
 }

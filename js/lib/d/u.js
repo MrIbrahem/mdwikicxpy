@@ -1,17 +1,17 @@
 'use strict';
 
-const LinearDoc = require('../lineardoc')
+const Linear_doc = require('../lineardoc')
 
 const fs = require('fs'),
 	yaml = require('js-yaml'),
 	CXSegmenter = require('../segmentation/CXSegmenter');
 
-const pageloaderConfig = yaml.load(fs.readFileSync(__dirname + '/MWPageLoader.yaml'));
+const pageloader_config = yaml.load(fs.read_file_sync(__dirname + '/MWPage_loader.yaml'));
 
-const removableSections = pageloaderConfig.removableSections;
+const removable_sections = pageloader_config.removable_sections;
 
 function normalize(html) {
-	const normalizer = new LinearDoc.Normalizer();
+	const normalizer = new Linear_doc.Normalizer();
 	normalizer.init();
 	normalizer.write(html.replace(/[\t\r\n]+/g, ''));
 	return normalizer.get_html();
@@ -19,20 +19,20 @@ function normalize(html) {
 
 function tet(source_HTML) {
 
-	const parser = new LinearDoc.Parser(new LinearDoc.MwContextualizer(
-		{ removableSections: removableSections }
+	const parser = new Linear_doc.Parser(new Linear_doc.Mw_contextualizer(
+		{ removable_sections: removable_sections }
 	), {
-		wrapSections: true
+		wrap_sections: true
 	});
 
 	parser.init();
 	parser.write(source_HTML);
-	let parsedDoc = parser.builder.doc;
-	parsedDoc = parsedDoc.wrapSections();
+	let parsed_doc = parser.builder.doc;
+	parsed_doc = parsed_doc.wrap_sections();
 
-	const segmentedDoc = new CXSegmenter().segment(parsedDoc, "en");
+	const segmented_doc = new CXSegmenter().segment(parsed_doc, "en");
 
-	const result = segmentedDoc.get_html();
+	const result = segmented_doc.get_html();
 
 	return result;
 }
