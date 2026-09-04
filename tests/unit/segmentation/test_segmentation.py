@@ -54,6 +54,9 @@ def test_cx_segmenter(lang, test_case):
         expected_text = f.read()
 
     # expected
-    expected_result_data = normalize(expected_text)
+    expected_result_data = expected_text
+    # expected_result_data = segmenter.segment(get_parsed_doc(expected_text), lang).get_html()
+
+    expected_result_data = normalize(expected_result_data)
 
     assert normalized_result == expected_result_data, f"{test_case['source']}: {test_case['desc'] or ''}"

@@ -74,7 +74,7 @@ class TestContextualizer:
         assert len(ctx.contexts) == 0
 
 
-class Testmw_contextualizer:
+class TestMwContextualizer:
     """Test mw_contextualizer class."""
 
     def test_mw_contextualizer_creation(self):

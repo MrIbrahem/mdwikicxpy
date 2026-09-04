@@ -11,7 +11,6 @@ converted from the LinearDoc javascript library of the Wikimedia Content transla
 https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineardoc/TextChunk.js
 """
 
-
 from __future__ import annotations
 
 from typing import Any
