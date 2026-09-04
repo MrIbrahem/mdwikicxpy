@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 from python.lib.lineardoc import Doc, MwContextualizer, Parser
-from python.lib.segmentation import CXSegmenter
 from python.lib.processor import normalize
+from python.lib.segmentation import CXSegmenter
 
 cx_segmenter_tests_path = Path(__file__).parent / "SegmentationTests.json"
 
@@ -23,6 +23,7 @@ def get_parsed_doc(content) -> Doc:
     parser.write(content.strip())
     parsed_doc = parser.builder.doc
     return parsed_doc
+
 
 test_params = [(lang, test_case) for lang, cases in alltests.items() for test_case in cases]
 

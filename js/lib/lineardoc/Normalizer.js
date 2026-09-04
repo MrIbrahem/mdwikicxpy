@@ -15,7 +15,6 @@ function esc(str) {
 /**
  * Parser to normalize XML.
  *
- * @class
  * @constructor
  */
 class Normalizer extends sax.SAXParser {
@@ -49,10 +48,6 @@ class Normalizer extends sax.SAXParser {
 
 	get_html() {
 		return this.doc.join('');
-	}
-
-	get_html() {
-		return this.get_html();
 	}
 
 }

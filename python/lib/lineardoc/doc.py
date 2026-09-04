@@ -14,9 +14,9 @@ https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineard
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 import hashlib
 from collections.abc import Callable
+from dataclasses import dataclass, field
 from typing import Any, Literal
 
 from . import util as cxutil
@@ -25,6 +25,7 @@ from .text_block import TextBlock
 
 ITEM_TYPES = Literal["open", "close", "blockspace", "textblock"]
 ITEM_OBJECT_TYPES = dict[str, Any] | TextBlock | str
+
 
 @dataclass
 class Item:
@@ -50,13 +51,13 @@ class Item:
     def from_any(cls, item_type: ITEM_TYPES, obj: ITEM_OBJECT_TYPES | Any) -> Item:
         result = cls(item_type=item_type, item=obj)
         if isinstance(obj, TextBlock):
-            result.item_text_block=obj
+            result.item_text_block = obj
 
         elif isinstance(obj, dict):
-            result.item_dict=obj
+            result.item_dict = obj
 
         elif isinstance(obj, str):
-            result.item_str=obj
+            result.item_str = obj
         else:
             raise TypeError(f"Invalid type for Item: {type(obj)}")
 
@@ -381,7 +382,7 @@ class Doc:
                 if not tag_for_id and not curr_section:
                     new_item = new_doc.get_current_item()
                     # Textblock with no tag identifier. Add it to the previous section
-                    if prev_section and new_item and new_item["item"]["name"] == 'section':
+                    if prev_section and new_item and new_item["item"]["name"] == "section":
                         insert_to_prev_section(item, new_doc)
                         continue
 

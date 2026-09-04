@@ -1,5 +1,5 @@
 """
-text_block - A block of annotated inline text.
+Functions for working with text chunks in the LinearDoc library.
 
 converted from the LinearDoc javascript library of the Wikimedia Content translation project
 
@@ -14,6 +14,257 @@ from typing import Any
 
 from . import utils
 from .text_chunk import TextChunk
+
+# Placeholder characters used when a text block is flattened to a plain
+# string. These are Unicode noncharacters (U+FDD0 and U+FDD1), guaranteed
+# absent from interchanged text.
+REF_CHAR = "\ufdd0"
+INLINE_CHAR = "\ufdd1"
+
+
+def is_reference_chunk(chunk: TextChunk) -> bool:
+    """
+    Whether the text chunk represents a reference marker.
+
+    Args:
+        chunk: The text chunk to check
+
+    Returns:
+        True if reference marker, False otherwise
+    """
+    inline = chunk.inline_content
+    if inline and getattr(inline, "wrapper_tag", None):
+        wrapper_tag = inline.wrapper_tag
+        if getattr(wrapper_tag, "attributes", None) and utils.is_reference(wrapper_tag):
+            return True
+
+    return any(tag.get("attributes") and utils.is_reference(tag) for tag in chunk.tags)
+
+
+def to_char_items(chunks: list[TextChunk]) -> list[dict[str, Any]]:
+    """
+    Flatten chunks into one item per string position. Reference markers and
+    other inline content become a single placeholder item; text chunks
+    contribute one item per code unit, each remembering its source chunk.
+    The concatenated chars form the plain text of the block, so rules matched
+    against it do not depend on how the text is split into chunks.
+
+    Args:
+        chunks: list[TextChunk] List of TextChunk objects
+
+    Returns:
+        List of item dicts of shape { "char": str, "chunk": TextChunk, "atomic": bool }
+    """
+    items = []
+    for chunk in chunks:
+        if is_reference_chunk(chunk):
+            items.append({"char": REF_CHAR, "chunk": chunk, "atomic": True})
+        elif chunk.inline_content:
+            items.append({"char": INLINE_CHAR, "chunk": chunk, "atomic": True})
+        else:
+            for char in chunk.text:
+                items.append({"char": char, "chunk": chunk, "atomic": False})
+    return items
+
+
+def to_chunks(items: list[dict[str, Any]]) -> list[TextChunk]:
+    """
+    Rebuild a chunk list from (reordered) flattened items. Atomic items emit
+    their original chunk; consecutive characters from the same source chunk
+    merge back into a single chunk. Source tags arrays are reused by
+    reference, which keeps the serialized markup of untouched regions
+    byte-identical.
+
+    Args:
+        items: list[dict] Items produced by to_char_items
+
+    Returns:
+        list[TextChunk] New chunk list
+    """
+    chunks = []
+    text = ""
+    source = None
+
+    def flush():
+        nonlocal text, source
+        if text != "":
+            tags = getattr(source, "tags", [])
+            chunks.append(TextChunk(text, tags))
+            text = ""
+
+    for item in items:
+        if item.get("atomic"):
+            flush()
+            source = None
+            chunks.append(item["chunk"])
+        elif item["chunk"] is source:
+            text += item["char"]
+        else:
+            flush()
+            source = item["chunk"]
+            text = item["char"]
+
+    flush()
+    return chunks
+
+
+def escape_for_char_class(char: str) -> str:
+    """
+    Escape a character for use inside a regex character class.
+
+    Args:
+        char: Character to escape
+
+    Returns:
+        Escaped character string
+    """
+    return re.sub(r"[\\\]^-]", r"\\\g<0>", char)
+
+
+def move_punctuation_across_references(chunks: list[TextChunk], policy: str, punctuation: list[str]) -> list[TextChunk]:
+    """
+    Move sentence punctuation across reference runs to the side preferred by
+    the target language. The block is flattened to a plain string in which
+    every reference marker is a single placeholder character, so the rule is
+    one regex over the visible text, independent of chunk boundaries. The
+    whitespace that separated the word, punctuation and references is dropped
+    so that the three stay glued together; whitespace between the references
+    of a run is preserved.
+
+    Args:
+        chunks: list[TextChunk] List of text chunks
+        policy: 'before' or 'after'
+        punctuation: list[str] Punctuation marks to reposition around
+
+    Returns:
+        list[TextChunk] New chunk list
+    """
+    items = to_char_items(chunks)
+    text = "".join(item["char"] for item in items)
+    punct = "([" + "".join(escape_for_char_class(p) for p in punctuation) + "])"
+    # run = f"({re.escape(REF_CHAR)}(?:\\s*{re.escape(REF_CHAR)})*)"
+    run = f"({REF_CHAR}(?:\\s*{REF_CHAR})*)"
+    if policy == "before":
+        pattern = re.compile(f"{punct}\\s*{run}")
+    else:
+        pattern = re.compile(f"\\s*{run}\\s*{punct}")
+
+    reordered = []
+    position = 0
+
+    for match in pattern.finditer(text):
+        if policy == "before":
+            run_start, run_end = match.span(2)
+        else:
+            run_start, run_end = match.span(1)
+        run_items = items[run_start:run_end]
+
+        # The moved punctuation inherits the reference tags (e.g. the segment
+        # span) so it stays inside the same markup as the reference run.
+        punct_char = match.group(1) if policy == "before" else match.group(2)
+        punct_item = {
+            "char": punct_char,
+            "chunk": TextChunk("", run_items[-1]["chunk"].tags),
+        }
+
+        reordered.extend(items[position : match.start()])
+        if policy == "before":
+            reordered.extend(run_items)
+            reordered.append(punct_item)
+        else:
+            reordered.append(punct_item)
+            reordered.extend(run_items)
+
+        position = match.end()
+
+    reordered.extend(items[position:])
+    return to_chunks(reordered)
+
+
+def get_chunk_about_values(chunk: TextChunk) -> list[str]:
+    """
+    Get the values of the "about" attribute of a text chunk.
+
+    The values come from the annotation tags of the chunk and from its
+    inline content. Inline content is not always a tag: for references it
+    is a sub-document with no attributes property. Read attributes only
+    when they are present.
+
+    Args:
+        chunk: The text chunk to process
+
+    Returns:
+        list[str] The about values; can be empty
+    """
+    values = []
+    for tag in chunk.tags:
+        attributes = tag.get("attributes") if isinstance(tag, dict) else getattr(tag, "attributes", None)
+        if attributes and isinstance(attributes, dict) and "about" in attributes:
+            values.append(attributes["about"])
+
+    inline = chunk.inline_content
+    if inline:
+        attributes = inline.get("attributes") if isinstance(inline, dict) else getattr(inline, "attributes", None)
+        if attributes and isinstance(attributes, dict) and "about" in attributes:
+            values.append(attributes["about"])
+
+    return values
+
+
+def suppress_about_group_boundaries(boundaries: list[int], text_chunks: list[TextChunk]) -> list[int]:
+    """
+    Remove sentence boundaries that fall inside a transclusion about-group.
+
+    Parsoid puts an inline transclusion into sibling elements that share one
+    "about" attribute. These siblings must stay together. A sentence boundary
+    between them would put the fragments into different segments and thus
+    into different parent elements (T213262). A boundary is inside a group
+    when the chunks on the two sides of it share an about value. The run
+    before the boundary includes zero-width chunks, such as category links.
+
+    Args:
+        boundaries: list[int] Sentence boundary offsets
+        text_chunks: list[TextChunk] The chunks of the text block
+
+    Returns:
+        list[int] The boundaries that do not break an about-group
+    """
+    starts = []
+    offset = 0
+    for chunk in text_chunks:
+        starts.append(offset)
+        offset += len(chunk.text)
+
+    def keep(boundary):
+        # Find the first chunk with content at or after the boundary.
+        # Zero-width chunks at the boundary belong to the run before it.
+        i = 0
+        length = len(text_chunks)
+        while i < length and starts[i] + len(text_chunks[i].text) <= boundary:
+            i += 1
+        if i == length:
+            return True
+
+        after_abouts = get_chunk_about_values(text_chunks[i])
+        if len(after_abouts) == 0:
+            return True
+
+        if starts[i] < boundary:
+            # The boundary is in the interior of a chunk that carries an
+            # about value: the two sides share it.
+            return False
+
+        before_abouts = []
+        j = i - 1
+        while j >= 0:
+            before_abouts.extend(get_chunk_about_values(text_chunks[j]))
+            if len(text_chunks[j].text) > 0:
+                break
+            j -= 1
+
+        return not any(about in before_abouts for about in after_abouts)
+
+    return [b for b in boundaries if keep(b)]
 
 
 class TextBlock:
@@ -178,7 +429,6 @@ class TextBlock:
 
         # Get trailing text and trailing whitespace
         tail = target_text[pos:]
-        import re
 
         tail_space_match = re.search(r"\s*$", tail)
         tail_space = tail_space_match.group(0) if tail_space_match else ""
@@ -327,8 +577,9 @@ class TextBlock:
             return self
 
         # for each chunk, split at any boundaries that occur inside the chunk
+        valid_boundaries = suppress_about_group_boundaries(get_boundaries(self.get_plain_text()), self.text_chunks)
         groups = utils.get_chunk_boundary_groups(
-            get_boundaries(self.get_plain_text()),
+            valid_boundaries,
             self.text_chunks,
             lambda t_chunk: len(t_chunk.text),
         )
@@ -404,4 +655,11 @@ class TextBlock:
 
 __all__ = [
     "TextBlock",
+    "is_reference_chunk",
+    "to_char_items",
+    "to_chunks",
+    "escape_for_char_class",
+    "move_punctuation_across_references",
+    "get_chunk_about_values",
+    "suppress_about_group_boundaries",
 ]

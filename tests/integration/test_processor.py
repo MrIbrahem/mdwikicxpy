@@ -1,19 +1,21 @@
 """
 Unit tests for processor.py module.
 """
+
 import re
+
 from python.lib.processor import normalize, process_html
 
 
 def normalize_test(html: str) -> str:
-    """
-    """
+    """ """
     html = html.strip()
     # Remove tabs, carriage returns, and newlines
     html = re.sub(r"[\t\r\n]+", "", html)
     html = re.sub(r"\s+", " ", html)
     html = re.sub(r">\s+<", "><", html)
     return html
+
 
 class TestNormalizeFunction:
     """Test normalize function."""
@@ -34,14 +36,14 @@ class TestNormalizeFunction:
         assert "\n" not in result
         assert "\t" not in result
         assert "\r" not in result
-        assert result == '<html><body><div>test</div></body></html>'
+        assert result == "<html><body><div>test</div></body></html>"
 
     def test_normalize_preserves_content(self):
         """Test that normalize preserves content."""
         html = "<p>Hello world</p>"
         result = normalize(html)
         assert "Hello world" in result
-        assert result == '<html><body><p>Hello world</p></body></html>'
+        assert result == "<html><body><p>Hello world</p></body></html>"
 
     def test_normalize_with_attributes(self):
         """Test normalizing with attributes."""
@@ -62,7 +64,8 @@ class TestProcessHtml:
         assert isinstance(result, str)
         assert len(result) > 0
 
-        assert normalize_test(result) == normalize_test('''
+        assert normalize_test(result) == normalize_test(
+            """
         <html id="0">
             <body id="1">
                 <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
@@ -70,7 +73,8 @@ class TestProcessHtml:
                 </section>
             </body>
         </html>
-        ''')
+        """
+        )
 
     def test_process_html_creates_sections(self):
         """Test that processing creates sections."""
@@ -80,7 +84,8 @@ class TestProcessHtml:
         assert "<section" in result
         assert 'rel="cx:Section"' in result
 
-        assert normalize_test(result) == normalize_test('''
+        assert normalize_test(result) == normalize_test(
+            """
         <html id="0">
             <body id="1">
                 <section data-mw-section-number="1" id="cxSourceSection0" rel="cx:Section">
@@ -91,13 +96,16 @@ class TestProcessHtml:
                 </section>
             </body>
         </html>
-        ''')
+        """
+        )
+
     def test_process_html_creates_segments(self):
         """Test that processing creates segments."""
         html = "<p>First sentence. Second sentence.</p>"
         result = process_html(html)
 
-        assert normalize_test(result) == normalize_test('''
+        assert normalize_test(result) == normalize_test(
+            """
         <html id="0">
             <body id="1">
                 <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
@@ -106,7 +114,8 @@ class TestProcessHtml:
                 </section>
             </body>
         </html>
-        ''')
+        """
+        )
         assert "cx-segment" in result
         assert "data-segmentid" in result
 
@@ -116,7 +125,8 @@ class TestProcessHtml:
         result = process_html(html)
         assert "link" in result
 
-        assert normalize_test(result) == normalize_test('''
+        assert normalize_test(result) == normalize_test(
+            """
         <html id="0">
             <body id="1">
                 <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
@@ -124,13 +134,15 @@ class TestProcessHtml:
                 </section>
             </body>
         </html>
-        ''')
+        """
+        )
+
     def test_process_html_empty_input(self):
         """Test processing empty input."""
         result = process_html("")
         # Should handle empty input gracefully
         assert isinstance(result, str)
-        assert result == ''
+        assert result == ""
 
     def test_process_html_with_figure(self):
         """Test processing HTML with figure."""
@@ -138,7 +150,8 @@ class TestProcessHtml:
         result = process_html(html)
         assert "cx:Figure" in result
 
-        assert normalize_test(result) == normalize_test('''
+        assert normalize_test(result) == normalize_test(
+            """
             <html id="0">
             <body id="1">
                 <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
@@ -148,13 +161,16 @@ class TestProcessHtml:
                 </section>
             </body>
             </html>
-        ''')
+        """
+        )
+
     def test_process_html_mediawiki_link(self):
         """Test processing MediaWiki link."""
         html = '<p>See <a rel="mw:WikiLink" href="/wiki/Article">article</a>.</p>'
         result = process_html(html)
 
-        assert normalize_test(result) == normalize_test('''
+        assert normalize_test(result) == normalize_test(
+            """
         <html id="0">
             <body id="1">
                 <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
@@ -163,7 +179,8 @@ class TestProcessHtml:
                 </section>
             </body>
         </html>
-        ''')
+        """
+        )
         # Should add link tracking
         assert "data-linkid" in result or "cx-link" in result
 
@@ -176,7 +193,8 @@ class TestProcessHtml:
         """
         result = process_html(html)
 
-        assert normalize_test(result) == normalize_test('''<html id="0">
+        assert normalize_test(result) == normalize_test(
+            """<html id="0">
             <body id="1">
                 <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
                     <p id="2"><span class="cx-segment" data-segmentid="3">First paragraph.</span></p>
@@ -186,7 +204,8 @@ class TestProcessHtml:
             </body>
 
             </html>
-        ''')
+        """
+        )
 
         # Should have multiple segments
         segment_count = result.count("cx-segment")
@@ -197,7 +216,8 @@ class TestProcessHtml:
         html = """<h2>Section 1</h2>\n<p>Content 1</p>\n<h2>Section 2</h2>\n<p>Content 2</p>"""
         result = process_html(html)
 
-        assert normalize_test(result) == normalize_test('''
+        assert normalize_test(result) == normalize_test(
+            """
         <html id="0">
             <body id="1">
                 <section data-mw-section-number="1" id="cxSourceSection0" rel="cx:Section">
@@ -214,7 +234,8 @@ class TestProcessHtml:
                 </section>
             </body>
         </html>
-        ''')
+        """
+        )
 
         # Should create sections
         assert result.count("<section") >= 2
@@ -240,7 +261,8 @@ class TestProcessHtml:
         assert "cx-segment" in result
         assert "<ul" in result or "<li" in result
 
-        assert normalize_test(result) == normalize_test('''
+        assert normalize_test(result) == normalize_test(
+            """
         <html id="0">
             <body id="1">
                 <section data-mw-section-number="1" id="cxSourceSection0" rel="cx:Section">
@@ -264,14 +286,16 @@ class TestProcessHtml:
                 </section>
             </body>
         </html>
-        ''')
+        """
+        )
 
     def test_process_html_unicode(self):
         """Test processing Unicode content."""
         html = "<p>مرحبا العالم. هذا اختبار.</p>"
         result = process_html(html)
 
-        assert normalize_test(result) == normalize_test('''
+        assert normalize_test(result) == normalize_test(
+            """
         <html id="0">
             <body id="1">
                 <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
@@ -280,7 +304,8 @@ class TestProcessHtml:
                 </section>
             </body>
         </html>
-        ''')
+        """
+        )
         # Unicode content should be in output (possibly escaped)
         assert len(result) > len(html)  # Should have added markup
         # Check for presence of Arabic content or escape sequences
@@ -291,7 +316,8 @@ class TestProcessHtml:
         html = "<p>Test &amp; special &lt;chars&gt;.</p>"
         result = process_html(html)
 
-        assert normalize_test(result) == normalize_test('''
+        assert normalize_test(result) == normalize_test(
+            """
         <html id="0">
             <body id="1">
                 <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
@@ -299,7 +325,8 @@ class TestProcessHtml:
                 </section>
             </body>
         </html>
-        ''')
+        """
+        )
         # Should preserve content (may be escaped differently)
         assert len(result) > 0
 
@@ -311,7 +338,8 @@ class TestProcessHtml:
         assert "bold" in result
         assert "italic" in result
 
-        assert normalize_test(result) == normalize_test('''
+        assert normalize_test(result) == normalize_test(
+            """
         <html id="0">
             <body id="1">
                 <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
@@ -320,14 +348,17 @@ class TestProcessHtml:
                 </section>
             </body>
         </html>
-        ''')
+        """
+        )
+
     def test_process_html_blockquote(self):
         """Test processing blockquote."""
         html = "<blockquote><p>Quoted text.</p></blockquote>"
         result = process_html(html)
         assert "Quoted" in result
 
-        assert normalize_test(result) == normalize_test('''
+        assert normalize_test(result) == normalize_test(
+            """
         <html id="0">
             <body id="1">
                 <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
@@ -337,13 +368,16 @@ class TestProcessHtml:
                 </section>
             </body>
         </html>
-        ''')
+        """
+        )
+
     def test_process_html_table(self):
         """Test processing table."""
         html = """ <table><tr><td>Cell 1</td><td>Cell 2</td></tr></table> """
         result = process_html(html)
 
-        assert normalize_test(result) == normalize_test('''
+        assert normalize_test(result) == normalize_test(
+            """
         <html id="0">
             <body id="1">
                 <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
@@ -356,7 +390,8 @@ class TestProcessHtml:
                 </section>
             </body>
         </html>
-        ''')
+        """
+        )
         assert "Cell 1" in result
         assert "Cell 2" in result
 

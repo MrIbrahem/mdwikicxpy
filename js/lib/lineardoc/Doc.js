@@ -23,7 +23,6 @@ import { get_prop } from './../util.js';
  *
  * N.B. 2 can change semantics, e.g. identical adjacent links != single link
  *
- * @class
  */
 class Doc {
 	/**
@@ -38,7 +37,6 @@ class Doc {
 	/**
 	 * Clone the Doc, modifying as we go
 	 *
-	 * @method
 	 * @param {Function} callback The function to modify a node
 	 * @return {Doc} clone with modifications
 	 */
@@ -55,11 +53,9 @@ class Doc {
 	/**
 	 * Add an item to the document
 	 *
-	 * @method
 	 * @param {string} type Type of item: open|close|blockspace|textblock
 	 * @param {Object|string|Text_block} item Open/close tag, space or text block
-	 * @return {Object}
-	 * @chainable
+	 * @return {this}
 	 */
 	add_item(type, item) {
 		this.items.push({ type, item });
@@ -104,7 +100,6 @@ class Doc {
 	/**
 	 * Segment the document into sentences
 	 *
-	 * @method
 	 * @param {Function} get_boundaries Function taking plaintext, returning offset array
 	 * @return {Doc} Segmented version of document TODO: warning: *shallow copied*.
 	 */
@@ -192,7 +187,6 @@ class Doc {
 	/**
 	 * Dump an XML version of the linear representation, for debugging
 	 *
-	 * @method
 	 * @return {string} XML version of the linear representation
 	 */
 	dump_xml() {
@@ -202,7 +196,6 @@ class Doc {
 	/**
 	 * Dump the document in HTML format
 	 *
-	 * @method
 	 * @return {string} HTML document
 	 */
 	get_html() {
@@ -246,7 +239,6 @@ class Doc {
 	 * Wrap the content into sections
 	 * See doc/Section_wrap.md for detailed documentaion.
 	 *
-	 * @method
 	 * @return {string} HTML document
 	 */
 	wrap_sections() {
@@ -389,7 +381,6 @@ class Doc {
 	/**
 	 * Dump an XML Array version of the linear representation, for debugging
 	 *
-	 * @method
 	 * @param {string} pad
 	 * @return {string[]} Array that will concatenate to an XML string representation
 	 */
@@ -438,7 +429,6 @@ class Doc {
 	/**
 	 * Extract the text segments from the document
 	 *
-	 * @method
 	 * @return {string[]} balanced html fragments, one per segment
 	 */
 	get_segments() {
@@ -725,7 +715,6 @@ class Doc {
 	/**
 	 * Recursively adapt all nodes in the document.
 	 *
-	 * @method
 	 * @param {Function} get_adapter Function taking a tag, returning adapted output
 	 * @return {Doc} Adapted version of document TODO: warning: *shallow copied*.
 	 */
@@ -787,6 +776,24 @@ class Doc {
 		}
 
 		return new_doc;
+	}
+
+	/**
+	 * Reposition reference markers relative to sentence punctuation across the
+	 * whole document, according to the target language convention.
+	 *
+	 * @param {Object} options
+	 * @param {string} options.policy 'before' or 'after'
+	 * @param {string[]} options.punctuation Punctuation marks to reposition around
+	 * @return {Doc} This document, with references repositioned
+	 */
+	adapt_reference_punctuation(options) {
+		for (let i = 0, len = this.items.length; i < len; i++) {
+			if (this.items[i].type === 'textblock') {
+				this.items[i].item = this.items[i].item.adapt_reference_punctuation(options);
+			}
+		}
+		return this;
 	}
 }
 

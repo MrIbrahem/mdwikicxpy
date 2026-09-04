@@ -37,7 +37,6 @@ const block_tags = [
 /**
  * Parser to read an HTML stream into a Doc
  *
- * @class
  */
 class Parser extends sax.SAXParser {
 	/**
@@ -59,7 +58,7 @@ class Parser extends sax.SAXParser {
 		this.all_tags = [];
 	}
 
-	onopentag(tag) {
+	on_open_tag(tag) {
 		if (
 			// Check if this tag is a child tag of a removable tag
 			this.contextualizer.get_context() === 'removable' ||
@@ -97,7 +96,7 @@ class Parser extends sax.SAXParser {
 		this.contextualizer.on_open_tag(tag);
 	}
 
-	onclosetag(tag_name) {
+	on_close_tag(tag_name) {
 		const tag = this.all_tags.pop(),
 			is_ann = this.is_inline_annotation_tag(tag_name, _is_transclusion(tag));
 

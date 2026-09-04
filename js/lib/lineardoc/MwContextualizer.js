@@ -7,9 +7,6 @@ const content_branch_node_names = ['blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', '
  *
  * See https://www.mediawiki.org/wiki/Specs/HTML
  *
- * @class
- * @extends Contextualizer
- * @constructor
  */
 class Mw_contextualizer extends Contextualizer {
 	/**
@@ -126,7 +123,7 @@ class Mw_contextualizer extends Contextualizer {
 		let mw_data = {};
 		try {
 			mw_data = JSON.parse(dataMW);
-		} catch (e) {
+		} catch {
 			return false;
 		}
 		const template_name = get_prop(['parts', 0, 'template', 'target', 'wt'], mw_data);
