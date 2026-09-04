@@ -170,11 +170,11 @@ class Doc:
                 tag = utils.clone_open_tag(item.item_dict)
 
                 if tag.get("attributes", {}).get("id"):
-					# If the item is a header, we make it a fixed length id using hash of
-					# the text content. Header ids are originally the header text to get
-					# the URL fragments working, but for CX, it is irrelevant and we need
-					# a fixed length id that can be used as DB key.
-					# The text inside this 'open tag' is in the next item(i+1).
+                    # If the item is a header, we make it a fixed length id using hash of
+                    # the text content. Header ids are originally the header text to get
+                    # the URL fragments working, but for CX, it is irrelevant and we need
+                    # a fixed length id that can be used as DB key.
+                    # The text inside this 'open tag' is in the next item(i+1).
                     if (
                         tag["name"] in ["h1", "h2", "h3", "h4", "h5"]
                         and i + 1 < len(self.items)
@@ -182,11 +182,11 @@ class Doc:
                     ):
                         h = hashlib.sha256()
                         h.update(self.items[i + 1]["item"].get_plain_text().encode("utf-8"))
-						# 30 is the max length of ids we allow. We also prepend the sequence id
-						# just to make sure the ids don't collide if the same text repeats.
+                        # 30 is the max length of ids we allow. We also prepend the sequence id
+                        # just to make sure the ids don't collide if the same text repeats.
                         tag["attributes"]["id"] = h.hexdigest()[:30]
                     elif len(tag["attributes"]["id"]) > 30:
-						# At any case, make sure that the section id never exceeds 30 bytes
+                        # At any case, make sure that the section id never exceeds 30 bytes
                         tag["attributes"]["id"] = tag["attributes"]["id"][:30]
                 else:
                     tag["attributes"]["id"] = get_next_id("block", tag["name"])
@@ -347,8 +347,8 @@ class Doc:
                 # tag = item_obj
                 if not curr_section:
                     if prev_section == get_tag_id(item_dict):
-						# This tag is connected to previous section. Can be a template fragment.
-						# Undo last section close
+                        # This tag is connected to previous section. Can be a template fragment.
+                        # Undo last section close
                         new_doc.undo_add_item()
                         curr_section = prev_section
                     else:
@@ -440,16 +440,16 @@ class Doc:
                     dump.append(f"{pad}cxtextchunk {{ border-right: solid #f88 1px }}</style>")
 
             elif item_type == "close":
-				# close block tag
+                # close block tag
                 tag = item.item_dict
                 dump.append(f'{pad}</{tag["name"]}>')
 
             elif item_type == "blockspace":
-				# Non-inline whitespace
+                # Non-inline whitespace
                 dump.append(f"{pad}<cxblockspace/>")
 
             elif item_type == "textblock":
-				# Block of inline text
+                # Block of inline text
                 text_block = item.item_text_block
                 dump.append(f"{pad}<cxtextblock>")
                 dump.extend(text_block.dump_xml_array(pad + "  "))
