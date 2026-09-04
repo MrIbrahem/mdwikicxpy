@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import fs from 'fs';
 import { fileURLTo_path } from 'url';
-import assert from '../utils/assert.js';
+import assert from '../../utils/assert.js';
 import * as Linear_doc from '../../lib/lineardoc/index.js';
 import Segmenter from '../../lib/segmentation/CXSegmenter.js';
 
