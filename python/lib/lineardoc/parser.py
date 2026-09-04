@@ -130,7 +130,7 @@ VOID_ELEMENTS = [
 class Parser:
     """Parser to read an HTML stream into a Doc."""
 
-    def __init__(self, contextualizer: MwContextualizer, options=None) -> None:
+    def __init__(self, contextualizer: MwContextualizer, options=None, sort_attrs: bool = True) -> None:
         """
         Initialize the parser.
 
@@ -141,12 +141,13 @@ class Parser:
         self.contextualizer = contextualizer
         self.options = options or {}
         self.lowercase = True
+        self.sort_attrs = sort_attrs
 
     def init(self) -> None:
         """
         Initialize state for parsing.
         """
-        self.root_builder = Builder()
+        self.root_builder = Builder(sort_attrs=self.sort_attrs)
         self.builder = self.root_builder
         # Stack of tags currently open
         self.all_tags = []

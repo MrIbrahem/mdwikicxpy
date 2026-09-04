@@ -27,11 +27,12 @@ def esc(s):
 class Normalizer:
     """Parser to normalize XML."""
 
-    def __init__(self) -> None:
+    def __init__(self, sort_attrs: bool = True) -> None:
         """
         Initialize the parser.
         """
         self.lowercase = True
+        self.sort_attrs = sort_attrs
 
     def init(self) -> None:
         """
@@ -118,7 +119,7 @@ class Normalizer:
             tag: Tag dict with 'name' and 'attributes'
         """
         self.tags.append(tag)
-        self.doc.append(utils.get_open_tag_html(tag))
+        self.doc.append(utils.get_open_tag_html(tag, self.sort_attrs))
 
     def on_close_tag(self, tag_name) -> None:
         """

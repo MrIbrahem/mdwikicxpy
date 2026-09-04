@@ -23,7 +23,7 @@ if not removable_sections:
     raise ValueError("removableSections must be defined in config")
 
 
-def normalize(html: str) -> str:
+def normalize(html: str, sort_attrs: bool = True) -> str:
     """
     Normalize HTML by parsing and re-serializing.
 
@@ -34,7 +34,7 @@ def normalize(html: str) -> str:
         Normalized HTML string
     """
     html = html.strip()
-    normalizer = Normalizer()
+    normalizer = Normalizer(sort_attrs=sort_attrs)
     normalizer.init()
     # Remove tabs, carriage returns, and newlines
     html = re.sub(r"[\t\r\n]+", "", html)
