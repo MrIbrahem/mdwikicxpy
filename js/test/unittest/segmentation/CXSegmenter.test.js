@@ -1,13 +1,13 @@
 import { describe, it } from 'node:test';
 import { readFileSync } from 'fs';
-import { deepEqual } from '../../utils/assert.js';
+import { deepEqual } from '../utils/assert.js';
 import {
 	MwContextualizer,
 	Normalizer,
 	Parser
-} from '../../../../js/lib/lineardoc/index.js';
-import Segmenter from '../../../../js/lib/segmentation/CXSegmenter.js';
-import allTests from './SegmentationTests.json' with { type: 'json' };
+} from '../../../lib/lineardoc/index.js';
+import Segmenter from '../../../lib/segmentation/CXSegmenter.js';
+import allTests from '../../../../tests/unit/lib/segmentation/SegmentationTests.json' with { type: 'json' };
 
 const dirname = new URL('.', import.meta.url).pathname;
 
@@ -18,7 +18,7 @@ function normalize(html) {
 	return normalizer.get_html();
 }
 
-function get_parsed_doc(content) {
+function getParsedDoc(content) {
 	const parser = new Parser(new MwContextualizer());
 	parser.init();
 	parser.write(content);
@@ -27,7 +27,7 @@ function get_parsed_doc(content) {
 
 function runTest(test, lang) {
 	const testData = readFileSync(dirname + '/data/' + test.source, 'utf8');
-	const parsedDoc = get_parsed_doc(testData);
+	const parsedDoc = getParsedDoc(testData);
 	const segmenter = new Segmenter();
 	const segmentedLinearDoc = segmenter.segment(parsedDoc, lang);
 	const result = normalize(segmentedLinearDoc.get_html());
