@@ -7,11 +7,8 @@ import {
 	Parser
 } from '../../../../js/lib/lineardoc/index.js';
 import Segmenter from '../../../../js/lib/segmentation/CXSegmenter.js';
-
-// const allTests = JSON.parse(
-// 	readFileSync(new URL('./SegmentationTests.json', import.meta.url), 'utf8')
-// );
 import allTests from './SegmentationTests.json' with { type: 'json' };
+
 const dirname = new URL('.', import.meta.url).pathname;
 
 function normalize(html) {
