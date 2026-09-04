@@ -270,7 +270,12 @@ def suppress_about_group_boundaries(boundaries: list[int], text_chunks: list[Tex
 class TextBlock:
     """A block of annotated inline text."""
 
-    def __init__(self, text_chunks: list[TextChunk], can_segment: bool = True) -> None:
+    def __init__(
+        self,
+        text_chunks: list[TextChunk],
+        can_segment: bool = True,
+        sort_attrs: bool = True,
+    ) -> None:
         """
         Initialize a text_block.
 
@@ -278,6 +283,7 @@ class TextBlock:
             text_chunks: Annotated inline text
             can_segment: This is a block which can be segmented
         """
+        self.sort_attrs = sort_attrs
         self.text_chunks = text_chunks
         self.can_segment = can_segment
         self.offsets = []
@@ -450,7 +456,7 @@ class TextBlock:
                 {"start": pos, "length": len(tail_space), "text_chunk": TextChunk(tail_space, common_tags)}
             )
 
-        return TextBlock([x["text_chunk"] for x in text_chunks])
+        return TextBlock([x["text_chunk"] for x in text_chunks], sort_attrs=self.sort_attrs)
 
     def get_plain_text(self) -> str:
         """
@@ -487,7 +493,7 @@ class TextBlock:
                 html.append(utils.get_close_tag_html(old_tags[j]))
 
             for j in range(match_top + 1, len(t_chunk.tags)):
-                html.append(utils.get_open_tag_html(t_chunk.tags[j]))
+                html.append(utils.get_open_tag_html(t_chunk.tags[j], sort_attrs=self.sort_attrs))
 
             old_tags = t_chunk.tags
 
@@ -499,7 +505,7 @@ class TextBlock:
                     html.append(t_chunk.inline_content.get_html())
                 else:
                     # an empty inline tag
-                    html.append(utils.get_open_tag_html(t_chunk.inline_content))
+                    html.append(utils.get_open_tag_html(t_chunk.inline_content, sort_attrs=self.sort_attrs))
                     html.append(utils.get_close_tag_html(t_chunk.inline_content))
 
         # Finally, close any remaining tags
@@ -606,7 +612,7 @@ class TextBlock:
             offset += len(t_chunk.text)
 
         flush_chunks()
-        return TextBlock(all_text_chunks)
+        return TextBlock(all_text_chunks, sort_attrs=self.sort_attrs)
 
     def set_link_ids(self, get_next_id: Callable) -> TextBlock:
         """

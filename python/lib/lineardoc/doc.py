@@ -67,7 +67,11 @@ class Item:
 class Doc:
     """An HTML document in linear representation."""
 
-    def __init__(self, wrapper_tag: dict[str, Any] | None = None) -> None:
+    def __init__(
+        self,
+        wrapper_tag: dict[str, Any] | None = None,
+        sort_attrs: bool = True,
+    ) -> None:
         """
         Initialize a Doc.
 
@@ -76,6 +80,7 @@ class Doc:
         """
         self.items: list[Item] = []
         self.wrapper_tag = wrapper_tag
+        self.sort_attrs = sort_attrs
         self.categories = []
 
     def clone(self, callback: Callable) -> Doc:
@@ -88,7 +93,7 @@ class Doc:
         Returns:
             Clone with modifications
         """
-        new_doc = Doc(self.wrapper_tag)
+        new_doc = Doc(self.wrapper_tag, self.sort_attrs)
         for item in self.items:
             new_item = callback(item)
             new_doc.add_item(new_item["type"], new_item["item"])
@@ -147,7 +152,7 @@ class Doc:
         Returns:
             Segmented version of document
         """
-        new_doc = Doc()
+        new_doc = Doc(sort_attrs=self.sort_attrs)
         next_section_id = 0
         next_id = 0
         section_number = 0
@@ -254,7 +259,7 @@ class Doc:
         html = []
 
         if self.wrapper_tag:
-            html.append(utils.get_open_tag_html(self.wrapper_tag))
+            html.append(utils.get_open_tag_html(self.wrapper_tag, self.sort_attrs))
 
         for item in self.items:
             item_type = item.item_type
@@ -264,7 +269,7 @@ class Doc:
                 continue
 
             if item_type == "open":
-                html.append(utils.get_open_tag_html(item_dict))
+                html.append(utils.get_open_tag_html(item_dict, self.sort_attrs))
 
             elif item_type == "close":
                 html.append(utils.get_close_tag_html(item_dict))
@@ -289,7 +294,7 @@ class Doc:
         Returns:
             Doc with wrapped sections
         """
-        new_doc = Doc()
+        new_doc = Doc(sort_attrs=self.sort_attrs)
         in_body = False
         prev_section = None
         curr_section = None

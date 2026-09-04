@@ -198,7 +198,7 @@ class TestProcessHtml:
             """
             <h2 id="0"><span class="cx-segment" data-segmentid="1">Section 1</span></h2><p id="2"><span class="cx-segment" data-segmentid="3">Content 1</span></p><h2 id="4"><span class="cx-segment" data-segmentid="5">Section 2</span></h2><p id="6"><span class="cx-segment" data-segmentid="7">Content 2</span></p>
             """
-            )
+        )
 
     def test_process_html_unicode(self):
         """Test processing Unicode content."""
