@@ -2,7 +2,7 @@
  * @external Doc
  */
 
-import Text_chunk from './Text_chunk.js';
+import TextChunk from './TextChunk.js';
 import * as cxutil from './../util.js';
 
 /**
@@ -341,7 +341,7 @@ function add_common_tag(text_chunks, tag) {
 		const text_chunk = text_chunks[i];
 		const new_tags = text_chunk.tags.slice();
 		new_tags.splice(common_tag_length, 0, tag);
-		new_text_chunks.push(new Text_chunk(
+		new_text_chunks.push(new TextChunk(
 			text_chunk.text,
 			new_tags,
 			text_chunk.inline_content
@@ -447,29 +447,21 @@ function is_ignorable_block(section_doc) {
 export {
 	add_common_tag,
 	clone_open_tag,
-	clone_open_tag as clone_open_tag,
 	dump_tags,
 	esc,
 	find_all,
 	get_chunk_boundary_groups,
 	get_close_tag_html,
-	get_close_tag_html as get_close_tag_html,
 	get_open_tag_html,
-	get_open_tag_html as get_open_tag_html,
 	is_ignorable_block,
 	is_external_link,
 	is_gallery,
 	is_inline_empty_tag,
-	is_inline_empty_tag as is_inline_empty_tag,
 	is_math,
 	is_reference,
-	is_reference as is_reference,
 	is_segment,
-	is_segment as is_segment,
 	is_transclusion,
-	is_transclusion as is_transclusion,
 	is_transclusion_fragment,
 	is_non_translatable,
-	is_non_translatable as is_non_translatable,
 	set_link_ids_in_place
 };

@@ -1,11 +1,11 @@
-import Text_chunk from './Text_chunk.js';
+import TextChunk from './TextChunk.js';
 import { add_common_tag, dump_tags, esc, get_chunk_boundary_groups, get_close_tag_html, get_open_tag_html, is_transclusion, is_transclusion_fragment, set_link_ids_in_place } from './Utils.js';
 import { get_prop } from './../util.js';
 
 /**
  * Whether the text chunk represents a reference marker.
  *
- * @param {Text_chunk} chunk
+ * @param {TextChunk} chunk
  * @return {boolean}
  */
 function is_reference_chunk(chunk) {
@@ -30,7 +30,7 @@ const INLINE_CHAR = '\uFDD1';
  * The concatenated chars form the plain text of the block, so rules matched
  * against it do not depend on how the text is split into chunks.
  *
- * @param {Text_chunk[]} chunks
+ * @param {TextChunk[]} chunks
  * @return {Object[]} Items of shape { char, chunk, atomic }
  */
 function to_char_items(chunks) {
@@ -57,7 +57,7 @@ function to_char_items(chunks) {
  * byte-identical.
  *
  * @param {Object[]} items Items produced by to_char_items
- * @return {Text_chunk[]} New chunk list
+ * @return {TextChunk[]} New chunk list
  */
 function to_chunks(items) {
 	const chunks = [];
@@ -65,7 +65,7 @@ function to_chunks(items) {
 	let source = null;
 	const flush = () => {
 		if (text !== '') {
-			chunks.push(new Text_chunk(text, source.tags));
+			chunks.push(new TextChunk(text, source.tags));
 			text = '';
 		}
 	};
@@ -105,10 +105,10 @@ function escape_for_char_class(char) {
  * so that the three stay glued together; whitespace between the references
  * of a run is preserved.
  *
- * @param {Text_chunk[]} chunks
+ * @param {TextChunk[]} chunks
  * @param {string} policy 'before' or 'after'
  * @param {string[]} punctuation Punctuation marks to reposition around
- * @return {Text_chunk[]} New chunk list
+ * @return {TextChunk[]} New chunk list
  */
 function move_punctuation_across_references(chunks, policy, punctuation) {
 	const items = to_char_items(chunks);
@@ -150,7 +150,7 @@ function move_punctuation_across_references(chunks, policy, punctuation) {
  * is a sub-document with no attributes property. Read attributes only
  * when they are present.
  *
- * @param {Text_chunk} chunk
+ * @param {TextChunk} chunk
  * @return {string[]} The about values; can be empty
  */
 function get_chunk_about_values(chunk) {
@@ -179,7 +179,7 @@ function get_chunk_about_values(chunk) {
  * before the boundary includes zero-width chunks, such as category links.
  *
  * @param {number[]} boundaries Sentence boundary offsets
- * @param {Text_chunk[]} text_chunks The chunks of the text block
+ * @param {TextChunk[]} text_chunks The chunks of the text block
  * @return {number[]} The boundaries that do not break an about-group
  */
 function suppress_about_group_boundaries(boundaries, text_chunks) {
@@ -224,7 +224,7 @@ function suppress_about_group_boundaries(boundaries, text_chunks) {
  * A block of annotated inline text
  *
  */
-class Text_block {
+class TextBlock {
 	/**
 	 * @constructor
 	 *
@@ -263,8 +263,8 @@ class Text_block {
 	/**
 	 * Get the (last) text chunk at a given char offset
 	 *
-	 * @param {number} char_offset The char offset of the Text_chunk
-	 * @return {Text_chunk} The text chunk
+	 * @param {number} char_offset The char offset of the TextChunk
+	 * @return {TextChunk} The text chunk
 	 */
 	get_text_chunk_at(char_offset) {
 		let i, len;
@@ -304,11 +304,11 @@ class Text_block {
 	}
 
 	/**
-	 * Create a new Text_block, applying our annotations to a translation
+	 * Create a new TextBlock, applying our annotations to a translation
 	 *
 	 * @param {string} target_text Translated plain text
 	 * @param {Object[]} range_mappings Array of source-target range index mappings
-	 * @return {Text_block} Translated textblock with tags applied
+	 * @return {TextBlock} Translated textblock with tags applied
 	 */
 	translate_tags(target_text, range_mappings) {
 		// map of { offset: x, text_chunks: [...] }
@@ -354,7 +354,7 @@ class Text_block {
 			text_chunks.push({
 				start: range_mapping.target.start,
 				length: range_mapping.target.length,
-				text_chunk: new Text_chunk(
+				text_chunk: new TextChunk(
 					text, source_text_chunk.tags, source_text_chunk.inline_content
 				)
 			});
@@ -393,7 +393,7 @@ class Text_block {
 				text_chunks.splice(i, 0, {
 					start: pos,
 					length: text_chunk.start - pos,
-					text_chunk: new Text_chunk(
+					text_chunk: new TextChunk(
 						target_text.slice(pos, text_chunk.start), common_tags
 					)
 				});
@@ -415,7 +415,7 @@ class Text_block {
 			text_chunks.push({
 				start: pos,
 				length: tail.length,
-				text_chunk: new Text_chunk(tail, common_tags)
+				text_chunk: new TextChunk(tail, common_tags)
 			});
 			pos += tail.length;
 		}
@@ -430,11 +430,11 @@ class Text_block {
 			text_chunks.push({
 				start: pos,
 				length: tail_space.length,
-				text_chunk: new Text_chunk(tail_space, common_tags)
+				text_chunk: new TextChunk(tail_space, common_tags)
 			});
 			pos += tail.length;
 		}
-		return new Text_block(text_chunks.map((x) => x.text_chunk));
+		return new TextBlock(text_chunks.map((x) => x.text_chunk));
 	}
 
 	/**
@@ -552,7 +552,7 @@ class Text_block {
 	 *
 	 * @param {Function} get_boundaries Function taking plaintext, returning offset array
 	 * @param {Function} get_next_id Function taking 'segment'|'link', returning next ID
-	 * @return {Text_block} Segmented version, with added span tags
+	 * @return {TextBlock} Segmented version, with added span tags
 	 */
 	segment(get_boundaries, get_next_id) {
 		// Setup: current_text_chunks for current segment, and all_text_chunks for all segments
@@ -599,10 +599,10 @@ class Text_block {
 				if (rel_offset === 0) {
 					flush_chunks();
 				} else {
-					const left_part = new Text_chunk(
+					const left_part = new TextChunk(
 						text_chunk.text.slice(0, rel_offset), text_chunk.tags.slice()
 					);
-					const right_part = new Text_chunk(
+					const right_part = new TextChunk(
 						text_chunk.text.slice(rel_offset),
 						text_chunk.tags.slice(),
 						text_chunk.inline_content
@@ -618,14 +618,14 @@ class Text_block {
 			offset += text_chunk.text.length;
 		}
 		flush_chunks();
-		return new Text_block(all_text_chunks);
+		return new TextBlock(all_text_chunks);
 	}
 
 	/**
 	 * Set the link Ids for the links in all the textchunks in the textblock instance.
 	 *
 	 * @param {Function} get_next_id Function taking 'segment'|'link', returning next ID
-	 * @return {Text_block} Segmented version, with added span tags
+	 * @return {TextBlock} Segmented version, with added span tags
 	 */
 	set_link_ids(get_next_id) {
 		set_link_ids_in_place(this.text_chunks, get_next_id);
@@ -636,7 +636,7 @@ class Text_block {
 	 * Adapt a text block.
 	 *
 	 * @param {Function} get_adapter A function that returns an adapter for the given node item
-	 * @return {Promise} Promise that resolves the adapted Text_block instance
+	 * @return {Promise} Promise that resolves the adapted TextBlock instance
 	 */
 	adapt(get_adapter) {
 		const text_chunk_promises = [];
@@ -725,4 +725,4 @@ class Text_block {
 	}
 }
 
-export default Text_block;
+export default TextBlock;

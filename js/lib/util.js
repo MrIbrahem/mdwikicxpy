@@ -4,7 +4,7 @@
  * @external Router
  */
 
-import { read_file_sync } from 'fs';
+import { readFileSync } from 'fs';
 import { load } from 'js-yaml';
 import language_data from '@wikimedia/language-data';
 
@@ -130,7 +130,7 @@ function get_config(conf_path) {
 		const dirname = new URL('.', import.meta.url).pathname;
 		conf_path = `${dirname}/../config.dev.yaml`;
 	}
-	const config = load(read_file_sync(conf_path));
+	const config = load(readFileSync(conf_path));
 	if (!config) {
 		throw new Error('Failed to load config from path: ' + conf_path);
 	}
