@@ -66,7 +66,7 @@ def esc_attr(s) -> str:
     return re.sub(r'["\'&<>]', lambda m: f"&#{ord(m.group(0))};", s)
 
 
-def get_open_tag_html(tag: dict[str, Any]) -> str:
+def get_open_tag_html(tag: dict[str, Any], sort_attrs: bool = True) -> str:
     """
     Render a SAX open tag into an HTML string.
 
@@ -80,7 +80,8 @@ def get_open_tag_html(tag: dict[str, Any]) -> str:
     attributes = tag.get("attributes", {}).keys()
 
     # sort attributes
-    attributes = sorted(attributes)
+    if sort_attrs:
+        attributes = sorted(attributes)
 
     for attr in attributes:
         html.append(" " + esc(attr) + '="' + esc_attr(tag["attributes"][attr]) + '"')
