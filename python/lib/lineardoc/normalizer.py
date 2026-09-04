@@ -19,11 +19,6 @@ from .parser import VOID_ELEMENTS
 logger = logging.getLogger(__name__)
 
 
-def esc(s):
-    """Escape text for inclusion in HTML."""
-    return s.replace("&", "&#38;").replace("<", "&#60;").replace(">", "&#62;")
-
-
 class Normalizer:
     """Parser to normalize XML."""
 
@@ -142,7 +137,7 @@ class Normalizer:
         Args:
             text: Text content
         """
-        self.doc.append(esc(text))
+        self.doc.append(utils.esc(text))
 
     def get_html(self) -> str:
         """
@@ -156,5 +151,4 @@ class Normalizer:
 
 __all__ = [
     "Normalizer",
-    "esc",
 ]
