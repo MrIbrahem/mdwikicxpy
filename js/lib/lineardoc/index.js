@@ -7,4 +7,4 @@ import Contextualizer from './Contextualizer.js';
 import MwContextualizer from './MwContextualizer.js';
 import Normalizer from './Normalizer.js';
 
-export { Doc, TextBlock as TextBlock, TextChunk as TextChunk, Builder, Parser, Contextualizer, MwContextualizer, Normalizer };
+export { Doc, TextBlock, TextChunk, Builder, Parser, Contextualizer, MwContextualizer, Normalizer };

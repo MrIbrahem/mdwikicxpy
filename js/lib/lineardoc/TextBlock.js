@@ -1,5 +1,5 @@
 import TextChunk from './TextChunk.js';
-import { add_common_tag, dump_tags, esc, get_chunk_boundary_groups, get_close_tag_html, get_open_tag_html, is_transclusion, is_transclusion_fragment, set_link_ids_in_place } from './Utils.js';
+import { add_common_tag, dump_tags, esc, get_chunk_boundary_groups, get_close_tag_html, get_open_tag_html, is_reference, is_transclusion, is_transclusion_fragment, set_link_ids_in_place } from './Utils.js';
 import { get_prop } from './../util.js';
 
 /**
@@ -691,6 +691,32 @@ class TextBlock {
 		});
 
 		return Promise.all(text_chunk_promises).then(() => this);
+	}
+
+	/**
+	 * Move reference markers relative to sentence punctuation according to the
+	 * target language convention (e.g. French and Polish place references before
+	 * the full stop). Reference bodies are left untouched.
+	 *
+	 * @param {Object} options
+	 * @param {string} options.policy 'before' or 'after'
+	 * @param {string[]} options.punctuation Punctuation marks to reposition around
+	 * @return {TextBlock} New text block with punctuation repositioned
+	 */
+	adapt_reference_punctuation(options) {
+		// Recurse into inline sub-documents, but not into reference bodies.
+		const chunks = this.text_chunks.map((chunk) => {
+			const inline = chunk.inline_content;
+			if (inline && inline.adapt_reference_punctuation && !is_reference_chunk(chunk)) {
+				return new TextChunk(
+					chunk.text, chunk.tags, inline.adapt_reference_punctuation(options)
+				);
+			}
+			return chunk;
+		});
+		return new TextBlock(
+			move_punctuation_across_references(chunks, options.policy, options.punctuation)
+		);
 	}
 
 	/**
