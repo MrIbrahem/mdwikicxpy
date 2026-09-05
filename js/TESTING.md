@@ -26,7 +26,7 @@ pull request).
 From the **repository root**:
 
 ```bash
-node --test tests/unit/segmentation/CXSegmenter.test.js
+node --test js/test/unittest/segmentation/CXSegmenter.test.js
 ```
 
 This uses Node's built-in test runner (no separate test framework needed). The
@@ -67,7 +67,7 @@ prefer not to use the symlink, change the test's import paths to
     with:
 
     ```bash
-    cd js && node --test ../tests/unit/segmentation/CXSegmenter.test.js
+    cd js && node --test ../js/test/unittest/segmentation/CXSegmenter.test.js
     ```
 
 -   `npm test` runs ESLint **before** the tests. **Note:** `js/` currently has no
@@ -86,11 +86,11 @@ status is visible on each PR. The job:
 1. Checks out the repo.
 2. Sets up Node 20.
 3. Installs JS dependencies with `npm ci` (in `js/`).
-4. Runs `node --test ../tests/unit/segmentation/CXSegmenter.test.js`.
+4. Runs `node --test ../js/test/unittest/segmentation/CXSegmenter.test.js`.
 
 ## Current status
 
-The suite **passes**: all 40 cases in `tests/unit/segmentation/CXSegmenter.test.js`
+The suite **passes**: all 40 cases in `js/test/unittest/segmentation/CXSegmenter.test.js`
 (parse → contextualize → segment → serialize, including references, figures,
 media and transclusion scenarios) run green both locally and in CI. Getting
 there required fixing several porting defects in `js/lib` (see the git history of

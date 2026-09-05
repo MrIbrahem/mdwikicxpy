@@ -486,6 +486,49 @@ class Doc:
 
         return segments
 
+    def is_ignorable_block(self) -> bool:
+        """
+        Check if the passed document is a section containing block level template or reference list.
+
+        Args:
+            section_doc: Doc object
+
+        Returns:
+            Whether the section is ignorable
+        """
+        ignorable = False
+        block_stack = []
+        first_block_template = None
+
+        # We start with index 1 since the first tag will be <section>.
+        for i in range(1, len(self.items)):
+            item = self.items[i]
+            tag_dict = item.item_dict
+            item_type = item.item_type
+
+            if item_type == "open":
+                block_stack.append(tag_dict)
+                if not first_block_template and (utils.is_transclusion(tag_dict) or utils.is_reference_list(tag_dict)):
+                    first_block_template = tag_dict
+
+            if item_type == "close":
+                if block_stack:
+                    current_close_tag = block_stack.pop()
+                    if utils.is_closing_template_match(block_stack, first_block_template, current_close_tag):
+                        return True
+
+            # Also check for textblocks
+            if item_type == "textblock":
+                if not first_block_template:
+                    root_item = item.item_text_block.get_root_item()
+                    if root_item and utils.is_non_translatable(root_item):
+                        first_block_template = root_item
+                        ignorable = True
+                    else:
+                        # There is non ignorable content to translate
+                        return False
+
+        return ignorable
 
 __all__ = [
     "Doc",
