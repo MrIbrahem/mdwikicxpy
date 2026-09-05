@@ -30,3 +30,5 @@ tests/fixtures/output_*.html
 mediawiki-services-cxserver-master.zip
 /mediawiki-services-cxserver-master
 js/package-lock.json
+**/node_modules/**
+/js_live
