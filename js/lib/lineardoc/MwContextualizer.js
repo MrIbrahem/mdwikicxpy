@@ -8,7 +8,7 @@ const content_branch_node_names = ['blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', '
  * See https://www.mediawiki.org/wiki/Specs/HTML
  *
  */
-class Mw_contextualizer extends Contextualizer {
+class MwContextualizer extends Contextualizer {
 	/**
 	 * @param {Object} config
 	 * @param {Object} config.removable_sections containing array of classes and rdfa values.
@@ -156,4 +156,4 @@ class Mw_contextualizer extends Contextualizer {
 	}
 }
 
-export default Mw_contextualizer;
+export default MwContextualizer;

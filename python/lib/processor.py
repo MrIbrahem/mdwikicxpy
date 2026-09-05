@@ -66,8 +66,7 @@ def process_html(source_html: str, lang: str | None = None):
 
     parser.init()
     parser.write(source_html)
-    parsed_doc = parser.builder.doc
-    parsed_doc = parsed_doc.wrap_sections()
+    parsed_doc = parser.create_wrapped_doc()
 
     segmented_doc = CXSegmenter().segment(parsed_doc, lang)
 

@@ -158,6 +158,9 @@ class Parser:
         # Stack of tags currently open
         self.all_tags = []
 
+    def create_wrapped_doc(self):
+        return self.builder.doc.wrap_sections()
+
     def write(self, html: str) -> None:
         """
         Parse HTML into the document.
