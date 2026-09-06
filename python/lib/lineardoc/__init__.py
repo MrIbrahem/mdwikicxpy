@@ -29,7 +29,6 @@ from .utils import (
     get_open_tag_html,
     is_external_link,
     is_gallery,
-    is_ignorable_block,
     is_inline_empty_tag,
     is_math,
     is_non_translatable,
@@ -71,5 +70,4 @@ __all__ = [
     "get_chunk_boundary_groups",
     "add_common_tag",
     "set_link_ids_in_place",
-    "is_ignorable_block",
 ]
