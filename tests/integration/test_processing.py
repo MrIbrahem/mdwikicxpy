@@ -8,7 +8,7 @@ import pytest
 
 from python.lib.processor import process_html
 
-@pytest.mark.parametrize("num", range(1, 5))
+@pytest.mark.parametrize("num", [1, 2, 3, 4])
 def test_run_processing_test(num):
     """Test HTML processing with a specific fixture file number."""
     fixtures_dir = Path(__file__).resolve().parent.parent / "fixtures"
