@@ -12,7 +12,7 @@ from python.lib.processor import process_html
 def test_run_processing_test(num):
     """Test HTML processing with a specific fixture file number."""
     fixtures_dir = Path(__file__).resolve().parent.parent / "fixtures"
-    test_path = fixtures_dir / f"test_{num}"
+    test_path = fixtures_dir / f"test{num}"
     input_path = test_path / "input.html"
     output_path = test_path / "output.html"
 
