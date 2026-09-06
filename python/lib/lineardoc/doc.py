@@ -146,7 +146,6 @@ class Doc:
         transclusion_context = None
 
         for i, i_item in enumerate(self.items):
-            # blockspace
             if i_item.item_type == "open" and isinstance(i_item, DocDict):
                 tag = i_item.item.clone()
 
