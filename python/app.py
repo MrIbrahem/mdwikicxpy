@@ -34,7 +34,7 @@ import logging
 import os
 from typing import Any
 
-from flask import Flask, Response, jsonify, request
+from flask import Flask, Response, jsonify, render_template, request
 from flask_cors import CORS
 from lib.processor import process_html
 
@@ -140,6 +140,13 @@ def create_success_response(result: str) -> tuple[Response, int]:
     return jsonify({"result": result, "success": True}), 200
 
 
+@app.route("/", methods=["GET"])
+@app.route("/HtmltoSegments", methods=["GET"])
+def index() -> str:
+    return render_template(
+        "html_to_segments/index.html",
+    )
+
 @app.route("/textp", methods=["POST"])
 @app.route("/HtmltoSegments", methods=["POST"])
 def process_text() -> tuple[Response, int]:
@@ -206,7 +213,7 @@ def process_text() -> tuple[Response, int]:
     # Process the HTML
     try:
         logger.info(f"Processing HTML request ({len(source_html)} bytes)")
-        processed_text = process_html(source_html)
+        processed_text = process_html(str(source_html), "en", sort_attrs=False)
         logger.info("HTML processing completed successfully")
         return create_success_response(processed_text)
 
@@ -255,7 +262,7 @@ def health() -> tuple[Response, int]:
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
+    debug = True#  os.environ.get("FLASK_DEBUG", "false").lower() == "true"
 
     logger.info(f"Starting Flask server on port {port} (debug={debug})")
     app.run(host="0.0.0.0", port=port, debug=debug)

@@ -310,6 +310,7 @@ class Doc:
             # Undo last section close
             doc.undo_add_item()
             curr_section = prev_section
+            # 'str' object has no attribute 'item_type'
             doc.add_item(item.item_type, item.item)
             close_section(new_doc)
 
@@ -351,7 +352,7 @@ class Doc:
                 tag = i_item.item
                 new_item = new_doc.get_current_item()
                 if prev_section and new_item and new_item["item"]["name"] == "section":
-                    insert_to_prev_section(tag, new_doc)
+                    insert_to_prev_section(i_item, new_doc)
                 else:
                     new_doc.add_blockspace_item(tag)
 
@@ -364,7 +365,7 @@ class Doc:
                     new_item = new_doc.get_current_item()
                     # Textblock with no tag identifier. Add it to the previous section
                     if prev_section and new_item and new_item["item"]["name"] == "section":
-                        insert_to_prev_section(tag, new_doc)
+                        insert_to_prev_section(i_item, new_doc)
                         continue
 
                 # No previous section to attach to; fall through to open a new one
@@ -372,7 +373,7 @@ class Doc:
 
                 if is_connected:
                     # This tag is connected to previous section. Can be a template fragment.
-                    insert_to_prev_section(tag, new_doc)
+                    insert_to_prev_section(i_item, new_doc)
                     continue
 
                 if not curr_section:
