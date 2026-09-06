@@ -57,7 +57,7 @@ class Parser:
     def create_wrapped_doc(self) -> Doc:
         return self.builder.doc.wrap_sections()
 
-    def write(self, html: str) -> None:
+    def write_fragments(self, html: str) -> None:
         """
         Parse HTML into the document.
 
@@ -86,7 +86,7 @@ class Parser:
 
             self._process_element(fragment)
 
-    def write_etree(self, html: str) -> None:
+    def write(self, html: str) -> None:
         """
         Parse HTML into the document.
 
