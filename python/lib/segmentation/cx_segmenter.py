@@ -12,6 +12,7 @@ import sentencex
 from ..lineardoc.doc import Doc
 
 
+
 class CXSegmenter:
     """Segmenter for CX documents."""
 
