@@ -30,3 +30,4 @@ js/package-lock.json
 **/node_modules/**
 /js_live
 /js/node_modules
+*.7z
