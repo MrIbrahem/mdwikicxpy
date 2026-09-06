@@ -29,3 +29,4 @@ mediawiki-services-cxserver-master.zip
 js/package-lock.json
 **/node_modules/**
 /js_live
+/js/node_modules
