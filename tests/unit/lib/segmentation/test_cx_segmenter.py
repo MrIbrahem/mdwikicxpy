@@ -1,5 +1,5 @@
 """
-Unit tests for lineardoc/utils.py module.
+Unit tests for lineardoc/Utils.py module.
 """
 
 import re
@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 from python.lib.lineardoc import Doc, MwContextualizer, Parser
-from python.lib.processor import normalize
+from python.lib.lineardoc import normalize
 from python.lib.segmentation import CXSegmenter
 
 cx_segmenter_tests_path = Path(__file__).parent / "SegmentationTests.json"

@@ -4,8 +4,8 @@ Unit tests for processor.py module.
 
 import re
 
-from python.lib.processor import normalize, process_html
-
+from python.lib.processor import process_html
+from python.lib.lineardoc import normalize
 
 def normalize_test(html: str) -> str:
     """ """

@@ -53,7 +53,15 @@ class MwContextualizer(Contextualizer):
         self.removable_transclusion_fragments = []
 
     def get_child_context(self, tag: dict[str, Any]) -> str | None:
-        """Get the context for a new tag being opened."""
+        """
+        Get the context for a new tag being opened.
+
+        Args:
+            tag: Tag dict with 'name' and 'attributes'
+
+        Returns:
+            The new context
+        """
         context = self.get_context()
         tag_type = tag.get("attributes", {}).get("typeof", "") or tag.get("attributes", {}).get("rel", "")
 
@@ -87,7 +95,9 @@ class MwContextualizer(Contextualizer):
         return context
 
     def can_segment(self) -> bool:
-        """Determine whether sentences can be segmented."""
+        """
+        Determine whether sentences can be segmented.
+        """
         return self.get_context() == "contentBranch"
 
     def is_removable(self, tag: dict[str, Any]) -> bool:
