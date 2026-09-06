@@ -19,6 +19,7 @@ from collections.abc import Callable
 from typing import Any
 
 from .doc_item import (
+    ALL_ITEMS_TYPES,
     DocDict,
     DocStr,
     DocTextBlock,
@@ -145,6 +146,7 @@ class Doc:
         transclusion_context = None
 
         for i, i_item in enumerate(self.items):
+            # blockspace
             if i_item.item_type == "open" and isinstance(i_item, DocDict):
                 tag = i_item.item.clone()
 
@@ -207,9 +209,13 @@ class Doc:
 
                 new_doc.add_textblock_item(segmented_text_block)
             else:
-                raise Exception(f"Unknown item type: {i_item.item_type}")
+                self.raise_if_unknown_item(i_item.item_type)
 
         return new_doc
+
+    def raise_if_unknown_item(self, item_type: str) -> None:
+        if item_type not in ALL_ITEMS_TYPES:
+            raise Exception(f"Unknown item type: {item_type}")
 
     def dump_xml(self) -> str:
         """
@@ -248,7 +254,7 @@ class Doc:
             elif item_type == "textblock" and isinstance(i_item, DocTextBlock):
                 html.append(i_item.get_html())
             else:
-                raise Exception(f"Unknown item type: {item_type}")
+                self.raise_if_unknown_item(i_item.item_type)
 
         if self.wrapper_tag:
             html.append(Utils.get_close_tag_html(self.wrapper_tag))
@@ -386,7 +392,7 @@ class Doc:
                 new_doc.add_textblock_item(text_block)
 
             else:
-                raise Exception(f"Unknown item type: {item_type}")
+                self.raise_if_unknown_item(i_item.item_type)
 
         return new_doc
 
@@ -431,7 +437,7 @@ class Doc:
                 dump.extend(i_item.generate_textblock_xml(pad))
 
             else:
-                raise Exception(f"Unknown item type: {i_item.item_type}")
+                self.raise_if_unknown_item(i_item.item_type)
 
         if self.wrapper_tag:
             dump.append(f"{pad}</cxwrapper>")

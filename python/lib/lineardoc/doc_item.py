@@ -9,6 +9,8 @@ from .elements import VOID_ELEMENTS
 from .text_block import TextBlock
 from .utils import Utils
 
+ALL_ITEMS_TYPES = ["open", "close", "blockspace", "textblock"]
+
 ITEM_TYPES_STR = Literal["open", "close"]
 
 
