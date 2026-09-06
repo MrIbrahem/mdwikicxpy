@@ -1,6 +1,7 @@
 """
 Comprehensive test suite for the CX HTML processing pipeline.
 """
+
 from python.lib.processor import process_html
 
 
@@ -17,7 +18,6 @@ def test_basic_html_processing():
 
 def test_mediawiki_elements():
     """Test MediaWiki-specific elements."""
-
 
     html = """
     <html>
@@ -42,7 +42,6 @@ def test_mediawiki_elements():
 def test_section_wrapping():
     """Test section wrapping."""
 
-
     html = """
     <html>
     <body>
@@ -60,9 +59,9 @@ def test_section_wrapping():
     assert section_count >= 2, f"Should have at least 2 sections, got {section_count}"
     assert "cx:Section" in result, "Should mark sections"
 
+
 def test_segmentation():
     """Test text segmentation."""
-
 
     html = """
     <html>
@@ -81,7 +80,6 @@ def test_segmentation():
 def test_reference_handling():
     """Test reference handling."""
 
-
     html = """
     <html>
     <body>
@@ -99,7 +97,6 @@ def test_reference_handling():
 def test_empty_input():
     """Test empty input handling."""
 
-
     html = ""
     try:
         result = process_html(html)
@@ -112,7 +109,6 @@ def test_empty_input():
 
 def test_complex_nesting():
     """Test complex nested structures."""
-
 
     html = """
     <html>
