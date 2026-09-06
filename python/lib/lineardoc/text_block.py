@@ -286,14 +286,14 @@ class TextBlock:
         self.sort_attrs = sort_attrs
         self.text_chunks = text_chunks
         self.can_segment = can_segment
-        self.offsets = []
+        self.offsets: list[dict[str, Any]] = []
 
         cursor = 0
         for t_chunk in self.text_chunks:
             self.offsets.append({"start": cursor, "length": len(t_chunk.text), "tags": t_chunk.tags})
             cursor += len(t_chunk.text)
 
-    def get_tag_offsets(self) -> list:
+    def get_tag_offsets(self) -> list[dict[str, Any]]:
         """
         Get the start and length of each non-common annotation.
 
@@ -643,7 +643,7 @@ class TextBlock:
         Utils.set_link_ids_in_place(self.text_chunks, get_next_id)
         return self
 
-    def dump_xml_array(self, pad: str) -> list:
+    def dump_xml_array(self, pad: str) -> list[list[str]]:
         """
         Dump an XML Array version of the linear representation, for debugging.
 

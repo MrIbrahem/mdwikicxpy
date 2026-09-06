@@ -395,7 +395,7 @@ class Doc:
 
         return new_doc
 
-    def dump_xml_array(self, pad: str) -> list:
+    def dump_xml_array(self, pad: str) -> list[str]:
         """
         Dump an XML Array version of the linear representation, for debugging.
 
@@ -443,7 +443,7 @@ class Doc:
 
         return dump
 
-    def get_segments(self) -> list:
+    def get_segments(self) -> list[str]:
         """
         Extract the text segments from the document.
 

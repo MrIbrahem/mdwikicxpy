@@ -28,7 +28,7 @@ html_escape_table = {
 
 class Utils:
     @staticmethod
-    def find_all(text, regex, callback: Callable) -> list:
+    def find_all(text, regex, callback: Callable) -> list[Any]:
         """
         Find all matches of regex in text, calling callback with each match object.
 
@@ -288,7 +288,7 @@ class Utils:
         return tag_name in inline_empty_tags
 
     @staticmethod
-    def get_chunk_boundary_groups(boundaries, chunks, get_length) -> list:
+    def get_chunk_boundary_groups(boundaries, chunks, get_length) -> list[dict[str, Any]]:
         """
         Find the boundaries that lie in each chunk.
 
@@ -331,7 +331,7 @@ class Utils:
         return groups
 
     @staticmethod
-    def add_common_tag(text_chunks: list[TextChunk], tag: dict[str, Any]) -> list:
+    def add_common_tag(text_chunks: list[TextChunk], tag: dict[str, Any]) -> list[TextChunk]:
         """
         Add a tag to consecutive text chunks, above common tags but below others.
 
