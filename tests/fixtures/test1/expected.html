@@ -53,46 +53,46 @@
             }
 
             @media screen {
-                html.skin-theme-clientpref-night .mw-parser-output .infobox-full-data:not(.notheme)&#62;
+                html.skin-theme-clientpref-night .mw-parser-output .infobox-full-data:not(.notheme) {
 
-                div:not(.notheme)[style] {
-                    background: #1f1f23 !important;
-                    color: #f8f9fa
-                }
-            }
-
-            @media screen and (prefers-color-scheme:dark) {
-                html.skin-theme-clientpref-os .mw-parser-output .infobox-full-data:not(.notheme)&#62;
-
-                div:not(.notheme)[style] {
-                    background: #1f1f23 !important;
-                    color: #f8f9fa
-                }
-            }
-
-            @media(min-width:640px) {
-                body.skin--responsive .mw-parser-output .infobox-table {
-                    display: table !important
+                    div:not(.notheme)[style] {
+                        background: #1f1f23 !important;
+                        color: #f8f9fa
+                    }
                 }
 
-                body.skin--responsive .mw-parser-output .infobox-table&#62;
+                @media screen and (prefers-color-scheme:dark) {
+                    html.skin-theme-clientpref-os .mw-parser-output .infobox-full-data:not(.notheme) {
 
-                caption {
-                    display: table-caption !important
-                }
+                        div:not(.notheme)[style] {
+                            background: #1f1f23 !important;
+                            color: #f8f9fa
+                        }
+                    }
 
-                body.skin--responsive .mw-parser-output .infobox-table&#62;
+                    @media(min-width:640px) {
+                        body.skin--responsive .mw-parser-output .infobox-table {
+                            display: table !important
+                        }
 
-                tbody {
-                    display: table-row-group
-                }
+                        body.skin--responsive .mw-parser-output .infobox-table {
 
-                body.skin--responsive .mw-parser-output .infobox-table th,
-                body.skin--responsive .mw-parser-output .infobox-table td {
-                    padding-left: inherit;
-                    padding-right: inherit
-                }
-            }
+                            caption {
+                                display: table-caption !important
+                            }
+
+                            body.skin--responsive .mw-parser-output .infobox-table {
+
+                                tbody {
+                                    display: table-row-group
+                                }
+
+                                body.skin--responsive .mw-parser-output .infobox-table th,
+                                body.skin--responsive .mw-parser-output .infobox-table td {
+                                    padding-left: inherit;
+                                    padding-right: inherit
+                                }
+                            }
         </style>
         <table class="infobox infobox-has-images-with-white-backgrounds" about="#mwt1" id="6">
             <tbody id="7">
@@ -345,27 +345,29 @@
                 counter-reset: listitem
             }
 
-            .mw-parser-output .hlist ol&#62;
+            .mw-parser-output .hlist ol {
 
-            li {
-                counter-increment: listitem
-            }
+                li {
+                    counter-increment: listitem
+                }
 
-            .mw-parser-output .hlist ol&#62;
+                .mw-parser-output .hlist ol {
 
-            li::before {
-                content: " " counter(listitem)"\a0 "
-            }
+                    li::before {
+                        content: " " counter(listitem)"\a0 "
+                    }
 
-            .mw-parser-output .hlist dd ol&#62;
-            li:first-child::before,
-            .mw-parser-output .hlist dt ol&#62;
-            li:first-child::before,
-            .mw-parser-output .hlist li ol&#62;
+                    .mw-parser-output .hlist dd ol {
 
-            li:first-child::before {
-                content: " (" counter(listitem)"\a0 "
-            }
+                        li:first-child::before,
+                        .mw-parser-output .hlist dt ol {
+
+                            li:first-child::before,
+                            .mw-parser-output .hlist li ol {
+
+                                li:first-child::before {
+                                    content: " (" counter(listitem)"\a0 "
+                                }
         </style>
     </section>
     <section rel="cx:Section" id="cxSourceSection1" data-mw-section-number="0">
@@ -503,41 +505,41 @@
                 }
             }
 
-            body.skin--responsive .mw-parser-output .sidebar a&#62;
+            body.skin--responsive .mw-parser-output .sidebar a {
 
-            img {
-                max-width: none !important
-            }
-
-            @media screen {
-
-                html.skin-theme-clientpref-night .mw-parser-output .sidebar:not(.notheme) .sidebar-list-title,
-                html.skin-theme-clientpref-night .mw-parser-output .sidebar:not(.notheme) .sidebar-title-with-pretitle {
-                    background: transparent !important
+                img {
+                    max-width: none !important
                 }
 
-                html.skin-theme-clientpref-night .mw-parser-output .sidebar:not(.notheme) .sidebar-title-with-pretitle a {
-                    color: var(--color-progressive) !important
-                }
-            }
+                @media screen {
 
-            @media screen and (prefers-color-scheme:dark) {
+                    html.skin-theme-clientpref-night .mw-parser-output .sidebar:not(.notheme) .sidebar-list-title,
+                    html.skin-theme-clientpref-night .mw-parser-output .sidebar:not(.notheme) .sidebar-title-with-pretitle {
+                        background: transparent !important
+                    }
 
-                html.skin-theme-clientpref-os .mw-parser-output .sidebar:not(.notheme) .sidebar-list-title,
-                html.skin-theme-clientpref-os .mw-parser-output .sidebar:not(.notheme) .sidebar-title-with-pretitle {
-                    background: transparent !important
+                    html.skin-theme-clientpref-night .mw-parser-output .sidebar:not(.notheme) .sidebar-title-with-pretitle a {
+                        color: var(--color-progressive) !important
+                    }
                 }
 
-                html.skin-theme-clientpref-os .mw-parser-output .sidebar:not(.notheme) .sidebar-title-with-pretitle a {
-                    color: var(--color-progressive) !important
-                }
-            }
+                @media screen and (prefers-color-scheme:dark) {
 
-            @media print {
-                body.ns-0 .mw-parser-output .sidebar {
-                    display: none !important
+                    html.skin-theme-clientpref-os .mw-parser-output .sidebar:not(.notheme) .sidebar-list-title,
+                    html.skin-theme-clientpref-os .mw-parser-output .sidebar:not(.notheme) .sidebar-title-with-pretitle {
+                        background: transparent !important
+                    }
+
+                    html.skin-theme-clientpref-os .mw-parser-output .sidebar:not(.notheme) .sidebar-title-with-pretitle a {
+                        color: var(--color-progressive) !important
+                    }
                 }
-            }
+
+                @media print {
+                    body.ns-0 .mw-parser-output .sidebar {
+                        display: none !important
+                    }
+                }
         </style>
         <table class="sidebar nomobile nowraplinks hlist" about="#mwt15" id="mwKQ">
             <tbody id="75">
@@ -792,46 +794,47 @@
                                 word-spacing: -0.125em
                             }
 
-                            .mw-parser-output .navbar a&#62;
-                            span,
-                            .mw-parser-output .navbar a&#62;
+                            .mw-parser-output .navbar a {
 
-                            abbr {
-                                text-decoration: inherit
-                            }
+                                span,
+                                .mw-parser-output .navbar a {
 
-                            .mw-parser-output .navbar-mini abbr {
-                                font-variant: small-caps;
-                                border-bottom: none;
-                                text-decoration: none;
-                                cursor: inherit
-                            }
+                                    abbr {
+                                        text-decoration: inherit
+                                    }
 
-                            .mw-parser-output .navbar-ct-full {
-                                font-size: 114%;
-                                margin: 0 7em
-                            }
+                                    .mw-parser-output .navbar-mini abbr {
+                                        font-variant: small-caps;
+                                        border-bottom: none;
+                                        text-decoration: none;
+                                        cursor: inherit
+                                    }
 
-                            .mw-parser-output .navbar-ct-mini {
-                                font-size: 114%;
-                                margin: 0 4em
-                            }
+                                    .mw-parser-output .navbar-ct-full {
+                                        font-size: 114%;
+                                        margin: 0 7em
+                                    }
 
-                            html.skin-theme-clientpref-night .mw-parser-output .navbar li a abbr {
-                                color: var(--color-base) !important
-                            }
+                                    .mw-parser-output .navbar-ct-mini {
+                                        font-size: 114%;
+                                        margin: 0 4em
+                                    }
 
-                            @media(prefers-color-scheme:dark) {
-                                html.skin-theme-clientpref-os .mw-parser-output .navbar li a abbr {
-                                    color: var(--color-base) !important
-                                }
-                            }
+                                    html.skin-theme-clientpref-night .mw-parser-output .navbar li a abbr {
+                                        color: var(--color-base) !important
+                                    }
 
-                            @media print {
-                                .mw-parser-output .navbar {
-                                    display: none !important
-                                }
-                            }
+                                    @media(prefers-color-scheme:dark) {
+                                        html.skin-theme-clientpref-os .mw-parser-output .navbar li a abbr {
+                                            color: var(--color-base) !important
+                                        }
+                                    }
+
+                                    @media print {
+                                        .mw-parser-output .navbar {
+                                            display: none !important
+                                        }
+                                    }
                         </style>
                     </td>
                 </tr>
