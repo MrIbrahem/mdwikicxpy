@@ -1,5 +1,5 @@
 """
-Unit tests for lineardoc/Utils.py module.
+Unit tests for lineardoc/utils.py module.
 """
 
 import re
