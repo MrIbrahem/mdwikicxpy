@@ -45,6 +45,15 @@ class Contextualizer:
         # No change: same as parent context
         return self.get_context()
 
+    def can_segment(self) -> bool:
+        """
+        Determine whether sentences can be segmented into spans in this context.
+
+        Returns:
+            Whether sentences can be segmented into spans in this context
+        """
+        return self.get_context() is None
+
     def get_context(self) -> str | None:
         """
         Get the current context.
@@ -68,14 +77,9 @@ class Contextualizer:
         if self.contexts:
             self.contexts.pop()
 
-    def can_segment(self) -> bool:
-        """
-        Determine whether sentences can be segmented into spans in this context.
-
-        Returns:
-            Whether sentences can be segmented into spans in this context
-        """
-        return self.get_context() is None
+    def is_removable(self, tag: dict[str, Any]) -> None:
+        # placeholder to shadow MwContextualizer
+        return None
 
 
 __all__ = [

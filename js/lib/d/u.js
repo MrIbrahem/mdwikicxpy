@@ -6,7 +6,7 @@ const fs = require('fs'),
 	yaml = require('js-yaml'),
 	CXSegmenter = require('../segmentation/CXSegmenter');
 
-const pageloader_config = yaml.load(fs.read_file_sync(__dirname + '/MWPage_loader.yaml'));
+const pageloader_config = yaml.load(fs.readFileSync(__dirname + '/MWPage_loader.yaml'));
 
 const removable_sections = pageloader_config.removable_sections;
 
@@ -19,7 +19,7 @@ function normalize(html) {
 
 function tet(source_HTML) {
 
-	const parser = new Linear_doc.Parser(new Linear_doc.Mw_contextualizer(
+	const parser = new Linear_doc.Parser(new Linear_doc.MwContextualizer(
 		{ removable_sections: removable_sections }
 	), {
 		wrap_sections: true

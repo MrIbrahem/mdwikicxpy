@@ -1,8 +1,8 @@
 /**
- * @external Text_block
+ * @external TextBlock
  */
 
-import { create_hash } from 'crypto';
+import { createHash } from 'crypto';
 import { clone_open_tag, get_close_tag_html, get_open_tag_html, is_gallery, is_math, is_non_translatable } from './Utils.js';
 import { get_prop } from './../util.js';
 
@@ -12,7 +12,7 @@ import { get_prop } from './../util.js';
  * The document is a list of items, where each items is
  * - a block open tag (e.g. <p>); or
  * - a block close tag (e.g. </p>); or
- * - a Text_block of annotated inline text; or
+ * - a TextBlock of annotated inline text; or
  * - "block whitespace" (a run of whitespace separating two block boundaries)
  *
  * Some types of HTML structure get normalized away. In particular:
@@ -54,7 +54,7 @@ class Doc {
 	 * Add an item to the document
 	 *
 	 * @param {string} type Type of item: open|close|blockspace|textblock
-	 * @param {Object|string|Text_block} item Open/close tag, space or text block
+	 * @param {Object|string|TextBlock} item Open/close tag, space or text block
 	 * @return {this}
 	 */
 	add_item(type, item) {
@@ -136,7 +136,7 @@ class Doc {
 						i + 1 < len &&
 						this.items[i + 1].type === 'textblock'
 					) {
-						const hash = create_hash('sha256');
+						const hash = createHash('sha256');
 						hash.update(this.items[i + 1].item.get_plain_text());
 						// 30 is the max length of ids we allow. We also prepend the sequence id
 						// just to make sure the ids don't collide if the same text repeats.

@@ -17,14 +17,14 @@ class TestBuilderCreation:
         assert builder.inline_annotation_tags == []
         assert builder.doc is not None
         assert isinstance(builder.doc, Doc)
-        assert builder.parent is None
+        assert builder.builder_parent is None
 
     def test_builder_with_parent(self):
-        """Test creating builder with parent."""
-        parent = Builder()
+        """Test creating builder with builder_parent."""
+        _parent = Builder()
         wrapper = {"name": "span", "attributes": {}}
-        child = Builder(parent, wrapper)
-        assert child.parent is parent
+        child = Builder(builder_parent=_parent, wrapper_tag=wrapper)
+        assert child.builder_parent is _parent
         assert child.doc.wrapper_tag == wrapper
 
 
@@ -106,7 +106,7 @@ class TestBuilderTextChunks:
         builder.add_text_chunk("Hello", True)
         builder.finish_text_block()
         # Should have added textblock to doc
-        assert any(item["type"] == "textblock" for item in builder.doc.items)
+        assert any(i_item.item_type == "textblock" for i_item in builder.doc.items)
 
 
 class TestBuilderChildBuilder:
@@ -114,10 +114,10 @@ class TestBuilderChildBuilder:
 
     def test_create_child_builder(self):
         """Test creating a child builder."""
-        parent = Builder()
+        _parent = Builder()
         wrapper = {"name": "span", "attributes": {}}
-        child = parent.create_child_builder(wrapper)
-        assert child.parent is parent
+        child = _parent.create_child_builder(wrapper)
+        assert child.builder_parent is _parent
         assert child.doc.wrapper_tag == wrapper
 
 

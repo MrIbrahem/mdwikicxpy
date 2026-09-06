@@ -9,12 +9,13 @@ https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineard
 from __future__ import annotations
 
 import logging
+import re
 from typing import Any
 
 from lxml import etree
 
-from . import utils
-from .parser import VOID_ELEMENTS
+from .elements import VOID_ELEMENTS
+from .utils import Utils
 
 logger = logging.getLogger(__name__)
 
@@ -45,51 +46,36 @@ class Normalizer:
         """
         parser = etree.HTMLParser(encoding="utf-8")
         try:
-            tree = etree.fromstring(html, parser)
-            self._process_element(tree)
+            root = etree.fromstring(html, parser)
+            self._process_element(root)
         except Exception as exc:
             logger.error("Failed to parse HTML error: %s", str(exc))
             # Try with wrapping
             try:
-                tree = etree.fromstring(f"<div>{html}</div>", parser)
-                for child in tree:
+                root = etree.fromstring(f"<div>{html}</div>", parser)
+                for child in root:
                     self._process_element(child)
             except Exception as e:
                 raise Exception(f"Failed to parse HTML: {e}") from e
 
-    def extract_tag_name(self, element: Any) -> str | None:
-        if isinstance(element, etree._ElementTree):
-            tag_name = element.getroot().tag
-        elif isinstance(element, etree._Element):
-            tag_name = element.tag
-        elif isinstance(element, etree.QName):
-            tag_name = element.localname
-        else:
-            tag_name = getattr(element, "tag", None)
-
-        # Handle Cython comment/processing instruction function objects
-        if callable(tag_name):
-            return None
-
-        return tag_name
-
-    def _process_element(self, element: etree._ElementTree | etree._Element | Any, tag_name: str | None = None) -> None:
+    def _process_element(self, element: etree._Element | Any, tag_name: str | None = None) -> None:
         """
         Process an element and its children recursively.
         """
-        # Create tag dict
-        if tag_name is None:
-            tag_name = element.tag
+        if element is None:
+            return
 
-        if self.lowercase:
+        if tag_name is None:
+            tag_name = element.tag  # pyright: ignore[reportAssignmentType]
+
+        if tag_name and self.lowercase:
             tag_name = tag_name.lower()
 
         # Create tag dict
         tag = {"name": tag_name, "attributes": dict(element.attrib)}
 
         # Mark HTML void elements as self-closing
-        if tag_name in VOID_ELEMENTS:
-            tag["isSelfClosing"] = True
+        tag["isSelfClosing"] = tag_name in VOID_ELEMENTS
 
         self.on_open_tag(tag)
 
@@ -104,7 +90,7 @@ class Normalizer:
             if child.tail:
                 self.on_text(child.tail)
 
-        self.on_close_tag(tag_name)
+        self.on_close_tag(tag_name)  # pyright: ignore[reportArgumentType]
 
     def on_open_tag(self, tag: dict[str, Any]) -> None:
         """
@@ -114,9 +100,9 @@ class Normalizer:
             tag: Tag dict with 'name' and 'attributes'
         """
         self.tags.append(tag)
-        self.doc.append(utils.get_open_tag_html(tag, self.sort_attrs))
+        self.doc.append(Utils.get_open_tag_html(tag, self.sort_attrs))
 
-    def on_close_tag(self, tag_name) -> None:
+    def on_close_tag(self, tag_name: str) -> None:
         """
         Handle close tag event.
 
@@ -128,7 +114,7 @@ class Normalizer:
         if tag["name"] != tag_name:
             raise Exception(f'Unmatched tags: {tag["name"]} !== {tag_name}')
 
-        self.doc.append(utils.get_close_tag_html(tag))
+        self.doc.append(Utils.get_close_tag_html(tag))
 
     def on_text(self, text: str) -> None:
         """
@@ -137,7 +123,7 @@ class Normalizer:
         Args:
             text: Text content
         """
-        self.doc.append(utils.esc(text))
+        self.doc.append(Utils.esc(text))
 
     def get_html(self) -> str:
         """
@@ -149,6 +135,26 @@ class Normalizer:
         return "".join(self.doc)
 
 
+def normalize(html: str, sort_attrs: bool = True) -> str:
+    """
+    Normalize HTML by parsing and re-serializing.
+
+    Args:
+        html: HTML string to normalize
+
+    Returns:
+        Normalized HTML string
+    """
+    html = html.strip()
+    normalizer = Normalizer(sort_attrs=sort_attrs)
+    normalizer.init()
+    # Remove tabs, carriage returns, and newlines
+    html = re.sub(r"[\t\r\n]+", "", html)
+    normalizer.write(html)
+    return normalizer.get_html()
+
+
 __all__ = [
     "Normalizer",
+    "normalize",
 ]
