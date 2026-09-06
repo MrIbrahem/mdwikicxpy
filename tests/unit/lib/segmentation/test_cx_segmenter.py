@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 from python.lib.lineardoc import Doc, MwContextualizer, Parser
 from python.lib.lineardoc import normalize
-from python.lib.segmentation.cx_segmenter import CXSegmenter
+from python.lib.segmentation import CXSegmenter
 
 cx_segmenter_tests_path = Path(__file__).parent / "SegmentationTests.json"
 
