@@ -643,7 +643,7 @@ class TextBlock:
         Utils.set_link_ids_in_place(self.text_chunks, get_next_id)
         return self
 
-    def dump_xml_array(self, pad: str) -> list[list[str]]:
+    def dump_xml_array(self, pad: str) -> list[str]:
         """
         Dump an XML Array version of the linear representation, for debugging.
 
@@ -653,7 +653,9 @@ class TextBlock:
         Returns:
             Array that will concatenate to an XML string representation
         """
-        dump = [chunk.generate_xml_chunk(pad) for chunk in self.text_chunks]
+        dump = []
+        for chunk in self.text_chunks:
+            dump.extend(chunk.generate_xml_chunk(pad))
         return dump
 
 

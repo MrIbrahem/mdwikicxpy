@@ -70,6 +70,7 @@ class Parser:
         try:
             fragments = lxml_html.fragments_fromstring(html)
         except Exception as exc:
+            logger.error("Failed to parse HTML error: %s", str(exc))
             # Fallback: wrap in a div and try again
             try:
                 fragments = lxml_html.fragments_fromstring(f"<div>{html}</div>")
@@ -84,6 +85,27 @@ class Parser:
                 continue
 
             self._process_element(fragment)
+
+    def write_etree(self, html: str) -> None:
+        """
+        Parse HTML into the document.
+
+        Args:
+            html: HTML string to parse
+        """
+        parser = etree.HTMLParser(encoding="utf-8")
+        try:
+            root = etree.fromstring(html.encode("utf-8"), parser)
+            self._process_element(root)
+        except Exception as exc:
+            logger.error("Failed to parse HTML error: %s", str(exc))
+            # Try with wrapping
+            try:
+                root = etree.fromstring(f"<div>{html}</div>".encode(), parser)
+                for child in root:
+                    self._process_element(child)
+            except Exception as e:
+                raise Exception(f"Failed to parse HTML: {e}") from e
 
     def _process_element(self, element: etree._Element | Any, tag_name: str | None = None) -> None:
         """
