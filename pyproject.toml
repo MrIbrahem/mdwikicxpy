@@ -189,7 +189,6 @@ disable = [
     "R0913", # too-many-arguments
 ]
 
-
 [tool.pyright]
 reportIncompatibleMethodOverride = "none"
 # Target Python version for type analysis
