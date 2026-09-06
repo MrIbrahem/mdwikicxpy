@@ -27,7 +27,7 @@ class TestTextChunk:
         """Test creating text_chunk with inline content."""
         tags = [{"name": "span"}]
         inline_content = {"name": "img", "attributes": {"src": "test.jpg"}}
-        chunk = TextChunk("", tags, inline_content)
+        chunk = TextChunk("", tags, inline_content=inline_content)
         assert chunk.text == ""
         assert chunk.tags == tags
         assert chunk.inline_content == inline_content

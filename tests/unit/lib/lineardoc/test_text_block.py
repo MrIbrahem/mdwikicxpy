@@ -171,7 +171,7 @@ class TestTextBlockGetTagForId:
     def test_get_tag_for_id_with_inline_content(self):
         """Test getting tag when inline content exists."""
         inline_content = {"name": "img", "attributes": {"src": "test.jpg"}}
-        chunks = [TextChunk("", [], inline_content)]
+        chunks = [TextChunk("", [], inline_content=inline_content)]
         block = TextBlock(chunks)
         tag = block.get_tag_for_id()
         assert tag == inline_content
