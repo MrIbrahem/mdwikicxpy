@@ -18,7 +18,7 @@ function normalize(html) {
 	return normalizer.get_html();
 }
 
-function get_parsed_doc(content) {
+function getParsedDoc(content) {
 	const parser = new Parser(new MwContextualizer());
 	parser.init();
 	parser.write(content);
@@ -27,7 +27,7 @@ function get_parsed_doc(content) {
 
 function runTest(test, lang) {
 	const testData = readFileSync(dirname + '/data/' + test.source, 'utf8');
-	const parsedDoc = get_parsed_doc(testData);
+	const parsedDoc = getParsedDoc(testData);
 	const segmenter = new Segmenter();
 	const segmentedLinearDoc = segmenter.segment(parsedDoc, lang);
 	const result = normalize(segmentedLinearDoc.get_html());
