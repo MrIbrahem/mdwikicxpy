@@ -1,7 +1,7 @@
 var express = require("express");
 var cors = require('cors');
 var body_parser = require('body-parser');
-var u = require('./lib/d/u.js');
+var u = require('./lib/d/segments_main.js');
 
 var app = express();
 
@@ -10,7 +10,7 @@ app.use(cors())
 app.use(body_parser.json({ limit: '50mb' }));
 app.use(body_parser.urlencoded({ limit: '50mb', extended: false }));
 
-app.post("/textp", (req, res) => {
+app.post("/HtmltoSegments", (req, res) => {
 	const source_html = req.body.html;
 
 	if (!source_html || source_html.trim().length === 0) {
@@ -21,7 +21,7 @@ app.post("/textp", (req, res) => {
 		return;
 	}
 	try {
-		const processed_text = u.tet(source_html);
+		const processed_text = u.HtmltoSegments(source_html);
 		res.send({ result: processed_text });
 	} catch (error) {
 		console.error(error);

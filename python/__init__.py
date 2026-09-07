@@ -136,7 +136,7 @@ def process_text() -> tuple[Response, int]:
     Examples:
         Using curl::
 
-            $ curl -X POST http://localhost:8000/textp \\
+            $ curl -X POST http://localhost:8000/HtmltoSegments \\
                 -H "Content-Type: application/json" \\
                 -d '{"html": "<p>Hello world</p>"}'
 

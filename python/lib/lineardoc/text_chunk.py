@@ -66,7 +66,7 @@ class TextChunk:
         return html
 
     def generate_xml_chunk(self, pad: str = "") -> list[str]:
-        chunk_dump = []
+        chunk_dump: list[str] = []
         tags_dump = self.dump_tags()
         tags_attr = f' tags="{tags_dump}"' if tags_dump else ""
 

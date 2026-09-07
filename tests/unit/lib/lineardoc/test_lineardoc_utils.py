@@ -8,7 +8,6 @@ import pytest
 from python.lib.lineardoc import MwContextualizer, Parser
 from python.lib.lineardoc.utils import Utils
 
-
 test_files = [
     Path(__file__).parent / "data" / "test-block-template-section-1.html",
     Path(__file__).parent / "data" / "test-block-template-section-2.html",
@@ -21,13 +20,20 @@ test_files = [
 def test_is_ignorable_block(test_file):
     with open(test_file, "r", encoding="utf-8") as f:
         html = f.read()
-    parser = Parser(MwContextualizer())
+
+    parser = Parser(
+        MwContextualizer(),
+        options={
+            "sort_attrs": True,
+        },
+    )
 
     parser.init()
     parser.write(html.strip())
     parsed_doc = parser.builder.doc
     result = parsed_doc.is_ignorable_block()
     assert result is True, f"Expected block to be ignorable for file: {test_file.name}"
+
 
 class TestEscapeFunctions:
     """Test HTML escape functions."""

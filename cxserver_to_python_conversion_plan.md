@@ -25,9 +25,9 @@ The system takes HTML input, processes it through a pipeline that:
 ```
 HTTP Server (Express)
     ↓
-Main Endpoint (/textp)
+Main Endpoint (/HtmltoSegments)
     ↓
-u.tet() function
+u.HtmltoSegments() function
     ↓
 LinearDoc Pipeline:
     1. Parser (SAX-based)
@@ -44,12 +44,12 @@ HTML Output
 
 1. **Server Layer** (`server.js`)
    - Express HTTP server
-   - POST /textp endpoint
+   - POST /HtmltoSegments endpoint
    - Body parsing (JSON, up to 50mb)
    - CORS enabled
 
-2. **Core Processing** (`lib/d/u.js`)
-   - Main entry point: `tet()` function
+2. **Core Processing** (`lib/d/segments_main.js`)
+   - Main entry point: `HtmltoSegments()` function
    - Orchestrates the pipeline
 
 3. **LinearDoc Library** (`lib/lineardoc/`)
@@ -317,7 +317,7 @@ app.add_middleware(
 class TextProcessRequest(BaseModel):
     html: str
 
-@app.post("/textp")
+@app.post("/HtmltoSegments")
 async def process_text(request: TextProcessRequest):
     if not request.html or not request.html.strip():
         raise HTTPException(
@@ -341,7 +341,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/textp', methods=['POST'])
+@app.route('/HtmltoSegments', methods=['POST'])
 def process_text():
     data = request.get_json()
     source_html = data.get('html', '')
@@ -460,7 +460,7 @@ def test_regression_against_js():
 
 ### Sprint 5 (Week 5): API & Integration
 - [ ] Create Flask/FastAPI server
-- [ ] Implement /textp endpoint
+- [ ] Implement /HtmltoSegments endpoint
 - [ ] Add error handling
 - [ ] Configure CORS
 - [ ] End-to-end testing
@@ -673,12 +673,12 @@ CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
 #### Phase 6: Pipeline Integration
 ```
 1. Create main pipeline (pipeline.py)
-   - Port u.tet() function
+   - Port u.HtmltoSegments() function
    - Wire all components together
    - Add error handling
 
 2. Create API endpoints (routes.py, app.py)
-   - Implement /textp POST endpoint
+   - Implement /HtmltoSegments POST endpoint
    - Add CORS configuration
    - Add request validation
 ```
@@ -731,7 +731,7 @@ CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
 ## Success Criteria
 
 ### Functional Requirements
-- ✅ Accepts HTML via POST /textp endpoint
+- ✅ Accepts HTML via POST /HtmltoSegments endpoint
 - ✅ Returns segmented HTML with IDs
 - ✅ Handles MediaWiki-specific elements
 - ✅ Removes configured sections
@@ -773,7 +773,7 @@ CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
 | JavaScript File | Python File | Priority |
 |----------------|-------------|----------|
 | `server.js` | `app.py` | HIGH |
-| `lib/d/u.js` | `core/pipeline.py` | HIGH |
+| `lib/d/segments_main.js` | `core/pipeline.py` | HIGH |
 | `lib/lineardoc/Parser.js` | `lineardoc/parser.py` | HIGH |
 | `lib/lineardoc/Builder.js` | `lineardoc/builder.py` | HIGH |
 | `lib/lineardoc/Doc.js` | `lineardoc/doc.py` | HIGH |

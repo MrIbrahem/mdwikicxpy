@@ -19,6 +19,7 @@ from collections.abc import Callable
 from typing import Any
 
 from .doc_item import (
+    ALL_ITEMS_TYPES,
     DocDict,
     DocStr,
     DocTextBlock,
@@ -207,9 +208,13 @@ class Doc:
 
                 new_doc.add_textblock_item(segmented_text_block)
             else:
-                raise Exception(f"Unknown item type: {i_item.item_type}")
+                self.raise_if_unknown_item(i_item.item_type)
 
         return new_doc
+
+    def raise_if_unknown_item(self, item_type: str) -> None:
+        if item_type not in ALL_ITEMS_TYPES:
+            raise Exception(f"Unknown item type: {item_type}")
 
     def dump_xml(self) -> str:
         """
@@ -248,7 +253,7 @@ class Doc:
             elif item_type == "textblock" and isinstance(i_item, DocTextBlock):
                 html.append(i_item.get_html())
             else:
-                raise Exception(f"Unknown item type: {item_type}")
+                self.raise_if_unknown_item(i_item.item_type)
 
         if self.wrapper_tag:
             html.append(Utils.get_close_tag_html(self.wrapper_tag))
@@ -305,6 +310,7 @@ class Doc:
             # Undo last section close
             doc.undo_add_item()
             curr_section = prev_section
+            # 'str' object has no attribute 'item_type'
             doc.add_item(item.item_type, item.item)
             close_section(new_doc)
 
@@ -346,7 +352,7 @@ class Doc:
                 tag = i_item.item
                 new_item = new_doc.get_current_item()
                 if prev_section and new_item and new_item["item"]["name"] == "section":
-                    insert_to_prev_section(tag, new_doc)
+                    insert_to_prev_section(i_item, new_doc)
                 else:
                     new_doc.add_blockspace_item(tag)
 
@@ -359,7 +365,7 @@ class Doc:
                     new_item = new_doc.get_current_item()
                     # Textblock with no tag identifier. Add it to the previous section
                     if prev_section and new_item and new_item["item"]["name"] == "section":
-                        insert_to_prev_section(tag, new_doc)
+                        insert_to_prev_section(i_item, new_doc)
                         continue
 
                 # No previous section to attach to; fall through to open a new one
@@ -367,7 +373,7 @@ class Doc:
 
                 if is_connected:
                     # This tag is connected to previous section. Can be a template fragment.
-                    insert_to_prev_section(tag, new_doc)
+                    insert_to_prev_section(i_item, new_doc)
                     continue
 
                 if not curr_section:
@@ -386,11 +392,11 @@ class Doc:
                 new_doc.add_textblock_item(text_block)
 
             else:
-                raise Exception(f"Unknown item type: {item_type}")
+                self.raise_if_unknown_item(i_item.item_type)
 
         return new_doc
 
-    def dump_xml_array(self, pad: str) -> list:
+    def dump_xml_array(self, pad: str) -> list[str]:
         """
         Dump an XML Array version of the linear representation, for debugging.
 
@@ -431,14 +437,14 @@ class Doc:
                 dump.extend(i_item.generate_textblock_xml(pad))
 
             else:
-                raise Exception(f"Unknown item type: {i_item.item_type}")
+                self.raise_if_unknown_item(i_item.item_type)
 
         if self.wrapper_tag:
             dump.append(f"{pad}</cxwrapper>")
 
         return dump
 
-    def get_segments(self) -> list:
+    def get_segments(self) -> list[str]:
         """
         Extract the text segments from the document.
 

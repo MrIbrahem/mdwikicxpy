@@ -8,7 +8,7 @@ Based on actual code analysis of `WikiAr/mdwikicxpy`
 
 ## 📋 **EXECUTIVE SUMMARY**
 
-### What POST /textp Does:
+### What POST /HtmltoSegments Does:
 
 ```
 Input: MediaWiki HTML (Parsoid format)
@@ -22,7 +22,7 @@ Input: MediaWiki HTML (Parsoid format)
 Output: Processed HTML ready for Content Translation
 ```
 
-### Core Pipeline (from `u.tet()`):
+### Core Pipeline (from `u.HtmltoSegments()`):
 
 ```javascript
 Parser + mw_contextualizer → Doc → wrapSections() → CXSegmenter → HTML
@@ -294,8 +294,8 @@ CONFIG = load_config()
 
 def process_html(source_html: str) -> str:
     """
-    Main processing pipeline - equivalent to u.tet()
-    See u.js lines 20-37
+    Main processing pipeline - equivalent to u.HtmltoSegments()
+    See segments_main.js lines 20-37
     """
     # 1. Create parser with MediaWiki contextualizer
     contextualizer = mw_contextualizer(
@@ -335,7 +335,7 @@ app = FastAPI()
 class HtmlRequest(BaseModel):
     html: str
 
-@app.post("/textp")
+@app.post("/HtmltoSegments")
 async def process_text(request: HtmlRequest):
     """
     Equivalent to server.js lines 13-35

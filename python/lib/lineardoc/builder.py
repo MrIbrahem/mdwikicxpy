@@ -65,6 +65,7 @@ class Builder:
 
         if tag["name"] == "figure":
             tag["attributes"]["rel"] = "cx:Figure"
+
         self.doc.add_dict_item("open", tag)
 
     def is_section(self, tag: dict[str, Any]) -> bool:
@@ -175,6 +176,7 @@ class Builder:
             can_segment: Whether this can be segmented
         """
         self.text_chunks.append(TextChunk(text, self.inline_annotation_tags[:]))
+
         self.inline_annotation_tags_used = len(self.inline_annotation_tags)
         # Inside a textblock, if a textchunk becomes segmentable
         self.is_block_segmentable = can_segment

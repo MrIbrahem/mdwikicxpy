@@ -6,7 +6,7 @@ the Content Translation pipeline. It exposes endpoints for HTML text
 processing and health checks.
 
 Endpoints:
-    POST /textp - Process HTML through the CX pipeline
+    POST /HtmltoSegments - Process HTML through the CX pipeline
     GET /health - Health check endpoint
 
 Security Considerations:
@@ -34,7 +34,7 @@ import logging
 import os
 from typing import Any
 
-from flask import Flask, Response, jsonify, request
+from flask import Flask, Response, jsonify, render_template, request
 from flask_cors import CORS
 from lib.processor import process_html
 
@@ -140,7 +140,14 @@ def create_success_response(result: str) -> tuple[Response, int]:
     return jsonify({"result": result, "success": True}), 200
 
 
-@app.route("/textp", methods=["POST"])
+@app.route("/", methods=["GET"])
+@app.route("/HtmltoSegments", methods=["GET"])
+def index() -> str:
+    return render_template(
+        "html_to_segments/index.html",
+    )
+
+
 @app.route("/HtmltoSegments", methods=["POST"])
 def process_text() -> tuple[Response, int]:
     """
@@ -175,7 +182,7 @@ def process_text() -> tuple[Response, int]:
     Examples:
         Using curl::
 
-            $ curl -X POST http://localhost:8000/textp \\
+            $ curl -X POST http://localhost:8000/HtmltoSegments \\
                 -H "Content-Type: application/json" \\
                 -d '{"html": "<p>Hello world</p>"}'
 
@@ -202,11 +209,18 @@ def process_text() -> tuple[Response, int]:
         return create_error_response(error_message, 400)
 
     source_html = data["html"] if data else {}
+    sort_attrs = data.get("sort_attrs", False) if data else False
+    wrap_sections = data.get("wrap_sections", False) if data else False
 
     # Process the HTML
     try:
         logger.info(f"Processing HTML request ({len(source_html)} bytes)")
-        processed_text = process_html(source_html)
+        processed_text = process_html(
+            source_html=str(source_html),
+            lang="en",
+            sort_attrs=sort_attrs,
+            wrap_sections=wrap_sections,
+        )
         logger.info("HTML processing completed successfully")
         return create_success_response(processed_text)
 
@@ -255,7 +269,7 @@ def health() -> tuple[Response, int]:
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
+    debug = True  #  os.environ.get("FLASK_DEBUG", "false").lower() == "true"
 
     logger.info(f"Starting Flask server on port {port} (debug={debug})")
     app.run(host="0.0.0.0", port=port, debug=debug)

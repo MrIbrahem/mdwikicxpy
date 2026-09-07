@@ -20,7 +20,7 @@ class TestParserCreation:
     def test_parser_with_options(self):
         """Test creating parser with options."""
         ctx = Contextualizer()
-        options = {"wrapSections": True}
+        options = {"wrapSections": True, "sort_attrs": True}
         parser = Parser(ctx, options)
         assert parser.options == options
 

@@ -11,9 +11,9 @@ const content_branch_node_names = ['blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', '
 class MwContextualizer extends Contextualizer {
 	/**
 	 * @param {Object} config
-	 * @param {Object} config.removable_sections containing array of classes and rdfa values.
+	 * @param {Object} config.removableSections containing array of classes and rdfa values.
 	 *  Tags matching these classes or rdfa values will be marked as removable.
-	 *  See config/MWPage_loader.yaml
+	 *  See config in removableSections
 	 */
 	constructor(config) {
 		super(config);
@@ -79,20 +79,20 @@ class MwContextualizer extends Contextualizer {
 	 * @return {boolean}
 	 */
 	is_removable(tag) {
-		const removable_sections = this.config.removable_sections;
-		if (!this.config.removable_sections) {
+		const removableSections = this.config.removableSections;
+		if (!this.config.removableSections) {
 			return false;
 		}
 
 		if (this.removable_transclusion_fragments.includes(tag.attributes.about)) {
 			// Once a transclusion is removed, make sure their fragments also removed
-			// even if the fragment does not match with removable_sections configuration.
+			// even if the fragment does not match with removableSections configuration.
 			return true;
 		}
 
 		const class_list = tag.attributes.class ? tag.attributes.class.split(' ') : [];
-		for (let i = 0; i < removable_sections.classes.length; i++) {
-			if (class_list.includes(removable_sections.classes[i])) {
+		for (let i = 0; i < removableSections.classes.length; i++) {
+			if (class_list.includes(removableSections.classes[i])) {
 				if (tag.attributes.about) {
 					this.removable_transclusion_fragments.push(tag.attributes.about);
 				}
@@ -103,10 +103,10 @@ class MwContextualizer extends Contextualizer {
 		const types = tag.attributes.typeof ? tag.attributes.typeof.split(' ') : [];
 		const rels = tag.attributes.rel ? tag.attributes.rel.split(' ') : [];
 		const rdfa = types.concat(rels);
-		for (let i = 0; i < removable_sections.rdfa.length; i++) {
+		for (let i = 0; i < removableSections.rdfa.length; i++) {
 			// Make sure that the rdfa value matches with removable section rdfa and does not
 			// have other rdfas in same element.
-			if (rdfa.includes(removable_sections.rdfa[i] && rdfa.length === 1)) {
+			if (rdfa.includes(removableSections.rdfa[i] && rdfa.length === 1)) {
 				if (tag.attributes.about) {
 					this.removable_transclusion_fragments.push(tag.attributes.about);
 				}
@@ -131,9 +131,9 @@ class MwContextualizer extends Contextualizer {
 			return false;
 		}
 
-		for (let i = 0; i < removable_sections.templates.length; i++) {
+		for (let i = 0; i < removableSections.templates.length; i++) {
 			let removable_template_name_reg_exp;
-			const removable_template_name = removable_sections.templates[i];
+			const removable_template_name = removableSections.templates[i];
 
 			if (removable_template_name[0] === '/' && removable_template_name.slice(-1) === '/') {
 				// A regular expression is given.

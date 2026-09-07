@@ -28,9 +28,15 @@ class Doc {
 	/**
 	 * @param {string} wrapper_tag open/close tags
 	 */
-	constructor(wrapper_tag) {
+	constructor(wrapper_tag = null) {
+		/**
+		 * @type {{ type: string; item: any; }[] | { item: { adapt_reference_punctuation: (arg0: { policy: string; punctuation: string[]; }) => any; }; }[]}
+		 */
 		this.items = [];
 		this.wrapper_tag = wrapper_tag || null;
+		/**
+		 * @type {any[]}
+		 */
 		this.categories = [];
 	}
 
@@ -110,6 +116,10 @@ class Doc {
 			section_number = 0;
 
 		// TODO: return different counters depending on type
+		/**
+		 * @param {string} id_type
+		 * @param {string} tag_name
+		 */
 		function get_next_id(id_type, tag_name) {
 			if (tag_name === 'section') {
 				return String(`cx_source_section${next_section_id++}`);
@@ -243,6 +253,12 @@ class Doc {
 	 */
 	wrap_sections() {
 		const new_doc = new Doc();
+		/**
+		 * @type {string}
+		 */
+		/**
+		 * @type {string}
+		 */
 		let in_body = false,
 			prev_section = null,
 			curr_section = null;
@@ -268,16 +284,26 @@ class Doc {
 			return id || tag.name;
 		}
 
+		/**
+		 * @param {Doc} doc
+		 */
 		function open_section(doc) {
 			doc.add_item('open', { name: 'section', attributes: { rel: 'cx:Section' } });
 		}
 
+		/**
+		 * @param {Doc} doc
+		 */
 		function close_section(doc) {
 			doc.add_item('close', { name: 'section' });
 			prev_section = curr_section;
 			curr_section = null;
 		}
 
+		/**
+		 * @param {{ name: any; type: any; item: any; }} item
+		 * @param {Doc} doc
+		 */
 		function insert_to_prev_section(item, doc) {
 			if (new_doc.get_current_item().item.name !== 'section') {
 				throw new Error(`Sectionwrap: Attempting to remove a non-section tag: ${item.name}`);
@@ -471,7 +497,7 @@ class Doc {
 		let non_translatable_context = false;
 
 		// Check if there are attributes other than id to save in attr_dump
-		const has_attributes_to_save = (obj) => {
+		const has_attributes_to_save = (/** @type {string} */ obj) => {
 			const keys = obj.attributes && Object.keys(obj.attributes);
 			if (!keys || keys.length === 0) {
 				return false;
@@ -613,7 +639,7 @@ class Doc {
 		const expanded_doc = new Doc(this.wrapper_tag);
 		let id = 0;
 
-		const has_attributes = (obj) => obj.attributes && Object.keys(obj.attributes).length;
+		const has_attributes = (/** @type {string} */ obj) => obj.attributes && Object.keys(obj.attributes).length;
 		if (this.wrapper_tag && has_attributes(this.wrapper_tag)) {
 			id = this.wrapper_tag.attributes.id;
 			if (extracted_data[id]) {
@@ -660,6 +686,9 @@ class Doc {
 			}
 
 			const textblock = tag;
+			/**
+			 * @type {number[]}
+			 */
 			const expanded_ids = [];
 			for (let j = 0, len = textblock.text_chunks.length; j < len; j++) {
 				const chunk = textblock.text_chunks[j];

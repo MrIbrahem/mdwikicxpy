@@ -8,11 +8,11 @@
 cxsever/
 └── www/
     └── js/
-        ├── server.js                    # Main Express server (only /textp endpoint)
+        ├── server.js                    # Main Express server (only /HtmltoSegments endpoint)
         ├── package.json                 # Dependencies and scripts
         └── lib/                         # Core libraries
             ├── d/                       # Data/processing layer
-            │   ├── u.js                 # HTML processing utilities (main logic)
+            │   ├── segments_main.js                 # HTML processing utilities (main logic)
             │   └── MWPageLoader.yaml    # Configuration file
             ├── lineardoc/               # Linear document processing
             │   ├── index.js             # Module exports
@@ -36,7 +36,7 @@ cxsever/
 var express = require("express");
 var cors = require("cors");
 var bodyParser = require("body-parser");
-var u = require("./lib/d/u.js");
+var u = require("./lib/d/segments_main.js");
 
 var app = express();
 
@@ -45,7 +45,7 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: false }));
 
 // Main endpoint - Process HTML for translation
-app.post("/textp", (req, res) => {
+app.post("/HtmltoSegments", (req, res) => {
     const sourceHtml = req.body.html;
 
     if (!sourceHtml || sourceHtml.trim().length === 0) {
@@ -56,7 +56,7 @@ app.post("/textp", (req, res) => {
         return;
     }
     try {
-        const processedText = u.tet(sourceHtml);
+        const processedText = u.HtmltoSegments(sourceHtml);
         res.send({ result: processedText });
     } catch (error) {
         console.error(error);
@@ -74,7 +74,7 @@ app.listen(process.env.PORT || 8000, function () {
 });
 ```
 
-### Core Processing (`lib/d/u.js`)
+### Core Processing (`lib/d/segments_main.js`)
 
 ```javascript
 "use strict";
@@ -89,7 +89,7 @@ const pageloaderConfig = yaml.load(
 );
 const removableSections = pageloaderConfig.removableSections;
 
-function tet(source_HTML) {
+function HtmltoSegments(source_HTML) {
     // 1. Parse HTML with MediaWiki contextualization
     const parser = new LinearDoc.Parser(
         new LinearDoc.mw_contextualizer({
@@ -115,7 +115,7 @@ function tet(source_HTML) {
     return result;
 }
 
-module.exports = { tet };
+module.exports = { HtmltoSegments };
 ```
 
 ---
@@ -135,7 +135,7 @@ cxserver_py/
 │   └── MWPageLoader.yaml               # MediaWiki page loader config
 ├── lib/                                # Core libraries
 │   ├── __init__.py
-│   ├── processor.py                    # Main HTML processor (u.tet equivalent)
+│   ├── processor.py                    # Main HTML processor (u.HtmltoSegments equivalent)
 │   ├── lineardoc/                      # Linear document processing
 │   │   ├── __init__.py
 │   │   ├── parser.py                   # HTML parser (SAX-based)
@@ -168,7 +168,7 @@ cxserver_py/
 ```python
 """
 CX Server - Content Translation HTML Processing
-Main Flask application with single /textp endpoint
+Main Flask application with single /HtmltoSegments endpoint
 """
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -189,13 +189,13 @@ CORS(app)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 
 
-@app.route('/textp', methods=['POST'])
+@app.route('/HtmltoSegments', methods=['POST'])
 def process_text():
     """
     Process HTML for translation
 
     Request:
-        POST /textp
+        POST /HtmltoSegments
         Content-Type: application/json
         Body: {"html": "<p>Your HTML here</p>"}
 
@@ -251,7 +251,7 @@ if __name__ == '__main__':
 ```python
 """
 Main HTML processing module
-Equivalent to lib/d/u.js - the tet() function
+Equivalent to lib/d/segments_main.js - the HtmltoSegments() function
 """
 import os
 import yaml
@@ -285,7 +285,7 @@ _removable_sections = _config.get('removableSections', {})
 def process_html(source_html: str) -> str:
     """
     Process HTML for translation
-    Equivalent to u.tet() function in JavaScript
+    Equivalent to u.HtmltoSegments() function in JavaScript
 
     Pipeline:
     1. Parse HTML with MediaWiki contextualization
@@ -494,7 +494,7 @@ def test_process_whitespace_only():
 | JavaScript                          | Python                               | Purpose                 |
 | ----------------------------------- | ------------------------------------ | ----------------------- |
 | `server.js`                         | `app.py`                             | Main application server |
-| `lib/d/u.js`                        | `lib/processor.py`                   | Core HTML processing    |
+| `lib/d/segments_main.js`                        | `lib/processor.py`                   | Core HTML processing    |
 | `lib/d/MWPageLoader.yaml`           | `config/MWPageLoader.yaml`           | Configuration           |
 | `lib/lineardoc/Parser.js`           | `lib/lineardoc/parser.py`            | HTML parser             |
 | `lib/lineardoc/Builder.js`          | `lib/lineardoc/builder.py`           | Document builder        |
@@ -534,7 +534,7 @@ python app.py
 ### Test the Endpoint
 
 ```bash
-curl -X POST http://localhost:8000/textp \
+curl -X POST http://localhost:8000/HtmltoSegments \
   -H "Content-Type: application/json" \
   -d '{"html": "<p>Hello world</p>"}'
 ```

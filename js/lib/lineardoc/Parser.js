@@ -70,7 +70,7 @@ class Parser extends sax.SAXParser {
 			return;
 		}
 
-		if (this.options.isolate_segments && is_segment(tag)) {
+		if (this.options.isolateSegments && is_segment(tag)) {
 			this.builder.push_block_tag({
 				name: 'div',
 				attributes: {
@@ -111,7 +111,7 @@ class Parser extends sax.SAXParser {
 			return;
 		} else if (is_ann && this.builder.inline_annotation_tags.length > 0) {
 			this.builder.pop_inline_annotation_tag(tag_name);
-			if (this.options.isolate_segments && is_segment(tag)) {
+			if (this.options.isolateSegments && is_segment(tag)) {
 				this.builder.pop_block_tag('div');
 			}
 		} else if (is_ann && this.builder.parent !== null) {
@@ -121,7 +121,8 @@ class Parser extends sax.SAXParser {
 			}
 			this.builder.finish_text_block();
 			this.builder.parent.add_inline_content(
-				this.builder.doc, this.contextualizer.can_segment()
+				this.builder.doc,
+				this.contextualizer.can_segment(),
 			);
 			// Finished with child now. Move back to the parent builder
 			this.builder = this.builder.parent;
