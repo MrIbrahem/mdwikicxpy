@@ -64,6 +64,8 @@ class Parser:
         Args:
             tag: Tag dict with 'name' and 'attributes'
         """
+        is_ann = self.is_inline_annotation_tag(tag["name"], Utils.is_transclusion(tag))
+
         if self.contextualizer.get_context() == "removable" or self.contextualizer.is_removable(tag):
             self.all_tags.append(tag)
             self.contextualizer.on_open_tag(tag)
@@ -82,7 +84,7 @@ class Parser:
                 can_segment=self.contextualizer.can_segment(),
             )
 
-        elif self.is_inline_annotation_tag(tag["name"], Utils.is_transclusion(tag)):
+        elif is_ann:
             self.builder.push_inline_annotation_tag(tag)
         else:
             self.builder.push_block_tag(tag)
@@ -102,6 +104,7 @@ class Parser:
 
         tag = self.all_tags.pop()
         is_ann = self.is_inline_annotation_tag(tag_name, Utils.is_transclusion(tag))
+
         if self.contextualizer.get_context() == "removable" or self.contextualizer.is_removable(tag):
             self.contextualizer.on_close_tag(tag)
             return
