@@ -9,6 +9,7 @@ https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineard
 from __future__ import annotations
 
 import logging
+import re
 from typing import Any
 
 from html.parser import HTMLParser
