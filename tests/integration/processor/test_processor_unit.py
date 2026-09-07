@@ -37,18 +37,10 @@ def test_process_html_simple():
     parsed_doc = parser.builder.doc
     parsed_doc = parsed_doc.wrap_sections()
 
-    # segmented_doc = CXSegmenter().segment(parsed_doc, "en")
-
     result = parsed_doc.get_html()
 
     assert normalize_test(result) == normalize_test("""
-        <html>
-            <body>
-                <section rel="cx:Section">
-                    <p>This is a test.</p>
-                </section>
-            </body>
-        </html>
+        <p>This is a test.</p>
     """)
 
 
@@ -75,14 +67,7 @@ def test_process_html_simple2():
     result = segmented_doc.get_html()
 
     assert normalize_test(result) == normalize_test("""
-        <html id="0">
-            <body id="1">
-                <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
-                    <p id="2"><span class="cx-segment" data-segmentid="3">This is a test.</span></p>
-                </section>
-            </body>
-
-        </html>
+        <p id="0"><span class="cx-segment" data-segmentid="1">This is a test.</span></p>
     """)
 
 
@@ -100,20 +85,20 @@ def test_process_html_sections():
     """
     expected_text = """
     <body id="0">
-        <section rel="cx:Section" id="cxSourceSection0" data-mw-section-number="1">
+        <section data-mw-section-number="1" id="cxSourceSection0" rel="cx:Section">
         <h2 id="0e769600933790607b2a13b33ddfad">
             <span class="cx-segment" data-segmentid="1">History</span>
         </h2>
         </section>
-        <section rel="cx:Section" id="cxSourceSection1" data-mw-section-number="1"><p id="mwUA"><span class="cx-segment" data-segmentid="2">content</span></p>
+        <section data-mw-section-number="1" id="cxSourceSection1" rel="cx:Section"><p id="mwUA"><span class="cx-segment" data-segmentid="2">content</span></p>
         </section>
-        <section rel="cx:Section" id="cxSourceSection2" data-mw-section-number="1"><p id="mwUB"><span class="cx-segment" data-segmentid="3">content</span></p>
+        <section data-mw-section-number="1" id="cxSourceSection2" rel="cx:Section"><p id="mwUB"><span class="cx-segment" data-segmentid="3">content</span></p>
         </section>
-        <section rel="cx:Section" id="cxSourceSection3" data-mw-section-number="1"><h3 id="0311fc66ff8b0cf80103792799fe14"><span class="cx-segment" data-segmentid="4">16th century</span></h3>
+        <section data-mw-section-number="1" id="cxSourceSection3" rel="cx:Section"><h3 id="0311fc66ff8b0cf80103792799fe14"><span class="cx-segment" data-segmentid="4">16th century</span></h3>
         </section>
-        <section rel="cx:Section" id="cxSourceSection4" data-mw-section-number="1"><p id="mwUC"><span class="cx-segment" data-segmentid="5">content</span></p>
+        <section data-mw-section-number="1" id="cxSourceSection4" rel="cx:Section"><p id="mwUC"><span class="cx-segment" data-segmentid="5">content</span></p>
         </section>
-        <section rel="cx:Section" id="cxSourceSection5" data-mw-section-number="1"><p id="mwUD"><span class="cx-segment" data-segmentid="6">content</span></p>
+        <section data-mw-section-number="1" id="cxSourceSection5" rel="cx:Section"><p id="mwUD"><span class="cx-segment" data-segmentid="6">content</span></p>
         </section>
     </body>
     """

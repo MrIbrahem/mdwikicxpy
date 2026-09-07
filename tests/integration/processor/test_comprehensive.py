@@ -8,9 +8,8 @@ from python.lib.processor import process_html
 def test_basic_html_processing():
     """Test basic HTML processing."""
 
-    html = "<h2>test</h2><p>This is a test. This is another sentence.</p>"
+    html = "<body><h2>test</h2><p>This is a test. This is another sentence.</p></body>"
     result = process_html(html)
-    expected = """<p id="0"><span class="cx-segment" data-segmentid="1">This is a test. </span><span class="cx-segment" data-segmentid="2">This is another sentence.</span></p>"""
 
     assert "cx-segment" in result, "Should contain segments"
     assert "data-segmentid" in result, "Should contain segment IDs"

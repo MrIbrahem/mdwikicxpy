@@ -34,14 +34,14 @@ class TestProcessHtml:
 
     def test_process_html_creates_sections(self):
         """Test that processing creates sections."""
-        html = "<h2>Heading</h2><p>Content</p>"
+        html = "<body><h2>Heading</h2><p>Content</p></body>"
         result = process_html(html)
 
         assert "<section" in result
         assert 'rel="cx:Section"' in result
 
         assert normalize_test(result) == normalize_test("""
-            <h2 id="0"><span class="cx-segment" data-segmentid="1">Heading</span></h2><p id="2"><span class="cx-segment" data-segmentid="3">Content</span></p>
+            <body id="0"><section data-mw-section-number="1" id="cxSourceSection0" rel="cx:Section"><h2 id="1"><span class="cx-segment" data-segmentid="2">Heading</span></h2></section><section data-mw-section-number="1" id="cxSourceSection1" rel="cx:Section"><p id="3"><span class="cx-segment" data-segmentid="4">Content</span></p></section></body>
         """)
 
     def test_process_html_creates_segments(self):
@@ -113,11 +113,11 @@ class TestProcessHtml:
 
     def test_process_html_headings(self):
         """Test processing headings."""
-        html = """<h2>Section 1</h2>\n<p>Content 1</p>\n<h2>Section 2</h2>\n<p>Content 2</p>"""
+        html = """<body><h2>Section 1</h2>\n<p>Content 1</p>\n<h2>Section 2</h2>\n<p>Content 2</p></body>"""
         result = process_html(html)
 
         assert normalize_test(result) == normalize_test("""
-        <h2 id="0"><span class="cx-segment" data-segmentid="1">Section 1</span></h2><p id="2"><span class="cx-segment" data-segmentid="3">Content 1</span></p><h2 id="4"><span class="cx-segment" data-segmentid="5">Section 2</span></h2><p id="6"><span class="cx-segment" data-segmentid="7">Content 2</span></p>
+        <body id="0"><section data-mw-section-number="1" id="cxSourceSection0" rel="cx:Section"><h2 id="1"><span class="cx-segment" data-segmentid="2">Section 1</span></h2></section><section data-mw-section-number="1" id="cxSourceSection1" rel="cx:Section"><p id="3"><span class="cx-segment" data-segmentid="4">Content 1</span></p></section><section data-mw-section-number="2" id="cxSourceSection2" rel="cx:Section"><h2 id="5"><span class="cx-segment" data-segmentid="6">Section 2</span></h2></section><section data-mw-section-number="2" id="cxSourceSection3" rel="cx:Section"><p id="7"><span class="cx-segment" data-segmentid="8">Content 2</span></p></section></body>
         """)
 
         # Should create sections
@@ -145,7 +145,7 @@ class TestProcessHtml:
         assert "<ul" in result or "<li" in result
 
         assert normalize_test(result) == normalize_test("""
-            <h2 id="0"><span class="cx-segment" data-segmentid="1">Section 1</span></h2><p id="2"><span class="cx-segment" data-segmentid="3">Content 1</span></p><h2 id="4"><span class="cx-segment" data-segmentid="5">Section 2</span></h2><p id="6"><span class="cx-segment" data-segmentid="7">Content 2</span></p>
+            <html id="0"><body id="1"><section data-mw-section-number="1" id="cxSourceSection0" rel="cx:Section"><h2 id="2"><span class="cx-segment" data-segmentid="3">Introduction</span></h2></section><section data-mw-section-number="1" id="cxSourceSection1" rel="cx:Section"><p id="4"><span class="cx-segment" data-segmentid="5">This is the intro. </span><span class="cx-segment" data-segmentid="6">It has multiple sentences.</span></p></section><section data-mw-section-number="2" id="cxSourceSection2" rel="cx:Section"><h2 id="7"><span class="cx-segment" data-segmentid="8">Details</span></h2></section><section data-mw-section-number="2" id="cxSourceSection3" rel="cx:Section"><p id="9"><span class="cx-segment" data-segmentid="10">More details here.</span></p></section><section data-mw-section-number="2" id="cxSourceSection4" rel="cx:Section"><ul id="11"><li id="12"><span class="cx-segment" data-segmentid="13">Item 1</span></li><li id="14"><span class="cx-segment" data-segmentid="15">Item 2</span></li></ul></section></body></html>
             """)
 
     def test_process_html_unicode(self):
