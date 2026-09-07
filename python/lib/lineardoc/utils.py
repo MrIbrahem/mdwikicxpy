@@ -350,11 +350,17 @@ class Utils:
         for i in range(1, len(text_chunks)):
             tags = text_chunks[i].tags
             j = 0
+            # start
+            # while j < j_len and common_tags[j] is tags[j]:
+            #     j += 1
+            # end
+            # start
             for j in range(min(len(common_tags), len(tags))):
                 if common_tags[j] is not tags[j]:
                     break
             else:
                 j += 1
+            # end
             if len(common_tags) > j:
                 common_tags = common_tags[:j]
 

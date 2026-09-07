@@ -63,7 +63,8 @@ class CXSegmenter:
 
             for sentence in sentences:
                 if sentence["text"].strip():
-                    boundaries.append(sentence["start_index"])
+                    b = sentence["start_index"]
+                    boundaries.append(b)
 
             return boundaries
 
