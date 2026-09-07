@@ -292,6 +292,7 @@ class Parser:
         """
         parser = SaxHTMLParser(self, html)
         parser.feed(html)
+        parser.close()
 
     def write_fragments(self, html: str) -> None:
         """
