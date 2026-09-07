@@ -30,7 +30,6 @@ class Parser:
         self,
         contextualizer: MwContextualizer | Contextualizer,
         options=None,
-        sort_attrs: bool = True,
     ) -> None:
         """
         Initialize the parser.
@@ -42,6 +41,11 @@ class Parser:
         self.contextualizer = contextualizer
         self.options = options or {}
         self.lowercase = True
+
+        sort_attrs = bool(self.options.get("sort_attrs"))
+        if self.options.get("sort_attrs") is None:
+            sort_attrs = True
+
         self.sort_attrs = sort_attrs
 
     def init(self) -> None:
