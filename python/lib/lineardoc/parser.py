@@ -9,6 +9,7 @@ https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineard
 from __future__ import annotations
 
 import logging
+import re
 from typing import Any
 
 from lxml import etree
@@ -219,6 +220,21 @@ class Parser:
         consistent with the upstream (sax-based) parser, which only emits the
         elements actually present in the input.
         """
+        # ``fragments_fromstring`` deliberately discards explicit document
+        # containers. Preserve them when supplied: section wrapping relies on
+        # the real ``body`` boundary, while bare fragments must not gain one.
+        if re.match(r"^\s*(?:<!doctype[^>]*>\s*)?<html(?:\s|>)", html, re.IGNORECASE):
+            root = etree.fromstring(html.encode("utf-8"), etree.HTMLParser())
+            self._process_element(root)
+            return
+
+        if re.match(r"^\s*<body(?:\s|>)", html, re.IGNORECASE):
+            root = etree.fromstring(html.encode("utf-8"), etree.HTMLParser())
+            body = root.find("body")
+            if body is not None:
+                self._process_element(body)
+            return
+
         try:
             fragments = lxml_html.fragments_fromstring(html)
         except Exception as exc:

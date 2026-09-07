@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 from python.lib.processor import process_html
 
-FIXTURES_DIR = Path(__file__).resolve().parent.parent / "fixtures"
+FIXTURES_DIR = Path(__file__).resolve().parents[2] / "fixtures"
 
 
 def normalize_test(html: str) -> str:
