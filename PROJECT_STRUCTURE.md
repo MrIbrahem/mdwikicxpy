@@ -8,7 +8,7 @@
 cxsever/
 └── www/
     └── js/
-        ├── server.js                    # Main Express server (only /textp endpoint)
+        ├── server.js                    # Main Express server (only /HtmltoSegments endpoint)
         ├── package.json                 # Dependencies and scripts
         └── lib/                         # Core libraries
             ├── d/                       # Data/processing layer
@@ -45,7 +45,7 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: false }));
 
 // Main endpoint - Process HTML for translation
-app.post("/textp", (req, res) => {
+app.post("/HtmltoSegments", (req, res) => {
     const sourceHtml = req.body.html;
 
     if (!sourceHtml || sourceHtml.trim().length === 0) {
@@ -168,7 +168,7 @@ cxserver_py/
 ```python
 """
 CX Server - Content Translation HTML Processing
-Main Flask application with single /textp endpoint
+Main Flask application with single /HtmltoSegments endpoint
 """
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -189,13 +189,13 @@ CORS(app)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 
 
-@app.route('/textp', methods=['POST'])
+@app.route('/HtmltoSegments', methods=['POST'])
 def process_text():
     """
     Process HTML for translation
 
     Request:
-        POST /textp
+        POST /HtmltoSegments
         Content-Type: application/json
         Body: {"html": "<p>Your HTML here</p>"}
 
@@ -534,7 +534,7 @@ python app.py
 ### Test the Endpoint
 
 ```bash
-curl -X POST http://localhost:8000/textp \
+curl -X POST http://localhost:8000/HtmltoSegments \
   -H "Content-Type: application/json" \
   -d '{"html": "<p>Hello world</p>"}'
 ```

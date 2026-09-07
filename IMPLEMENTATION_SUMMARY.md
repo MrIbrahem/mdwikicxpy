@@ -127,7 +127,7 @@ Maintained the same linear document representation as JavaScript:
 ```
 ✅ 7/7 comprehensive tests PASSED
 ✅ Integration test PASSED
-✅ Flask /textp endpoint WORKING
+✅ Flask /HtmltoSegments endpoint WORKING
 ✅ Flask /health endpoint WORKING
 ✅ Output generates 94 segments, 7 sections
 ```
@@ -198,7 +198,7 @@ gunicorn -w 4 -b 0.0.0.0:8000 app:app
 
 ## API Documentation
 
-### POST /textp
+### POST /HtmltoSegments
 
 Process MediaWiki HTML for translation
 
@@ -221,7 +221,7 @@ Process MediaWiki HTML for translation
 **Example:**
 
 ```bash
-curl -X POST http://localhost:8000/textp \
+curl -X POST http://localhost:8000/HtmltoSegments \
   -H "Content-Type: application/json" \
   -d '{"html": "<p>Hello world. This is a test.</p>"}'
 ```

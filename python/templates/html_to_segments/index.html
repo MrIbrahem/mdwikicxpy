@@ -26,14 +26,25 @@
     </header>
     <main id="body">
         <div id="maindiv" class="container">
-            <div class="card">
+            <div class="card mb-3">
                 <div class="card-header aligncenter">
                     <div class='row'>
                         <div class='col-md-5'>
-                            <b>/PageHtmlDomain/:domain/:title</b> (get) <span id="time_domain"></span><br> Html text
+                            <b>Html source text:</b>
                         </div>
                         <div class='col-md-5'>
-                            <div class='row cols-3' id="link_domain">
+                            <input class='btn btn-outline-primary' size='10' name='start' value='Start'
+                                onclick="javascript:fix_it();" />
+                            <span id="load_fixit" class="spinner-border spinner-border-sm" role="status"
+                                aria-hidden="true" style="display:none;"></span>
+                        </div>
+                        <div class='col-md-5'>
+                            <div>
+                                <div>
+                                    <!-- add check input with id sort_attrs -->
+                                    <input type="checkbox" id="sort_attrs" name="sort_attrs" value="sort_attrs">
+                                    <label for="sort_attrs">Sort attributes</label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -42,31 +53,23 @@
                     <div class='row'>
                         <div class='col-md-12'>
                             <div class='input-group mb-3'>
-                                <textarea class='form-control' type='text' id='old_domain' name='old_domain'
+                                <textarea class='form-control' type='text' id='source_text' name='source_text'
                                     rows='4'></textarea>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="card">
                 <div class="card-header aligncenter">
-                    <b>/HtmltoSegments</b> (post) <span id="time_fixit"></span><br>Html to Segments
+                    <b>/HtmltoSegments</b> (POST) <span id="time_fixit"></span>
                 </div>
                 <div class="card-body">
                     <div class='row'>
-                        <div class='col-md-10'>
-                            <input class='btn btn-outline-primary' size='10' name='start' value='fix it'
-                                onclick="javascript:fix_it();" />
-                            <span id="load_fixit" class="spinner-border spinner-border-sm" role="status"
-                                aria-hidden="true" style="display:none;"></span>
-                        </div>
-                    </div>
-                    <div class='row'>
                         <div class='col-md-12'>
                             <div class='input-group mb-3'>
-                                <textarea class='form-control' type='text' id='new' name='new' rows='4'></textarea>
+                                <textarea class='form-control' type='text' id='new_text' name='new_text'
+                                    rows='4'></textarea>
                             </div>
                         </div>
                     </div>

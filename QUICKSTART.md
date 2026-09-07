@@ -50,7 +50,7 @@ Response:
 
 ### Process HTML
 ```bash
-curl -X POST http://localhost:8000/textp \
+curl -X POST http://localhost:8000/HtmltoSegments \
   -H "Content-Type: application/json" \
   -d '{
     "html": "<html><body><p>This is a test. Another sentence here.</p></body></html>"
@@ -87,7 +87,7 @@ print(result)
 
 The result will contain:
 - ✅ Wrapped sections with `<section>` tags
-- ✅ Segmented sentences with `<span class="cx-segment">` 
+- ✅ Segmented sentences with `<span class="cx-segment">`
 - ✅ Segment IDs via `data-segmentid` attributes
 - ✅ Link IDs via `data-linkid` attributes
 - ✅ Section metadata

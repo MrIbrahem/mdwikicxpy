@@ -8,7 +8,7 @@ Based on actual code analysis of `WikiAr/mdwikicxpy`
 
 ## 📋 **EXECUTIVE SUMMARY**
 
-### What POST /textp Does:
+### What POST /HtmltoSegments Does:
 
 ```
 Input: MediaWiki HTML (Parsoid format)
@@ -335,7 +335,7 @@ app = FastAPI()
 class HtmlRequest(BaseModel):
     html: str
 
-@app.post("/textp")
+@app.post("/HtmltoSegments")
 async def process_text(request: HtmlRequest):
     """
     Equivalent to server.js lines 13-35

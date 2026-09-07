@@ -10,7 +10,7 @@ app.use(cors())
 app.use(body_parser.json({ limit: '50mb' }));
 app.use(body_parser.urlencoded({ limit: '50mb', extended: false }));
 
-app.post("/textp", (req, res) => {
+app.post("/HtmltoSegments", (req, res) => {
 	const source_html = req.body.html;
 
 	if (!source_html || source_html.trim().length === 0) {

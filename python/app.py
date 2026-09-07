@@ -6,7 +6,7 @@ the Content Translation pipeline. It exposes endpoints for HTML text
 processing and health checks.
 
 Endpoints:
-    POST /textp - Process HTML through the CX pipeline
+    POST /HtmltoSegments - Process HTML through the CX pipeline
     GET /health - Health check endpoint
 
 Security Considerations:
@@ -147,7 +147,6 @@ def index() -> str:
         "html_to_segments/index.html",
     )
 
-@app.route("/textp", methods=["POST"])
 @app.route("/HtmltoSegments", methods=["POST"])
 def process_text() -> tuple[Response, int]:
     """
@@ -182,7 +181,7 @@ def process_text() -> tuple[Response, int]:
     Examples:
         Using curl::
 
-            $ curl -X POST http://localhost:8000/textp \\
+            $ curl -X POST http://localhost:8000/HtmltoSegments \\
                 -H "Content-Type: application/json" \\
                 -d '{"html": "<p>Hello world</p>"}'
 
@@ -209,11 +208,12 @@ def process_text() -> tuple[Response, int]:
         return create_error_response(error_message, 400)
 
     source_html = data["html"] if data else {}
+    sort_attrs = data.get("sort_attrs", False) if data else False
 
     # Process the HTML
     try:
         logger.info(f"Processing HTML request ({len(source_html)} bytes)")
-        processed_text = process_html(str(source_html), "en", sort_attrs=False)
+        processed_text = process_html(str(source_html), "en", sort_attrs=sort_attrs)
         logger.info("HTML processing completed successfully")
         return create_success_response(processed_text)
 

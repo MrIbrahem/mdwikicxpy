@@ -93,8 +93,8 @@ Successfully converted the entire JavaScript CXServer HTML processing pipeline t
     -   Orchestrates parsing, contextualization, segmentation
     -   Configuration loading
 
-16. **app.py** - Flask application with /textp endpoint
-    -   POST /textp for HTML processing
+16. **app.py** - Flask application with /HtmltoSegments endpoint
+    -   POST /HtmltoSegments for HTML processing
     -   GET /health for health checks
     -   Error handling and JSON responses
 
@@ -226,7 +226,7 @@ python app.py
 gunicorn -w 4 -b 0.0.0.0:8000 app:app
 
 # Use API
-curl -X POST http://localhost:8000/textp \
+curl -X POST http://localhost:8000/HtmltoSegments \
   -H "Content-Type: application/json" \
   -d '{"html": "<p>Test.</p>"}'
 ```
