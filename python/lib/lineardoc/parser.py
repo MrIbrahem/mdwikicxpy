@@ -99,26 +99,36 @@ class Parser:
         Args:
             tag_name: Name of tag to close
         """
+        # If there are no tags to close, return immediately
         if not self.all_tags:
             return
 
+        # Get the last opened tag from the stack
         tag = self.all_tags.pop()
+        # Check if it's an annotation tag and if it's a transclusion
         is_ann = self.is_inline_annotation_tag(tag_name, Utils.is_transclusion(tag))
 
+        # Handle removable tags or tags in removable context
         if self.contextualizer.get_context() == "removable" or self.contextualizer.is_removable(tag):
             self.contextualizer.on_close_tag(tag)
             return
 
+        # Process the tag close for non-removable tags
         self.contextualizer.on_close_tag(tag)
 
+        # Skip processing for empty inline tags
         if Utils.is_inline_empty_tag(tag_name):
             return
 
+        # Handle annotation tags
         if is_ann and len(self.builder.inline_annotation_tags) > 0:
+            # Pop the annotation tag from the builder
             self.builder.pop_inline_annotation_tag(tag_name)
+            # Handle segment isolation if needed
             if self.options.get("isolateSegments") and Utils.is_segment(tag):
                 self.builder.pop_block_tag("div")
 
+        # Handle annotation tags in sub-documents
         elif is_ann and self.builder.builder_parent is not None:
             # In a sub document: should be a span or sup that closes a reference
             if tag_name not in ("span", "sup"):
