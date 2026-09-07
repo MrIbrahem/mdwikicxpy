@@ -70,7 +70,9 @@ def test_cx_segmenter(test_case):
     normalized_result = normalize_test(result)
 
     output_path = output_path / test_case["result"]
-    output_path.write_text(result, encoding="utf-8")
+
+    result2 = re.sub(r">\s*<", ">\n<", result)
+    output_path.write_text(result2, encoding="utf-8")
 
     # expected
     expected_result_data = expected_text
