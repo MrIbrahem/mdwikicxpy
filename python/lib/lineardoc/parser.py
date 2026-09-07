@@ -294,15 +294,6 @@ class Parser:
         parser.feed(html)
         parser.close()
 
-    def write_fragments(self, html: str) -> None:
-        """
-        Parse HTML into the document.
-
-        Args:
-            html: HTML string to parse
-        """
-        return self.write(html)
-
 __all__ = [
     "Parser",
 ]

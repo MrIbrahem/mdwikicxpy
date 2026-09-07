@@ -403,13 +403,14 @@ class Utils:
                     tag["attributes"].pop("typeof", None)
                     tag["attributes"].pop("href", None)
                     tag["attributes"].pop("data-mw-i18n", None)
-
+                    # by Ibrahem Qasim - start
                     existing_cls = tag["attributes"].get("class", "").strip()
                     if existing_cls:
                         tag["attributes"]["class"] = f"{existing_cls} cx-link"
                     else:
                         tag["attributes"]["class"] = "cx-link"
 
+                    # by Ibrahem Qasim - end
                     tag["attributes"]["data-linkid"] = get_next_id("link")
                     tag["attributes"]["href"] = href
 
