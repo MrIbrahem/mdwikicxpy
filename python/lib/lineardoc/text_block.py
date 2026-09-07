@@ -207,7 +207,11 @@ def get_chunk_about_values(chunk: TextChunk) -> list[str]:
         attributes = inline.get("attributes") if isinstance(inline, dict) else getattr(inline, "attributes", None)
         if not attributes and getattr(inline, "wrapper_tag", None):
             wrapper_tag = inline.wrapper_tag
-            attributes = wrapper_tag.get("attributes") if isinstance(wrapper_tag, dict) else getattr(wrapper_tag, "attributes", None)
+            attributes = (
+                wrapper_tag.get("attributes")
+                if isinstance(wrapper_tag, dict)
+                else getattr(wrapper_tag, "attributes", None)
+            )
         if attributes and isinstance(attributes, dict) and "about" in attributes:
             values.append(attributes["about"])
 

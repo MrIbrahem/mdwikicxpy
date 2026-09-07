@@ -11,7 +11,7 @@ from typing import Any
 import sentencex
 
 from ..lineardoc.doc import Doc
-from ..lineardoc.text_block import REF_CHAR, INLINE_CHAR
+from ..lineardoc.text_block import INLINE_CHAR, REF_CHAR
 
 
 class CXSegmenter:

@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 from python.lib.lineardoc import Doc, MwContextualizer, Parser, normalize
-from python.lib.mw.mw_page_loader import MWPageLoader, removable_sections
+from python.lib.mw.mw_page_loader import removable_sections
 from python.lib.segmentation import CXSegmenter
 
 cx_segmenter_tests_path = Path(__file__).parent / "SegmentationTests.json"
@@ -33,12 +33,6 @@ def get_parsed_doc(content, config=None) -> Doc:
     parser.init()
     parser.write(content)
     return parser.builder.doc
-
-
-def get_result1(lang, source_text):
-    segmenter = CXSegmenter()
-    result = segmenter.segment(get_parsed_doc(source_text), lang).get_html()
-    return result
 
 
 @pytest.mark.parametrize("test_case", test_params, ids=lambda x: x["source"])
@@ -69,6 +63,9 @@ def test_cx_segmenter(test_case):
     output_path.write_text(result2, encoding="utf-8")
 
     # expected
+    # expected_result_data = expected_text
+    # expected_result_data = segmenter.segment(get_parsed_doc(expected_text), lang).get_html()
+
     expected_result_data = normalize_test(expected_text)
 
     if normalized_result != expected_result_data:

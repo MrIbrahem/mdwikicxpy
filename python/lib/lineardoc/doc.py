@@ -305,7 +305,9 @@ class Doc:
             new_item = new_doc.get_current_item()
 
             if new_item and (not isinstance(new_item.get("item"), dict) or new_item["item"].get("name") != "section"):
-                tag_name = item.item.get("name") if isinstance(item.item, dict) else getattr(item.item, "name", "unknown")
+                tag_name = (
+                    item.item.get("name") if isinstance(item.item, dict) else getattr(item.item, "name", "unknown")
+                )
                 raise Exception(f"Sectionwrap: Attempting to remove a non-section tag: {tag_name}")
 
             # Undo last section close
@@ -352,7 +354,12 @@ class Doc:
             elif item_type == "blockspace" and isinstance(i_item, DocStr):
                 tag = i_item.item
                 new_item = new_doc.get_current_item()
-                if prev_section and new_item and isinstance(new_item.get("item"), dict) and new_item["item"].get("name") == "section":
+                if (
+                    prev_section
+                    and new_item
+                    and isinstance(new_item.get("item"), dict)
+                    and new_item["item"].get("name") == "section"
+                ):
                     insert_to_prev_section(i_item, new_doc)
                 else:
                     new_doc.add_blockspace_item(tag)
@@ -365,7 +372,12 @@ class Doc:
                 if not tag_for_id and not curr_section:
                     new_item = new_doc.get_current_item()
                     # Textblock with no tag identifier. Add it to the previous section
-                    if prev_section and new_item and isinstance(new_item.get("item"), dict) and new_item["item"].get("name") == "section":
+                    if (
+                        prev_section
+                        and new_item
+                        and isinstance(new_item.get("item"), dict)
+                        and new_item["item"].get("name") == "section"
+                    ):
                         insert_to_prev_section(i_item, new_doc)
                         continue
 
