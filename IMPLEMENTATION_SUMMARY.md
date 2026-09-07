@@ -61,7 +61,7 @@ Successfully completed a full conversion of the MediaWiki Content Translation (C
 #### Server & Pipeline
 
 -   `server.js` → `app.py` - Web server (Express → Flask)
--   `lib/d/u.js` → `lib/processor.py` - Main processing pipeline
+-   `lib/d/segments_main.js` → `lib/processor.py` - Main processing pipeline
 
 ## Implementation Details
 

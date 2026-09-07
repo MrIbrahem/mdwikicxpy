@@ -27,7 +27,7 @@ HTTP Server (Express)
     ↓
 Main Endpoint (/HtmltoSegments)
     ↓
-u.tet() function
+u.HtmltoSegments() function
     ↓
 LinearDoc Pipeline:
     1. Parser (SAX-based)
@@ -48,8 +48,8 @@ HTML Output
    - Body parsing (JSON, up to 50mb)
    - CORS enabled
 
-2. **Core Processing** (`lib/d/u.js`)
-   - Main entry point: `tet()` function
+2. **Core Processing** (`lib/d/segments_main.js`)
+   - Main entry point: `HtmltoSegments()` function
    - Orchestrates the pipeline
 
 3. **LinearDoc Library** (`lib/lineardoc/`)
@@ -673,7 +673,7 @@ CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
 #### Phase 6: Pipeline Integration
 ```
 1. Create main pipeline (pipeline.py)
-   - Port u.tet() function
+   - Port u.HtmltoSegments() function
    - Wire all components together
    - Add error handling
 
@@ -773,7 +773,7 @@ CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
 | JavaScript File | Python File | Priority |
 |----------------|-------------|----------|
 | `server.js` | `app.py` | HIGH |
-| `lib/d/u.js` | `core/pipeline.py` | HIGH |
+| `lib/d/segments_main.js` | `core/pipeline.py` | HIGH |
 | `lib/lineardoc/Parser.js` | `lineardoc/parser.py` | HIGH |
 | `lib/lineardoc/Builder.js` | `lineardoc/builder.py` | HIGH |
 | `lib/lineardoc/Doc.js` | `lineardoc/doc.py` | HIGH |

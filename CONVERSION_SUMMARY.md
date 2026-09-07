@@ -88,7 +88,7 @@ Successfully converted the entire JavaScript CXServer HTML processing pipeline t
 
 #### Application
 
-15. **processor.py** - Main processing pipeline (equivalent to u.tet())
+15. **processor.py** - Main processing pipeline (equivalent to u.HtmltoSegments())
 
     -   Orchestrates parsing, contextualization, segmentation
     -   Configuration loading
