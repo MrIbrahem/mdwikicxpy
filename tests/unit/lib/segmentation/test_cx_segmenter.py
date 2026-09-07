@@ -38,16 +38,18 @@ def get_parsed_doc(content) -> Doc:
     parsed_doc = parser.builder.doc
     return parsed_doc
 
-def get_result(lang, test_data):
+def get_result1(lang, test_data):
     segmenter = CXSegmenter()
     result = segmenter.segment(get_parsed_doc(test_data), lang).get_html()
     return result
 
 
-def get_result1(lang, test_data):
+def get_result(lang, test_data):
     return MWPageLoader().get_page(
         source_html=test_data,
         lang=lang,
+        sort_attrs = True,
+        wrap_sections = False,
     )
 
 
