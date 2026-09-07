@@ -51,14 +51,14 @@ class MwContextualizer extends Contextualizer {
 			return 'section';
 		}
 
-		// And figure//figcaption is contentBranch
+		// And figure//figcaption is content_branch
 		if ((context === 'media' || context === 'media-inline') && tag.name === 'figcaption') {
-			return 'contentBranch';
+			return 'content_branch';
 		}
 
-		// And Content_branch_nodes are contentBranch
+		// And Content_branch_nodes are content_branch
 		if ((context === 'section' || context === undefined) && content_branch_node_names.includes(tag.name)) {
-			return 'contentBranch';
+			return 'content_branch';
 		}
 
 		// Else same as parent context
@@ -69,7 +69,7 @@ class MwContextualizer extends Contextualizer {
 	 * @inheritdoc
 	 */
 	can_segment() {
-		return this.get_context() === 'contentBranch';
+		return this.get_context() === 'content_branch';
 	}
 
 	/**
