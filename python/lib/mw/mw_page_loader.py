@@ -27,7 +27,9 @@ class MWPageLoader:
 
     def get_parsed_doc(self, source_html: str, options: dict[str, Any]) -> Doc:
         parser = Parser(
-            contextualizer=MwContextualizer(config={"removableSections": removable_sections}),
+            contextualizer=MwContextualizer(
+                config={"removableSections": removable_sections},
+            ),
             options=options,
         )
 

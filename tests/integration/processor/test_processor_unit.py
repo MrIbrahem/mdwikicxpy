@@ -25,8 +25,11 @@ def test_process_html_simple():
 
     parser = Parser(
         contextualizer=MwContextualizer({"removableSections": {}}),
-        options={"wrapSections": False, "isolateSegments": False},
-        sort_attrs=True,
+        options={
+            "wrapSections": False,
+            "isolateSegments": False,
+            "sort_attrs": True,
+        },
     )
 
     parser.init()
@@ -55,8 +58,11 @@ def test_process_html_simple2():
 
     parser = Parser(
         contextualizer=MwContextualizer({"removableSections": {}}),
-        options={"wrapSections": True, "isolateSegments": False},
-        sort_attrs=True,
+        options={
+            "wrapSections": True,
+            "isolateSegments": False,
+            "sort_attrs": True,
+        },
     )
 
     parser.init()

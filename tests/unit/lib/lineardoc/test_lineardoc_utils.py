@@ -20,7 +20,13 @@ test_files = [
 def test_is_ignorable_block(test_file):
     with open(test_file, "r", encoding="utf-8") as f:
         html = f.read()
-    parser = Parser(MwContextualizer())
+
+    parser = Parser(
+        MwContextualizer(),
+        options={
+            "sort_attrs": True,
+        },
+    )
 
     parser.init()
     parser.write(html.strip())
