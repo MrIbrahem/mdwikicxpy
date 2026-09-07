@@ -15,8 +15,8 @@ from typing import Any
 from lxml import etree
 
 from .elements import VOID_ELEMENTS
-from .utils import Utils
 from .sax_html_parser import SaxHTMLParser
+from .utils import Utils
 
 logger = logging.getLogger(__name__)
 
