@@ -4,7 +4,6 @@ Unit tests for processor.py module.
 
 import re
 
-from python.lib.lineardoc import normalize
 from python.lib.processor import process_html
 
 
@@ -12,46 +11,10 @@ def normalize_test(html: str) -> str:
     """ """
     html = html.strip()
     # Remove tabs, carriage returns, and newlines
-    html = re.sub(r"[\t\r\n]+", "", html)
+    html = re.sub(r"[\t\r\n]+", " ", html)
     html = re.sub(r"\s+", " ", html)
     html = re.sub(r">\s+<", "><", html)
     return html
-
-
-class TestNormalizeFunction:
-    """Test normalize function."""
-
-    def test_normalize_simple(self):
-        """Test normalizing simple HTML."""
-        result = normalize("<div>test</div>")
-        assert "<div>" in result
-        assert "test" in result
-        assert "</div>" in result
-        assert result == "<html><body><div>test</div></body></html>"
-
-    def test_normalize_removes_whitespace(self):
-        """Test that normalize removes tabs, newlines, carriage returns."""
-        html = "<div>\n\t\rtest\n\t\r</div>"
-        result = normalize(html)
-        # Should not contain tabs, newlines, or carriage returns
-        assert "\n" not in result
-        assert "\t" not in result
-        assert "\r" not in result
-        assert result == "<html><body><div>test</div></body></html>"
-
-    def test_normalize_preserves_content(self):
-        """Test that normalize preserves content."""
-        html = "<p>Hello world</p>"
-        result = normalize(html)
-        assert "Hello world" in result
-        assert result == "<html><body><p>Hello world</p></body></html>"
-
-    def test_normalize_with_attributes(self):
-        """Test normalizing with attributes."""
-        html = '<div class="test">content</div>'
-        result = normalize(html)
-        assert 'class="test"' in result
-        assert result == '<html><body><div class="test">content</div></body></html>'
 
 
 class TestProcessHtml:

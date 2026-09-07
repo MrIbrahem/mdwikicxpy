@@ -9,12 +9,15 @@ from pathlib import Path
 import pytest
 from python.lib.lineardoc import Doc, MwContextualizer, Parser, normalize
 from python.lib.segmentation import CXSegmenter
+from python.lib.mw.mw_page_loader import MWPageLoader
 
 cx_segmenter_tests_path = Path(__file__).parent / "SegmentationTests.json"
 
 alltests = {}
 with open(cx_segmenter_tests_path, "r", encoding="utf-8") as f:
     alltests = json.load(f)
+
+test_params = [{"lang":lang, **test_case} for lang, cases in alltests.items() for test_case in cases]
 
 
 def normalize_test(html: str) -> str:
@@ -35,17 +38,22 @@ def get_parsed_doc(content) -> Doc:
     parsed_doc = parser.builder.doc
     return parsed_doc
 
-
-test_params = [(lang, test_case) for lang, cases in alltests.items() for test_case in cases]
-
-
-@pytest.mark.parametrize("lang, test_case", test_params)
-@pytest.mark.integration
-def test_cx_segmenter(lang, test_case):
+def get_result(lang, test_data):
     segmenter = CXSegmenter()
+    result = segmenter.segment(get_parsed_doc(test_data), lang).get_html()
+    return result
 
-    if not segmenter.is_language_supported(lang):
-        pytest.skip(f"Language {lang} not supported")
+
+def get_result1(lang, test_data):
+    return MWPageLoader().get_page(
+        source_html=test_data,
+        lang=lang,
+    )
+
+
+@pytest.mark.parametrize("test_case", test_params, ids=lambda x: x["source"])
+@pytest.mark.integration
+def test_cx_segmenter(test_case):
 
     date_path = Path(__file__).parent / "data"
     output_path = Path(__file__).parent / "output"
@@ -57,7 +65,7 @@ def test_cx_segmenter(lang, test_case):
     test_data = source_path.read_text(encoding="utf-8")
     expected_text = expected_path.read_text(encoding="utf-8")
 
-    result = segmenter.segment(get_parsed_doc(test_data), lang).get_html()
+    result = get_result(test_case["lang"], test_data)
 
     normalized_result = normalize_test(result)
 

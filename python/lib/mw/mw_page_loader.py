@@ -42,7 +42,7 @@ class MWPageLoader:
         source_html: str,
         lang: str | None = None,
         sort_attrs: bool = True,
-        wrap_sections: bool = False,
+        wrap_sections: bool = True,
     ) -> str:
         """
         Process source HTML through the CX pipeline.
