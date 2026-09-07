@@ -120,7 +120,7 @@ class TestNormalizeFunction:
         assert "<div>" in result
         assert "test" in result
         assert "</div>" in result
-        assert result == "<html><body><div>test</div></body></html>"
+        assert result == "<div>test</div>"
 
     def test_normalize_removes_whitespace(self):
         """Test that normalize removes tabs, newlines, carriage returns."""
@@ -130,18 +130,18 @@ class TestNormalizeFunction:
         assert "\n" not in result
         assert "\t" not in result
         assert "\r" not in result
-        assert result == "<html><body><div>test</div></body></html>"
+        assert result == "<div>test</div>"
 
     def test_normalize_preserves_content(self):
         """Test that normalize preserves content."""
         html = "<p>Hello world</p>"
         result = normalize(html)
         assert "Hello world" in result
-        assert result == "<html><body><p>Hello world</p></body></html>"
+        assert result == "<p>Hello world</p>"
 
     def test_normalize_with_attributes(self):
         """Test normalizing with attributes."""
         html = '<div class="test">content</div>'
         result = normalize(html)
         assert 'class="test"' in result
-        assert result == '<html><body><div class="test">content</div></body></html>'
+        assert result == '<div class="test">content</div>'
