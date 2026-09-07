@@ -34,17 +34,11 @@ def normalize_test(html: str) -> str:
     return html
 
 
-def get_parsed_doc(content, config=None) -> Doc:
-    parser = Parser(MwContextualizer(config=config))
+def get_parsed_doc(content, config=None, options=None) -> Doc:
+    parser = Parser(MwContextualizer(config=config), options=options)
     parser.init()
     parser.write(content)
     return parser.builder.doc
-
-
-def get_result1(lang, source_text):
-    segmenter = CXSegmenter()
-    result = segmenter.segment(get_parsed_doc(source_text), lang).get_html()
-    return result
 
 
 @pytest.mark.parametrize("test_case", test_params, ids=lambda x: x["source"])
@@ -77,10 +71,10 @@ def test_cx_segmenter(test_case):
     output_path.write_text(result2, encoding="utf-8")
 
     # expected
-    expected_result_data = expected_text
+    # expected_result_data = expected_text
     # expected_result_data = segmenter.segment(get_parsed_doc(expected_text), lang).get_html()
 
-    expected_result_data = normalize_test(expected_result_data)
+    expected_result_data = normalize_test(expected_text)
 
     if normalized_result != expected_result_data:
         print(f"{doc.dump_xml()}")
