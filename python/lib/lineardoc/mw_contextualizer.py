@@ -98,7 +98,7 @@ class MwContextualizer(Contextualizer):
         """
         Determine whether sentences can be segmented.
         """
-        return self.get_context() == "contentBranch"
+        return self.get_context() in ("contentBranch", "content_branch")
 
     def is_removable(self, tag: dict[str, Any]) -> bool:
         """

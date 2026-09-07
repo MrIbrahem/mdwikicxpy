@@ -34,12 +34,11 @@ def normalize_test(html: str) -> str:
     return html
 
 
-def get_parsed_doc(content) -> Doc:
-    parser = Parser(MwContextualizer())
+def get_parsed_doc(content, config=None) -> Doc:
+    parser = Parser(MwContextualizer(config=config))
     parser.init()
-    parser.write(content.strip())
-    parsed_doc = parser.builder.doc
-    return parsed_doc
+    parser.write(content)
+    return parser.builder.doc
 
 
 def get_result1(lang, source_text):
