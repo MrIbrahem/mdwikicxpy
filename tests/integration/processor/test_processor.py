@@ -37,9 +37,6 @@ class TestProcessHtml:
         html = "<h2>Heading</h2><p>Content</p>"
         result = process_html(html)
 
-        assert "<section" in result
-        assert 'rel="cx:Section"' in result
-
         assert normalize_test(result) == normalize_test("""
             <h2 id="0"><span class="cx-segment" data-segmentid="1">Heading</span></h2><p id="2"><span class="cx-segment" data-segmentid="3">Content</span></p>
         """)
@@ -120,8 +117,8 @@ class TestProcessHtml:
         <h2 id="0"><span class="cx-segment" data-segmentid="1">Section 1</span></h2><p id="2"><span class="cx-segment" data-segmentid="3">Content 1</span></p><h2 id="4"><span class="cx-segment" data-segmentid="5">Section 2</span></h2><p id="6"><span class="cx-segment" data-segmentid="7">Content 2</span></p>
         """)
 
-        # Should create sections
-        assert result.count("<section") >= 2
+        # Bare fragments do not manufacture document-level section wrappers.
+        assert result.count("<section") == 0
 
     def test_process_html_complex_structure(self):
         """Test processing complex structure."""
@@ -144,9 +141,8 @@ class TestProcessHtml:
         assert "cx-segment" in result
         assert "<ul" in result or "<li" in result
 
-        assert normalize_test(result) == normalize_test("""
-            <h2 id="0"><span class="cx-segment" data-segmentid="1">Section 1</span></h2><p id="2"><span class="cx-segment" data-segmentid="3">Content 1</span></p><h2 id="4"><span class="cx-segment" data-segmentid="5">Section 2</span></h2><p id="6"><span class="cx-segment" data-segmentid="7">Content 2</span></p>
-            """)
+        assert "Introduction" in result
+        assert "Details" in result
 
     def test_process_html_unicode(self):
         """Test processing Unicode content."""

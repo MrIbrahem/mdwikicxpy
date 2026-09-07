@@ -495,12 +495,24 @@ class Doc:
         ignorable = False
         block_stack = []
         first_block_template = None
+        has_section = any(
+            item.item_type == "open" and isinstance(item, DocDict) and item.item.name == "section"
+            for item in self.items
+        )
+        in_section = not has_section
 
-        # We start with index 1 since the first tag will be <section>.
-
-        for i, i_item in enumerate(self.items):
-            if i == 0:
+        for i_item in self.items:
+            # A wrapped section starts with a synthetic ``section`` tag, which
+            # is only a container and must not count as translatable content.
+            # Parser users may also call this method on an unwrapped fragment;
+            # in that case the first item is real content and must be checked.
+            if not in_section:
+                if i_item.item_type == "open" and isinstance(i_item, DocDict) and i_item.item.name == "section":
+                    in_section = True
                 continue
+
+            if i_item.item_type == "close" and isinstance(i_item, DocDict) and i_item.item.name == "section":
+                break
 
             item_type = i_item.item_type
 

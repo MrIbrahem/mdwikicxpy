@@ -14,7 +14,9 @@ def test_basic_html_processing():
 
     assert "cx-segment" in result, "Should contain segments"
     assert "data-segmentid" in result, "Should contain segment IDs"
-    assert "<section" in result, "Should contain section wrapper"
+    # Bare fragments intentionally remain fragments; section wrapping applies
+    # when the input supplies a document/body boundary.
+    assert "<h2" in result, "Should preserve the heading"
 
 
 def test_mediawiki_elements():

@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 
 import pytest
-from python.lib.lineardoc import Doc, MwContextualizer, Parser, normalize
+from python.lib.lineardoc import Doc, MwContextualizer, Parser
 from python.lib.mw.mw_page_loader import MWPageLoader
 from python.lib.segmentation import CXSegmenter
 
@@ -28,6 +28,9 @@ def normalize_test(html: str) -> str:
     html = re.sub(r"[\t\r\n]+", " ", html)
     html = re.sub(r"\s+", " ", html)
     html = re.sub(r">\s+<", "><", html)
+    # HTML void elements may be serialized as either ``<img/>`` or
+    # ``<img />`` without changing the document structure.
+    html = re.sub(r"\s*/>", "/>", html)
     return html
 
 
