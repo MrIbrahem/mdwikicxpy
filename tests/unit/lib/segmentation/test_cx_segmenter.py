@@ -42,27 +42,27 @@ test_params = [(lang, test_case) for lang, cases in alltests.items() for test_ca
 @pytest.mark.parametrize("lang, test_case", test_params)
 @pytest.mark.integration
 def test_cx_segmenter(lang, test_case):
-    date_path = Path(__file__).parent / "data"
-    output_path = Path(__file__).parent / "output"
-    output_path.mkdir(parents=True, exist_ok=True)
-
-    with open(date_path / test_case["source"], "r", encoding="utf-8") as f:
-        test_data = f.read()
-
     segmenter = CXSegmenter()
 
     if not segmenter.is_language_supported(lang):
         pytest.skip(f"Language {lang} not supported")
 
+    date_path = Path(__file__).parent / "data"
+    output_path = Path(__file__).parent / "output"
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    source_path = date_path / test_case["source"]
+    expected_path = date_path / test_case["result"]
+
+    test_data = source_path.read_text(encoding="utf-8")
+    expected_text = expected_path.read_text(encoding="utf-8")
+
     result = segmenter.segment(get_parsed_doc(test_data), lang).get_html()
 
     normalized_result = normalize_test(result)
 
-    with open(output_path / test_case["result"], "w", encoding="utf-8") as f:
-        f.write(result)
-
-    with open(date_path / test_case["result"], "r", encoding="utf-8") as f:
-        expected_text = f.read()
+    output_path = output_path / test_case["result"]
+    output_path.write_text(result, encoding="utf-8")
 
     # expected
     expected_result_data = expected_text
