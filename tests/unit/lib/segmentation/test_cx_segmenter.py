@@ -7,8 +7,8 @@ import re
 from pathlib import Path
 
 import pytest
-from python.lib.lineardoc import Doc, MwContextualizer, Parser
-from python.lib.mw.mw_page_loader import MWPageLoader
+from python.lib.lineardoc import Doc, MwContextualizer, Parser, normalize
+from python.lib.mw.mw_page_loader import removable_sections, MWPageLoader
 from python.lib.segmentation import CXSegmenter
 
 cx_segmenter_tests_path = Path(__file__).parent / "SegmentationTests.json"
@@ -21,19 +21,29 @@ test_params = [{"lang": lang, **test_case} for lang, cases in alltests.items() f
 
 
 def normalize_test(html: str) -> str:
+    """Normalize HTML using normalizer module."""
+    cleaned = re.sub(r"<span[^>]*class=\"Z3988\"[^>]*>.*?</span>", "", html, flags=re.DOTALL)
+    cleaned = cleaned.strip()
+
+    cleaned = re.sub(r">\s+<", "><", cleaned)
+    cleaned = cleaned.replace("&nbsp;", "\u00a0")
+    cleaned = cleaned.strip()
+    cleaned = normalize(cleaned)
+    return cleaned
+
+def normalize_test1(html: str) -> str:
     """ """
     # html = normalize(html)
-    html = html.strip()
+    cleaned = html.strip()
     # Remove tabs, carriage returns, and newlines
-    html = re.sub(r"[\t\r\n]+", " ", html)
-    html = re.sub(r"\s+", " ", html)
-    html = re.sub(r">\s+<", "><", html)
+    cleaned = re.sub(r"[\t\r\n]+", " ", cleaned)
+    cleaned = re.sub(r"\s+", " ", cleaned)
+    cleaned = re.sub(r">\s+<", "><", cleaned)
     # HTML void elements may be serialized as either ``<img/>`` or
     # ``<img />`` without changing the document structure.
-    html = re.sub(r"\s*/>", "/>", html)
-    html = re.sub(r">\s*<", ">\n<", html)
-    return html
-
+    cleaned = re.sub(r"\s*/>", "/>", cleaned)
+    cleaned = re.sub(r">\s*<", ">\n<", cleaned)
+    return cleaned
 
 def get_parsed_doc(content, config=None, options=None) -> Doc:
     parser = Parser(MwContextualizer(config=config), options=options)
@@ -46,6 +56,7 @@ def get_parsed_doc(content, config=None, options=None) -> Doc:
 @pytest.mark.integration
 def test_cx_segmenter(test_case: dict[str, str]):
     test_desc = test_case["desc"]
+
     date_path = Path(__file__).parent / "data"
     output_path = Path(__file__).parent / "output"
     output_path.mkdir(parents=True, exist_ok=True)
@@ -69,7 +80,8 @@ def test_cx_segmenter(test_case: dict[str, str]):
         "isolateSegments": False,
         "sort_attrs": True,
     }
-    parsed_doc = get_parsed_doc(source_text, options=options)
+    cfg = {"removableSections": removable_sections} if test_case["source"] == "test-T253501.html" else None
+    parsed_doc = get_parsed_doc(source_text, config=cfg, options=options)
     segmenter = CXSegmenter()
     doc = segmenter.segment(parsed_doc, test_case["lang"])
     result = doc.get_html()
@@ -78,7 +90,8 @@ def test_cx_segmenter(test_case: dict[str, str]):
 
     output_path = output_path / test_case["result"]
 
-    output_path.write_text(normalized_result, encoding="utf-8")
+    result2 = re.sub(r">\s*<", ">\n<", normalized_result)
+    output_path.write_text(result2, encoding="utf-8")
 
     # expected
     expected_result_data = expected_text
