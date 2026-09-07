@@ -55,12 +55,21 @@ def test_cx_segmenter(test_case):
     source_text = source_path.read_text(encoding="utf-8")
     expected_text = expected_path.read_text(encoding="utf-8")
 
+    """
     doc = MWPageLoader().get_page(
         source_html=source_text,
         lang=test_case["lang"],
         sort_attrs=True,
         wrap_sections=False,
     )
+    """
+    options = {
+        "wrapSections": True,
+        "isolateSegments": False,
+        "sort_attrs": True,
+    }
+    parsed_doc = get_parsed_doc(source_text, options=options)
+    doc = CXSegmenter().segment(parsed_doc, test_case["lang"])
     result = doc.get_html()
 
     normalized_result = normalize_test(result)

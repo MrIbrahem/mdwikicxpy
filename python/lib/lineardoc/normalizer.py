@@ -157,10 +157,12 @@ def normalize(html: str, sort_attrs: bool = True) -> str:
         Normalized HTML string
     """
     html = html.strip()
+    html = html.replace("&nbsp;", "\u00a0")
     normalizer = Normalizer(sort_attrs=sort_attrs)
     normalizer.init()
     # Remove tabs, carriage returns, and newlines
     html = re.sub(r"[\t\r\n]+", "", html)
+    html = re.sub(r">\s+<", "><", html)
     normalizer.write(html)
     return normalizer.get_html()
 
