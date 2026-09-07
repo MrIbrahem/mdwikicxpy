@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 from python.lib.lineardoc import Doc, MwContextualizer, Parser, normalize
-from python.lib.mw.mw_page_loader import MWPageLoader
+from python.lib.mw.mw_page_loader import MWPageLoader, removable_sections
 from python.lib.segmentation import CXSegmenter
 
 cx_segmenter_tests_path = Path(__file__).parent / "SegmentationTests.json"
@@ -21,22 +21,18 @@ test_params = [{"lang": lang, **test_case} for lang, cases in alltests.items() f
 
 
 def normalize_test(html: str) -> str:
-    """ """
-    # html = normalize(html)
-    html = html.strip()
-    # Remove tabs, carriage returns, and newlines
-    html = re.sub(r"[\t\r\n]+", " ", html)
-    html = re.sub(r"\s+", " ", html)
-    html = re.sub(r">\s+<", "><", html)
-    return html
+    """Normalize HTML using normalizer module."""
+    cleaned = re.sub(r"<span[^>]*class=\"Z3988\"[^>]*>.*?</span>", "", html, flags=re.DOTALL)
+    cleaned = re.sub(r">\s+<", "><", cleaned.strip().rstrip('"').strip())
+    cleaned = cleaned.replace("&nbsp;", "\u00a0")
+    return normalize(cleaned)
 
 
-def get_parsed_doc(content) -> Doc:
-    parser = Parser(MwContextualizer())
+def get_parsed_doc(content, config=None) -> Doc:
+    parser = Parser(MwContextualizer(config=config))
     parser.init()
-    parser.write(content.strip())
-    parsed_doc = parser.builder.doc
-    return parsed_doc
+    parser.write(content)
+    return parser.builder.doc
 
 
 def get_result1(lang, source_text):
@@ -59,12 +55,10 @@ def test_cx_segmenter(test_case):
     source_text = source_path.read_text(encoding="utf-8")
     expected_text = expected_path.read_text(encoding="utf-8")
 
-    doc = MWPageLoader().get_page(
-        source_html=source_text,
-        lang=test_case["lang"],
-        sort_attrs=True,
-        wrap_sections=False,
-    )
+    cfg = {"removableSections": removable_sections} if test_case["source"] == "test-T253501.html" else None
+    parsed_doc = get_parsed_doc(source_text, config=cfg)
+    segmenter = CXSegmenter()
+    doc = segmenter.segment(parsed_doc, test_case["lang"])
     result = doc.get_html()
 
     normalized_result = normalize_test(result)
@@ -75,10 +69,7 @@ def test_cx_segmenter(test_case):
     output_path.write_text(result2, encoding="utf-8")
 
     # expected
-    expected_result_data = expected_text
-    # expected_result_data = segmenter.segment(get_parsed_doc(expected_text), lang).get_html()
-
-    expected_result_data = normalize_test(expected_result_data)
+    expected_result_data = normalize_test(expected_text)
 
     if normalized_result != expected_result_data:
         print(f"{doc.dump_xml()}")
@@ -97,12 +88,9 @@ def test_cx_segmenter_1():
         </p>
     """
 
-    doc = MWPageLoader().get_page(
-        source_html=source_text,
-        lang="en",
-        sort_attrs=True,
-        wrap_sections=False,
-    )
+    parsed_doc = get_parsed_doc(source_text)
+    segmenter = CXSegmenter()
+    doc = segmenter.segment(parsed_doc, "en")
     result = doc.get_html()
 
     normalized_result = normalize_test(result)

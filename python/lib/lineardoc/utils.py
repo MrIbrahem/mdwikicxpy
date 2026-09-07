@@ -349,11 +349,9 @@ class Utils:
         common_tags = text_chunks[0].tags[:]
         for i in range(1, len(text_chunks)):
             tags = text_chunks[i].tags
+            j_len = min(len(common_tags), len(tags))
             j = 0
-            for j in range(min(len(common_tags), len(tags))):
-                if common_tags[j] is not tags[j]:
-                    break
-            else:
+            while j < j_len and common_tags[j] is tags[j]:
                 j += 1
             if len(common_tags) > j:
                 common_tags = common_tags[:j]
@@ -396,9 +394,6 @@ class Utils:
 
                     # Copy href, then remove it, then re-add it
                     href = tag["attributes"]["href"]
-                    # split href before ?
-                    if "?" in href:
-                        href = href.split("?")[0]
 
                     tag["attributes"].pop("typeof", None)
                     tag["attributes"].pop("href", None)

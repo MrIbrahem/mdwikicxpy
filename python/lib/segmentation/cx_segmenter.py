@@ -4,12 +4,14 @@ CXSegmenter - Sentence segmentation for Content Translation.
 
 from __future__ import annotations
 
+import re
 from collections.abc import Callable
 from typing import Any
 
 import sentencex
 
 from ..lineardoc.doc import Doc
+from ..lineardoc.text_block import REF_CHAR, INLINE_CHAR
 
 
 class CXSegmenter:
@@ -63,7 +65,21 @@ class CXSegmenter:
 
             for sentence in sentences:
                 if sentence["text"].strip():
-                    boundaries.append(sentence["start_index"])
+                    b = sentence["start_index"]
+                    if b > 0 and re.search(r"[.!?]\s*$", text[:b]):
+                        pos = b
+                        while pos < len(text) and text[pos] in (REF_CHAR, INLINE_CHAR):
+                            pos += 1
+                        while pos < len(text) and text[pos] == " ":
+                            pos += 1
+                        if pos > b:
+                            b = pos
+                        boundaries.append(b)
+                    else:
+                        rem = text[b:].lstrip()
+                        if rem and rem[0].islower():
+                            continue
+                        boundaries.append(b)
 
             return boundaries
 

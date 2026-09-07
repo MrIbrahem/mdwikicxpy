@@ -223,13 +223,19 @@ class Builder:
         if whitespace_only:
             self.doc.add_blockspace_item("".join(whitespace))
         else:
-            self.doc.add_textblock_item(
-                TextBlock(
-                    self.text_chunks,
-                    self.is_block_segmentable,
-                    sort_attrs=self.sort_attrs,
-                ),
-            )
+            while self.text_chunks and not self.text_chunks[0].text.strip() and not self.text_chunks[0].inline_content and not self.text_chunks[0].tags:
+                self.doc.add_blockspace_item(self.text_chunks.pop(0).text)
+            while self.text_chunks and not self.text_chunks[-1].text.strip() and not self.text_chunks[-1].inline_content and not self.text_chunks[-1].tags:
+                self.doc.add_blockspace_item(self.text_chunks.pop().text)
+
+            if self.text_chunks:
+                self.doc.add_textblock_item(
+                    TextBlock(
+                        self.text_chunks,
+                        self.is_block_segmentable,
+                        sort_attrs=self.sort_attrs,
+                    ),
+                )
 
         self.text_chunks = []
         self.is_block_segmentable = True

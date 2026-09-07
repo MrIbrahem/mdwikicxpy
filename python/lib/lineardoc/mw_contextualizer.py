@@ -83,13 +83,13 @@ class MwContextualizer(Contextualizer):
         if context is None and tag["name"] == "body":
             return "section"
 
-        # And figure//figcaption is contentBranch
+        # And figure//figcaption is content_branch
         if (context in ("media", "media-inline")) and tag["name"] == "figcaption":
-            return "contentBranch"
+            return "content_branch"
 
-        # And ContentBranchNodes are contentBranch
+        # And ContentBranchNodes are content_branch
         if (context in ("section", None)) and tag["name"] in CONTENT_BRANCH_NODE_NAMES:
-            return "contentBranch"
+            return "content_branch"
 
         # Else same as parent context
         return context
@@ -98,7 +98,7 @@ class MwContextualizer(Contextualizer):
         """
         Determine whether sentences can be segmented.
         """
-        return self.get_context() == "contentBranch"
+        return self.get_context() == "content_branch"
 
     def is_removable(self, tag: dict[str, Any]) -> bool:
         """

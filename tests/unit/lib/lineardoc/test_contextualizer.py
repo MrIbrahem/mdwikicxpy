@@ -83,9 +83,9 @@ class TestMwContextualizer:
         assert ctx.removable_transclusion_fragments == []
 
     def test_can_segment_content_branch(self):
-        """Test can_segment in contentBranch context."""
+        """Test can_segment in content_branch context."""
         ctx = MwContextualizer()
-        ctx.contexts.append("contentBranch")
+        ctx.contexts.append("content_branch")
         assert ctx.can_segment() is True
 
     def test_can_segment_other_context(self):
@@ -136,7 +136,7 @@ class TestMwContextualizer:
         ctx = MwContextualizer()
         ctx.contexts.append("media")
         tag = {"name": "figcaption", "attributes": {}}
-        assert ctx.get_child_context(tag) == "contentBranch"
+        assert ctx.get_child_context(tag) == "content_branch"
 
     def test_get_child_context_content_branch_nodes(self):
         """Test content branch nodes."""
@@ -144,7 +144,7 @@ class TestMwContextualizer:
         ctx.contexts.append("section")
         for tag_name in ["p", "h1", "h2", "div", "blockquote"]:
             tag = {"name": tag_name, "attributes": {}}
-            assert ctx.get_child_context(tag) == "contentBranch", f"{tag_name} should create contentBranch"
+            assert ctx.get_child_context(tag) == "content_branch", f"{tag_name} should create content_branch"
 
     def test_is_removable_by_class(self):
         """Test removing elements by class."""

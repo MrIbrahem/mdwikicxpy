@@ -8,6 +8,7 @@ https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineard
 
 from __future__ import annotations
 
+import html
 import logging
 import re
 from typing import Any
@@ -80,11 +81,8 @@ class SaxHTMLParser(HTMLParser):
         self.target.on_text(data)
 
     def handle_entityref(self, name: str) -> None:
-        entity_map = {"amp": "&", "lt": "<", "gt": ">", "quot": '"', "apos": "'"}
-        if name in entity_map:
-            self.target.on_text(entity_map[name])
-        else:
-            self.target.on_text(f"&{name};")
+        unescaped = html.unescape(f"&{name};")
+        self.target.on_text(unescaped)
 
     def handle_charref(self, name: str) -> None:
         try:

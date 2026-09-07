@@ -205,6 +205,9 @@ def get_chunk_about_values(chunk: TextChunk) -> list[str]:
     inline = chunk.inline_content
     if inline:
         attributes = inline.get("attributes") if isinstance(inline, dict) else getattr(inline, "attributes", None)
+        if not attributes and getattr(inline, "wrapper_tag", None):
+            wrapper_tag = inline.wrapper_tag
+            attributes = wrapper_tag.get("attributes") if isinstance(wrapper_tag, dict) else getattr(wrapper_tag, "attributes", None)
         if attributes and isinstance(attributes, dict) and "about" in attributes:
             values.append(attributes["about"])
 
@@ -258,7 +261,7 @@ def suppress_about_group_boundaries(boundaries: list[int], text_chunks: list[Tex
         j = i - 1
         while j >= 0:
             before_abouts.extend(get_chunk_about_values(text_chunks[j]))
-            if len(text_chunks[j].text) > 0:
+            if text_chunks[j].text.strip():
                 break
             j -= 1
 
