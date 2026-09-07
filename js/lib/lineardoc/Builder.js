@@ -74,11 +74,11 @@ class Builder {
 	 */
 	is_category(tag) {
 		return tag.name === 'link' && tag.attributes.rel &&
-			// We add the spaces before and after to ensure matching on the "word" mw:Page_prop/Category
+			// We add the spaces before and after to ensure matching on the "word" mw:PageProp/Category
 			// without additional content. This is technically not necessary (we don't generate
-			// mw:Page_prop/Category/Something_else) nor entirely correct (attributes values could be separated by other
+			// mw:PageProp/Category/ExtLinkSomethingElse) nor entirely correct (attributes values could be separated by other
 			// characters than 0x20), but provides a bit of future-proofing.
-			(' ' + tag.attributes.rel + ' ').includes(' mw:Page_prop/Category ') && !tag.attributes.about;
+			(' ' + tag.attributes.rel + ' ').includes(' mw:PageProp/Category ') && !tag.attributes.about;
 	}
 
 	/**
