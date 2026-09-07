@@ -20,7 +20,7 @@ with open(cx_segmenter_tests_path, "r", encoding="utf-8") as f:
 test_params = [{"lang": lang, **test_case} for lang, cases in alltests.items() for test_case in cases]
 
 
-def normalize_test(html: str) -> str:
+def normalize_test(html: str, sort_attrs: bool = True) -> str:
     """Normalize HTML using normalizer module."""
     cleaned = re.sub(r"<span[^>]*class=\"Z3988\"[^>]*>.*?</span>", "", html, flags=re.DOTALL)
     cleaned = cleaned.strip()
@@ -28,7 +28,7 @@ def normalize_test(html: str) -> str:
     cleaned = re.sub(r">\s+<", "><", cleaned)
     cleaned = cleaned.replace("&nbsp;", "\u00a0")
     cleaned = cleaned.strip()
-    cleaned = normalize(cleaned)
+    cleaned = normalize(cleaned, sort_attrs=sort_attrs)
     return cleaned
 
 
@@ -77,10 +77,11 @@ def test_cx_segmenter(test_case: dict[str, str]):
         wrap_sections=False,
     )
     """
+    sort_attrs = True
     options = {
         "wrapSections": True,
         "isolateSegments": False,
-        "sort_attrs": True,
+        "sort_attrs": sort_attrs,
     }
     cfg = {"removableSections": removable_sections} if test_case["source"] == "test-T253501.html" else None
     parsed_doc = get_parsed_doc(source_text, config=cfg, options=options)
@@ -88,7 +89,7 @@ def test_cx_segmenter(test_case: dict[str, str]):
     doc = segmenter.segment(parsed_doc, test_case["lang"])
     result = doc.get_html()
 
-    normalized_result = normalize_test(result)
+    normalized_result = normalize_test(result, sort_attrs=sort_attrs)
 
     output_path = output_path / test_case["result"]
 
@@ -99,7 +100,7 @@ def test_cx_segmenter(test_case: dict[str, str]):
     expected_result_data = expected_text
     # expected_result_data = segmenter.segment(get_parsed_doc(expected_text), test_case["lang"]).get_html()
 
-    expected_result_data = normalize_test(expected_result_data)
+    expected_result_data = normalize_test(expected_result_data, sort_attrs=sort_attrs)
 
     # if normalized_result != expected_result_data: print(f"{doc.dump_xml()}")
 
@@ -116,17 +117,17 @@ def test_cx_segmenter_1():
             <span class="cx-segment" data-segmentid="2">Others in the US.</span>
         </p>
     """
-
+    sort_attrs = True
     doc = MWPageLoader().get_page(
         source_html=source_text,
         lang="en",
-        sort_attrs=True,
+        sort_attrs=sort_attrs,
         wrap_sections=False,
     )
     result = doc.get_html()
 
-    normalized_result = normalize_test(result)
+    normalized_result = normalize_test(result, sort_attrs=sort_attrs)
 
-    expected_result_data = normalize_test(expected_text)
+    expected_result_data = normalize_test(expected_text, sort_attrs=sort_attrs)
 
     assert normalized_result == expected_result_data
