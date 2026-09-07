@@ -1,7 +1,7 @@
 var express = require("express");
 var cors = require('cors');
 var body_parser = require('body-parser');
-var u = require('./lib/d/u.js');
+var u = require('./lib/d/segments_main.js');
 
 var app = express();
 
@@ -21,7 +21,7 @@ app.post("/HtmltoSegments", (req, res) => {
 		return;
 	}
 	try {
-		const processed_text = u.tet(source_html);
+		const processed_text = u.HtmltoSegments(source_html);
 		res.send({ result: processed_text });
 	} catch (error) {
 		console.error(error);

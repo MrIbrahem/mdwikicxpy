@@ -13,21 +13,36 @@ class Builder {
 	 * @param {Object} [wrapper_tag] tag that wraps document (if there is a parent)
 	 */
 	constructor(parent, wrapper_tag) {
+		/**
+		 * @type {any[]}
+		 */
 		this.block_tags = [];
 		// Stack of annotation tags
+		/**
+		 * @type {Object[]}
+		 */
 		this.inline_annotation_tags = [];
 		// The height of the annotation tags that have been used, minus one
 		this.inline_annotation_tags_used = 0;
 		this.doc = new Doc(wrapper_tag || null);
+		/**
+		 * @type {string | { text: any; }[]}
+		 */
 		this.text_chunks = [];
 		this.is_block_segmentable = true;
 		this.parent = parent || null;
 	}
 
+	/**
+	 * @param {Object} wrapper_tag
+	 */
 	create_child_builder(wrapper_tag) {
 		return new Builder(this, wrapper_tag);
 	}
 
+	/**
+	 * @param {{ name: string; attributes: { rel: string; }; }} tag
+	 */
 	push_block_tag(tag) {
 		this.finish_text_block();
 		this.block_tags.push(tag);
@@ -40,14 +55,23 @@ class Builder {
 		this.doc.add_item('open', tag);
 	}
 
+	/**
+	 * @param {{ name: string; attributes: { [x: string]: any; }; }} tag
+	 */
 	is_section(tag) {
 		return tag.name === 'section' && tag.attributes['data-mw-section-id'];
 	}
 
+	/**
+	 * @param {any} tag
+	 */
 	is_ignored_tag(tag) {
 		return this.is_section(tag) || this.is_category(tag);
 	}
 
+	/**
+	 * @param {Object} tag
+	 */
 	is_category(tag) {
 		return tag.name === 'link' && tag.attributes.rel &&
 			// We add the spaces before and after to ensure matching on the "word" mw:Page_prop/Category
@@ -57,6 +81,9 @@ class Builder {
 			(' ' + tag.attributes.rel + ' ').includes(' mw:Page_prop/Category ') && !tag.attributes.about;
 	}
 
+	/**
+	 * @param {string} tag_name
+	 */
 	pop_block_tag(tag_name) {
 		const tag = this.block_tags.pop();
 		if (!tag || tag.name !== tag_name) {
@@ -73,10 +100,16 @@ class Builder {
 		return tag;
 	}
 
+	/**
+	 * @param {any} tag
+	 */
 	push_inline_annotation_tag(tag) {
 		this.inline_annotation_tags.push(tag);
 	}
 
+	/**
+	 * @param {string} tag_name
+	 */
 	pop_inline_annotation_tag(tag_name) {
 		let i;
 		const tag = this.inline_annotation_tags.pop();
@@ -133,6 +166,10 @@ class Builder {
 		return;
 	}
 
+	/**
+	 * @param {string} text
+	 * @param {boolean} can_segment
+	 */
 	add_text_chunk(text, can_segment) {
 		this.text_chunks.push(new TextChunk(text, this.inline_annotation_tags.slice()));
 		this.inline_annotation_tags_used = this.inline_annotation_tags.length;

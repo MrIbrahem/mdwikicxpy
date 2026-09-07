@@ -47,7 +47,7 @@ def process_html(
 
     parser = Parser(
         contextualizer=MwContextualizer({"removableSections": removable_sections}),
-        options={"wrapSections": True},
+        options={"wrapSections": True, "isolateSegments": False},
         sort_attrs=sort_attrs,
     )
 
