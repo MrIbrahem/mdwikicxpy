@@ -102,8 +102,7 @@ class Parser:
 
         tag = self.all_tags.pop()
         is_ann = self.is_inline_annotation_tag(tag_name, Utils.is_transclusion(tag))
-
-        if self.contextualizer.is_removable(tag) or self.contextualizer.get_context() == "removable":
+        if self.contextualizer.get_context() == "removable" or self.contextualizer.is_removable(tag):
             self.contextualizer.on_close_tag(tag)
             return
 
@@ -156,7 +155,7 @@ class Parser:
         """Handle script text."""
         self.builder.add_text_chunk(text, self.contextualizer.can_segment())
 
-    def is_inline_annotation_tag(self, tag_name, is_transclusion) -> bool:
+    def is_inline_annotation_tag(self, tag_name, is_transclusion: bool) -> bool:
         """
         Determine whether a tag is an inline annotation or not.
 
