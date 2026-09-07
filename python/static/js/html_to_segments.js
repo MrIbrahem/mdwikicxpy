@@ -39,6 +39,7 @@ function fix_it() {
     $("#load_fixit").show();
 
     let sort_attrs = $("#sort_attrs").prop("checked");
+    let wrap_sections = $("#wrap_sections").prop("checked");
     var text = $("#source_text").val();
     if (!text) {
         $("#load_fixit").hide();
@@ -47,7 +48,7 @@ function fix_it() {
     }
 
     (async () => {
-        const newtext = await fix_it_api({ html: text, sort_attrs: sort_attrs });
+        const newtext = await fix_it_api({ html: text, sort_attrs: sort_attrs, wrap_sections: wrap_sections });
         $("#new_text").val(newtext);
         $("#load_fixit").hide();
         do_seconds(start_time, "#time_fixit");

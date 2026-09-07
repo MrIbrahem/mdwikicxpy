@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytest
 from python.lib.lineardoc import Doc, MwContextualizer, Parser, normalize
-from python.lib.segmentation import CXSegmenter
 from python.lib.mw.mw_page_loader import MWPageLoader
+from python.lib.segmentation import CXSegmenter
 
 cx_segmenter_tests_path = Path(__file__).parent / "SegmentationTests.json"
 
@@ -17,7 +17,7 @@ alltests = {}
 with open(cx_segmenter_tests_path, "r", encoding="utf-8") as f:
     alltests = json.load(f)
 
-test_params = [{"lang":lang, **test_case} for lang, cases in alltests.items() for test_case in cases]
+test_params = [{"lang": lang, **test_case} for lang, cases in alltests.items() for test_case in cases]
 
 
 def normalize_test(html: str) -> str:
@@ -38,6 +38,7 @@ def get_parsed_doc(content) -> Doc:
     parsed_doc = parser.builder.doc
     return parsed_doc
 
+
 def get_result1(lang, test_data):
     segmenter = CXSegmenter()
     result = segmenter.segment(get_parsed_doc(test_data), lang).get_html()
@@ -48,8 +49,8 @@ def get_result(lang, test_data):
     return MWPageLoader().get_page(
         source_html=test_data,
         lang=lang,
-        sort_attrs = True,
-        wrap_sections = False,
+        sort_attrs=True,
+        wrap_sections=False,
     )
 
 

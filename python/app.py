@@ -210,11 +210,17 @@ def process_text() -> tuple[Response, int]:
 
     source_html = data["html"] if data else {}
     sort_attrs = data.get("sort_attrs", False) if data else False
+    wrap_sections = data.get("wrap_sections", False) if data else False
 
     # Process the HTML
     try:
         logger.info(f"Processing HTML request ({len(source_html)} bytes)")
-        processed_text = process_html(str(source_html), "en", sort_attrs=sort_attrs)
+        processed_text = process_html(
+            source_html=str(source_html),
+            lang="en",
+            sort_attrs=sort_attrs,
+            wrap_sections=wrap_sections,
+        )
         logger.info("HTML processing completed successfully")
         return create_success_response(processed_text)
 
