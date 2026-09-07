@@ -64,31 +64,40 @@ class Parser:
         Args:
             tag: Tag dict with 'name' and 'attributes'
         """
+        # Check if the tag is an inline annotation
         is_ann = self.is_inline_annotation_tag(tag["name"], Utils.is_transclusion(tag))
 
+        # Handle removable tags - either in removable context or marked as removable
         if self.contextualizer.get_context() == "removable" or self.contextualizer.is_removable(tag):
             self.all_tags.append(tag)
             self.contextualizer.on_open_tag(tag)
             return
 
+        # Handle segment isolation if enabled
         if self.options.get("isolateSegments") and Utils.is_segment(tag):
+            # Wrap segment in a div block with specific class
             self.builder.push_block_tag({"name": "div", "attributes": {"class": "cx-segment-block"}})
 
+        # Handle reference and math tags by creating a child builder
         if Utils.is_reference(tag) or Utils.is_math(tag):
             # Start a reference: create a child builder, and move into it
             self.builder = self.builder.create_child_builder(wrapper_tag=tag)
 
+        # Handle inline empty tags
         elif Utils.is_inline_empty_tag(tag["name"]):
             self.builder.add_inline_content(
                 content=tag,
                 can_segment=self.contextualizer.can_segment(),
             )
 
+        # Handle inline annotation tags
         elif is_ann:
             self.builder.push_inline_annotation_tag(tag)
+        # Handle all other block tags
         else:
             self.builder.push_block_tag(tag)
 
+        # Add tag to all tags list and notify contextualizer
         self.all_tags.append(tag)
         self.contextualizer.on_open_tag(tag)
 
