@@ -593,6 +593,7 @@ class TextBlock:
 
         # for each chunk, split at any boundaries that occur inside the chunk
         valid_boundaries = suppress_about_group_boundaries(get_boundaries(self.get_plain_text()), self.text_chunks)
+
         groups = Utils.get_chunk_boundary_groups(
             valid_boundaries,
             self.text_chunks,

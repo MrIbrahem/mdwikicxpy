@@ -93,8 +93,8 @@ class Parser:
         # Handle inline annotation tags
         elif is_ann:
             self.builder.push_inline_annotation_tag(tag)
-        # Handle all other block tags
         else:
+            # Handle all other block tags
             self.builder.push_block_tag(tag)
 
         # Add tag to all tags list and notify contextualizer
@@ -172,6 +172,7 @@ class Parser:
         """
         if self.contextualizer.get_context() == "removable":
             return
+
         self.builder.add_text_chunk(text, self.contextualizer.can_segment())
 
     def on_script(self, text: str) -> None:
@@ -244,7 +245,18 @@ class Parser:
         Args:
             html: HTML string to parse
         """
-        parser = etree.HTMLParser(encoding="utf-8")
+        parser = etree.HTMLParser(
+            encoding="utf-8",
+            remove_blank_text=False,
+            remove_comments=False,
+            remove_pis=False,
+            no_network=True,
+            recover=True,
+            compact=True,
+            default_doctype=True,
+            collect_ids=True,
+            huge_tree=False,
+        )
         try:
             root = etree.fromstring(html.encode("utf-8"), parser)
             self._process_element(root)

@@ -29,12 +29,13 @@ def process_html(
     Returns:
         Processed HTML string
     """
-    return MWPageLoader().get_page(
+    doc = MWPageLoader().get_page(
         source_html=source_html,
         lang=lang,
         sort_attrs=sort_attrs,
         wrap_sections=wrap_sections,
     )
+    return doc.get_html()
 
 
 __all__ = [

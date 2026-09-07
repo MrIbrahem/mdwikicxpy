@@ -44,7 +44,18 @@ class Normalizer:
         Args:
             html: HTML string to normalize
         """
-        parser = etree.HTMLParser(encoding="utf-8")
+        parser = etree.HTMLParser(
+            encoding="utf-8",
+            remove_blank_text=False,
+            remove_comments=False,
+            remove_pis=False,
+            no_network=True,
+            recover=True,
+            compact=True,
+            default_doctype=True,
+            collect_ids=True,
+            huge_tree=False,
+        )
         try:
             root = etree.fromstring(html, parser)
             self._process_element(root)

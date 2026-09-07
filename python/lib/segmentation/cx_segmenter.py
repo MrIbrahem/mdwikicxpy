@@ -39,7 +39,7 @@ class CXSegmenter:
             Function that returns sentence boundary offsets
         """
 
-        def segmenter(text: str) -> list[Any]:
+        def segmenter(text: str) -> list[int]:
             """Segment text into sentences."""
             sentences = sentencex.segment(language, text)
             boundaries = []
@@ -56,7 +56,42 @@ class CXSegmenter:
 
             return boundaries
 
-        return segmenter
+        def get_sentence_boundaries(text: str) -> list[int]:
+            """Segment text into sentences."""
+            sentences = sentencex.get_sentence_boundaries(language, text)
+            boundaries = []
+
+            for sentence in sentences:
+                if sentence["text"].strip():
+                    boundaries.append(sentence["start_index"])
+
+            return boundaries
+
+        return get_sentence_boundaries
+
+    def get_segmenter_obj(self, language: str) -> Callable[..., list[Any]]:
+        """
+        Get the segmenter for the given language.
+
+        Args:
+            language: Language code
+
+        Returns:
+            Function that returns sentence boundary offsets
+        """
+
+        def get_sentence_boundaries(text: str) -> list[sentencex.Boundary]:
+            """Segment text into sentences."""
+            sentences = sentencex.get_sentence_boundaries(language, text)
+            boundaries = []
+
+            for sentence in sentences:
+                if sentence["text"].strip():
+                    boundaries.append(sentence)
+
+            return boundaries
+
+        return get_sentence_boundaries
 
     def is_language_supported(self, language: str) -> bool:
         return True

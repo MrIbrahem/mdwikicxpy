@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from dataclasses import asdict, dataclass, field
 from typing import Any, Literal
 
@@ -12,6 +13,8 @@ from .utils import Utils
 ALL_ITEMS_TYPES = ["open", "close", "blockspace", "textblock"]
 
 ITEM_TYPES_STR = Literal["open", "close"]
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -126,6 +129,10 @@ class DictTag:
         Returns:
             HTML representation of open tag
         """
+        if self.name in ("html", "body"):
+            logger.debug(self.attributes)  # {'id': '0'} {'id': '1'}
+            # self.attributes.pop("id", None) # TEST
+
         html = ["<" + Utils.esc(self.name)]
         attributes = self.attributes.keys()
 

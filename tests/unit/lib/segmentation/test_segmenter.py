@@ -27,6 +27,7 @@ class TestCXSegmenter:
         boundaries = seg_func("Hello world.")
         assert len(boundaries) >= 1
         assert 0 in boundaries
+        assert boundaries == [0]
 
     def test_segment_multiple_sentences(self):
         """Test segmenting multiple sentences."""
@@ -36,6 +37,7 @@ class TestCXSegmenter:
         boundaries = seg_func(text)
         # Should have boundaries for each sentence
         assert len(boundaries) >= 2
+        assert boundaries == [0, 16, 33]
 
     def test_segment_empty_text(self):
         """Test segmenting empty text."""
@@ -51,6 +53,7 @@ class TestCXSegmenter:
         boundaries = seg_func("   \n\n  ")
         # Should handle whitespace gracefully
         assert isinstance(boundaries, list)
+        assert boundaries == []
 
     def test_segment_no_punctuation(self):
         """Test segmenting text without punctuation."""
@@ -59,6 +62,7 @@ class TestCXSegmenter:
         boundaries = seg_func("Hello world")
         # Should still return at least the start
         assert isinstance(boundaries, list)
+        assert boundaries == [0]
 
     def test_segment_question_mark(self):
         """Test segmenting with question marks."""
@@ -67,6 +71,7 @@ class TestCXSegmenter:
         text = "How are you? I am fine."
         boundaries = seg_func(text)
         assert len(boundaries) >= 2
+        assert boundaries == [0, 13]
 
     def test_segment_exclamation(self):
         """Test segmenting with exclamation marks."""
@@ -75,6 +80,7 @@ class TestCXSegmenter:
         text = "Hello! How are you?"
         boundaries = seg_func(text)
         assert len(boundaries) >= 2
+        assert boundaries == [0, 7]
 
     def test_segment_abbreviations(self):
         """Test segmenting with abbreviations."""
@@ -84,6 +90,7 @@ class TestCXSegmenter:
         boundaries = seg_func(text)
         # pysbd should handle abbreviations correctly
         assert isinstance(boundaries, list)
+        assert boundaries == [0, 19]
 
     def test_segment_different_language(self):
         """Test segmenting different languages."""
@@ -93,6 +100,7 @@ class TestCXSegmenter:
         text = "Hola mundo. ¿Cómo estás?"
         boundaries = seg_func_es(text)
         assert len(boundaries) >= 1
+        assert boundaries == [0, 12]
 
     def test_segment_doc(self):
         """Test segmenting a Doc object."""
@@ -129,3 +137,29 @@ class TestCXSegmenter:
         boundaries = seg_func(text)
         # Should handle Arabic text
         assert isinstance(boundaries, list)
+        assert boundaries == [0, 7]
+
+    def test_segment_unicode_text_obj(self):
+        """Test segmenting Unicode text."""
+        segmenter = CXSegmenter()
+        seg_func = segmenter.get_segmenter_obj("ar")
+        text = "مرحبا. كيف حالك؟"
+        boundaries = seg_func(text)
+        # Should handle Arabic text
+        assert isinstance(boundaries, list)
+        assert boundaries == [
+            {
+                "start_index": 0,
+                "end_index": 7,
+                "text": "مرحبا. ",
+                "boundary_symbol": ".",
+                "is_paragraph_break": False,
+            },
+            {
+                "start_index": 7,
+                "end_index": 16,
+                "text": "كيف حالك؟",
+                "boundary_symbol": "؟",
+                "is_paragraph_break": False,
+            },
+        ]

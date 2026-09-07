@@ -43,7 +43,7 @@ class MWPageLoader:
         lang: str | None = None,
         sort_attrs: bool = True,
         wrap_sections: bool = True,
-    ) -> str:
+    ) -> Doc:
         """
         Process source HTML through the CX pipeline.
 
@@ -58,7 +58,7 @@ class MWPageLoader:
             source_html: Source HTML string
 
         Returns:
-            Processed HTML string
+            Processed document
         """
         if lang is None:
             lang = "en"
@@ -76,7 +76,7 @@ class MWPageLoader:
         # Extract category tags from source document.
         segmented_doc = CXSegmenter().segment(parsed_doc, lang)
 
-        return segmented_doc.get_html()
+        return segmented_doc
 
 
 __all__ = [
