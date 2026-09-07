@@ -4,9 +4,10 @@ Unit tests for processor.py module.
 
 import re
 
-from python.lib.processor import process_html
 from python.lib.lineardoc import MwContextualizer, Parser
+from python.lib.processor import process_html
 from python.lib.segmentation import CXSegmenter
+
 
 def normalize_test(html: str) -> str:
     """ """
@@ -30,14 +31,14 @@ def test_process_html_simple():
 
     parser.init()
     parser.write(html)
-    parsed_doc = parser.create_wrapped_doc()
+    parsed_doc = parser.builder.doc
+    parsed_doc = parsed_doc.wrap_sections()
 
     # segmented_doc = CXSegmenter().segment(parsed_doc, "en")
 
     result = parsed_doc.get_html()
 
-    assert normalize_test(result) == normalize_test(
-    """
+    assert normalize_test(result) == normalize_test("""
         <html>
             <body>
                 <section rel="cx:Section">
@@ -45,8 +46,7 @@ def test_process_html_simple():
                 </section>
             </body>
         </html>
-    """
-    )
+    """)
 
 
 def test_process_html_simple2():
@@ -61,15 +61,14 @@ def test_process_html_simple2():
 
     parser.init()
     parser.write(html)
-    parsed_doc = parser.create_wrapped_doc()
+    parsed_doc = parser.builder.doc
+    parsed_doc = parsed_doc.wrap_sections()
 
     segmented_doc = CXSegmenter().segment(parsed_doc, "en")
 
     result = segmented_doc.get_html()
 
-
-    assert normalize_test(result) == normalize_test(
-    """
+    assert normalize_test(result) == normalize_test("""
         <html id="0">
             <body id="1">
                 <section data-mw-section-number="0" id="cxSourceSection0" rel="cx:Section">
@@ -78,8 +77,7 @@ def test_process_html_simple2():
             </body>
 
         </html>
-    """
-    )
+    """)
 
 
 def test_process_html_sections():
@@ -119,4 +117,4 @@ def test_process_html_sections():
     is_start = result.strip().startswith("<html")
     assert not is_start, "Result should not startswith <html tag"
 
-    assert normalize_test(result) == normalize_test(expected_text) , "Result should match expected output"
+    assert normalize_test(result) == normalize_test(expected_text), "Result should match expected output"

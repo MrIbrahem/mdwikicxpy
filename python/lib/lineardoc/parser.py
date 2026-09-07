@@ -16,7 +16,6 @@ from lxml import html as lxml_html
 
 from .builder import Builder
 from .contextualizer import Contextualizer
-from .doc import Doc
 from .elements import BLOCK_TAGS, VOID_ELEMENTS
 from .mw_contextualizer import MwContextualizer
 from .utils import Utils
@@ -182,9 +181,6 @@ class Parser:
 
         # All tags that are not block tags are inline annotation tags.
         return tag_name not in BLOCK_TAGS
-
-    def create_wrapped_doc(self) -> Doc:
-        return self.builder.doc.wrap_sections()
 
     def write_fragments(self, html: str) -> None:
         """

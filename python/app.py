@@ -147,6 +147,7 @@ def index() -> str:
         "html_to_segments/index.html",
     )
 
+
 @app.route("/HtmltoSegments", methods=["POST"])
 def process_text() -> tuple[Response, int]:
     """
@@ -262,7 +263,7 @@ def health() -> tuple[Response, int]:
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    debug = True#  os.environ.get("FLASK_DEBUG", "false").lower() == "true"
+    debug = True  #  os.environ.get("FLASK_DEBUG", "false").lower() == "true"
 
     logger.info(f"Starting Flask server on port {port} (debug={debug})")
     app.run(host="0.0.0.0", port=port, debug=debug)

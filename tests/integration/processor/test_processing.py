@@ -2,14 +2,14 @@
 Test the HTML processing pipeline.
 """
 
+import re
 from pathlib import Path
 
-import re
 import pytest
-
 from python.lib.processor import process_html
 
 FIXTURES_DIR = Path(__file__).resolve().parent.parent / "fixtures"
+
 
 def normalize_test(html: str) -> str:
     """ """
@@ -69,4 +69,4 @@ def test_process_html():
     is_start = result.strip().startswith("<html")
     assert not is_start, "Result should not startswith <html tag"
 
-    assert normalize_test(result) == normalize_test(expected_text) , "Result should match expected output"
+    assert normalize_test(result) == normalize_test(expected_text), "Result should match expected output"
