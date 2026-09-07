@@ -90,9 +90,6 @@ def test_cx_segmenter(test_case: dict[str, str]):
 
     assert normalized_result == expected_result_data, f"{source_path.name}: {test_desc}"
 
-    if normalized_result == expected_result_data:
-        expected_path.write_text(expected_result_data, encoding="utf-8")
-
 
 def test_cx_segmenter_1():
 
