@@ -40,7 +40,9 @@ class SaxHTMLParser(HTMLParser):
 
     def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         tag_name = tag.lower() if self.target.lowercase else tag
-        if self.should_skiped(tag_name):
+        if tag_name == "html" and not self.has_explicit_html:
+            return
+        if tag_name == "body" and not self.has_explicit_body:
             return
 
         attr_dict = {k: (v if v is not None else "") for k, v in attrs}
@@ -52,12 +54,11 @@ class SaxHTMLParser(HTMLParser):
         self.target.on_open_tag(tag_dict)
         self.target.on_close_tag(tag_name)
 
-    def should_skiped(self, tag_name: str) -> bool:
-        return tag_name == "html" and not self.has_explicit_html or tag_name == "body" and not self.has_explicit_body
-
     def handle_endtag(self, tag: str) -> None:
         tag_name = tag.lower() if self.target.lowercase else tag
-        if self.should_skiped(tag_name):
+        if tag_name == "html" and not self.has_explicit_html:
+            return
+        if tag_name == "body" and not self.has_explicit_body:
             return
 
         if tag_name not in VOID_ELEMENTS:
