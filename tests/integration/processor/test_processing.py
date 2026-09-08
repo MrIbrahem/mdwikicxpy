@@ -2,26 +2,14 @@
 Test the HTML processing pipeline.
 """
 
-import re
 from pathlib import Path
 
 import pytest
 
 from python.lib.processor import process_html
-
-# from tests.unit.html_normalizer import normalize_test
+from tests.unit.html_normalizer import normalize_test
 
 FIXTURES_DIR = Path(__file__).resolve().parent.parent.parent / "fixtures"
-
-
-def normalize_test(html: str) -> str:
-    """ """
-    html = html.strip()
-    # Remove tabs, carriage returns, and newlines
-    html = re.sub(r"[\t\r\n]+", "", html)
-    html = re.sub(r"\s+", " ", html)
-    html = re.sub(r">\s+<", "><", html)
-    return html
 
 
 @pytest.mark.parametrize("num", [1, 2, 3, 4])
