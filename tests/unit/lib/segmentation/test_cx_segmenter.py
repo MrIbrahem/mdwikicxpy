@@ -83,7 +83,7 @@ def test_cx_segmenter(test_case: dict[str, str]):
         "isolateSegments": False,
         "sort_attrs": sort_attrs,
     }
-    cfg = {"removableSections": removable_sections} if test_case["source"] == "test-T253501.html" else None
+    cfg = {"removableSections": removable_sections} # if test_case["source"] == "test-T253501.html" else None
     parsed_doc = get_parsed_doc(source_text, config=cfg, options=options)
     segmenter = CXSegmenter()
     doc = segmenter.segment(parsed_doc, test_case["lang"])
