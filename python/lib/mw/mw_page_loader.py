@@ -12,6 +12,7 @@ import yaml
 from ..lineardoc import Doc, MwContextualizer, Parser
 from ..segmentation import CXSegmenter
 
+
 def load_removable_sections() -> dict[str, list[str]]:
     # Load configuration
     config_path = Path(__file__).parent.parent.parent / "config" / "MWPageLoader.yaml"
@@ -24,7 +25,9 @@ def load_removable_sections() -> dict[str, list[str]]:
         raise ValueError("removableSections must be defined in config")
     return removable_sections
 
+
 removable_sections = load_removable_sections()
+
 
 class MWPageLoader:
 

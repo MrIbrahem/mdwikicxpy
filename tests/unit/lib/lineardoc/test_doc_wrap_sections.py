@@ -173,8 +173,7 @@ nestedSectionsWithTransclusion = """
     <span about="#mwt216" typeof="mw:Transclusion" data-mw="{}" id="mw7Q">10,000</span>
     <span typeof="mw:Entity" about="#mwt216">&nbsp;</span>
     <span about="#mwt216">m (33,000</span>
-    <span about="#mwt216">mi)</span> in the
-    </p>
+    <span about="#mwt216">mi)</span> in the</p>
     <section data-mw-section-id="3" id="mwXw">
     <h3>Heading</h3>
     <p id="mw6Q">Para1</p>
@@ -257,7 +256,8 @@ sectionWithMeta = """
 <section data-mw-section-id="0" id="mwAQ">
 <meta property="mw:PageProp/displaytitle" content="test" id="mwAg" />
 <table class="infobox" style="width: 270px; font-size: 95%;" about="#mwt2" typeof="mw:Transclusion" data-mw='{}' id="mwAw">
-    <caption style="background: #C6C9FF;  border:1px solid #aaaaaa; border-bottom:0px;">test<br />Fleming: The Man Who Would Be Bond</caption>
+    <caption style="background: #C6C9FF;  border:1px solid #aaaaaa; border-bottom:0px;">test
+<br />Fleming: The Man Who Would Be Bond</caption>
     <tbody>
         <tr>
             <td colspan="2" style="text-align:center"></td>
@@ -438,19 +438,29 @@ sectionWithTemplateAndTemplateStylesResult = """
 # non-section open tag (style) was the last item in the document, violating the precondition.
 sectionWithTemplateStylesFragment = """
 <body>
-<section data-mw-section-id="0">
-<span about="#mwt1" typeof="mw:Transclusion" data-mw="{}">First</span>
-</section>
-<section data-mw-section-id="1">
-<style about="#mwt2" typeof="mw:Extension/templatestyles" data-mw="{}"><span about="#mwt1">Fragment inside style</span></style>
-</section>
-</body>"""
+    <section data-mw-section-id="0">
+        <span about="#mwt1" typeof="mw:Transclusion" data-mw="{}">First</span>
+    </section>
+    <section data-mw-section-id="1">
+        <style about="#mwt2" typeof="mw:Extension/templatestyles" data-mw="{}">
+            <span about="#mwt1">Fragment inside style</span>
+        </style>
+    </section>
+</body>
+"""
 
 sectionWithTemplateStylesFragmentResult = """
 <body>
-<section rel="cx:Section"><span about="#mwt1" data-mw="{}" typeof="mw:Transclusion">First</span></section>
-<section rel="cx:Section"><style about="#mwt2" data-mw="{}" typeof="mw:Extension/templatestyles"><span about="#mwt1">Fragment inside style</span></style></section>
-</body>"""
+    <section rel="cx:Section">
+        <span about="#mwt1" data-mw="{}" typeof="mw:Transclusion">First</span>
+    </section>
+    <section rel="cx:Section">
+        <style about="#mwt2" data-mw="{}" typeof="mw:Extension/templatestyles">
+            <span about="#mwt1">Fragment inside style</span>
+        </style>
+    </section>
+</body>
+"""
 
 tests = [
     {
@@ -524,8 +534,7 @@ class TestSectionWrap:
         result = normalize_test(wrapped_section_doc.get_html())
         expected_result_data = normalize_test(test['result'])
 
-        show_html_diff(result, expected_result_data)
-        assert result == expected_result_data
+        assert result == expected_result_data, show_html_diff(result, expected_result_data)
 
     @pytest.mark.parametrize('test', tests, ids=lambda t: t['desc'])
     def test_extract_correct_number_of_categories(self, test):
