@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import { readFileSync } from 'fs';
-import { deepEqual } from '../../utils/assert.js';
+import { deepEqual } from '../utils/assert.js';
 import {
 	MwContextualizer,
 	Normalizer,
