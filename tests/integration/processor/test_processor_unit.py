@@ -7,6 +7,7 @@ import re
 from python.lib.lineardoc import MwContextualizer, Parser
 from python.lib.processor import process_html
 from python.lib.segmentation import CXSegmenter
+
 # from tests.unit.html_normalizer import normalize_test
 
 

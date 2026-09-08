@@ -8,11 +8,10 @@ https://github.com/wikimedia/mediawiki-services-cxserver/blob/master/lib/lineard
 
 from __future__ import annotations
 
+import html
 import re
 from collections.abc import Callable
 from typing import Any
-
-import html
 from urllib.parse import parse_qsl, unquote, urlsplit, urlunsplit
 
 from . import util as cxutil
@@ -404,11 +403,12 @@ class Utils:
                         attributes["href"] = Utils.remove_action_and_redlink_from_url(href)
                     # by Ibrahem Qasim - end
                     if (
-                        attributes.get("rel") is not None and
+                        attributes.get("rel") is not None
+                        and
                         # We add the spaces before and after to ensure matching on the "word" mw:WikiLink
                         # without additional content to avoid matching on mw:WikiLink/Interwiki and mw:WikiLink/ISBN.
-                        f" {attributes['rel']} ".find(" mw:WikiLink ") != -1 and
-                        attributes.get("data-linkid") is None
+                        f" {attributes['rel']} ".find(" mw:WikiLink ") != -1
+                        and attributes.get("data-linkid") is None
                     ):
 
                         # Hack: copy href, then remove it, then re-add it, so that
@@ -478,6 +478,7 @@ class Utils:
         # Rebuild final URL preserving original characters without percent-encoding
         new_url_parts = url_parts._replace(path=raw_path, query=new_query)
         return unquote(urlunsplit(new_url_parts))
+
     @staticmethod
     def is_closing_template_match(
         block_stack: list[Any],

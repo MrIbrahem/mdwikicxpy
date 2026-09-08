@@ -11,6 +11,7 @@ from __future__ import annotations
 import logging
 import re
 from typing import Any
+
 from .sax_html_parser import SaxHTMLParser
 from .utils import Utils
 

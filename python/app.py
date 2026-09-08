@@ -36,6 +36,7 @@ from typing import Any
 
 from flask import Flask, Response, jsonify, render_template, request
 from flask_cors import CORS
+
 from lib.processor import process_html
 
 # Configure logging

@@ -5,6 +5,7 @@ Unit tests for lineardoc/Utils.py module.
 from pathlib import Path
 
 import pytest
+
 from python.lib.lineardoc import MwContextualizer, Parser
 from python.lib.lineardoc.utils import Utils
 

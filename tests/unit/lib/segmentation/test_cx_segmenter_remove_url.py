@@ -1,8 +1,8 @@
-"""
-"""
+""" """
 
 from python.lib.mw.mw_page_loader import MWPageLoader
 from tests.unit.html_normalizer import normalize_test
+
 
 def test_cx_segmenter_2():
     source_text = """

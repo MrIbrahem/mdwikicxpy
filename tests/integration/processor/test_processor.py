@@ -5,6 +5,7 @@ Unit tests for processor.py module.
 import re
 
 from python.lib.processor import process_html
+
 # from tests.unit.html_normalizer import normalize_test
 
 

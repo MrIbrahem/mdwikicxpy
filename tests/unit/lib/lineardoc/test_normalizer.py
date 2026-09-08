@@ -29,7 +29,7 @@ class TestNormalizer:
         assert "<div>" in result
         assert "Hello" in result
         assert "</div>" in result
-        assert result == '<div>Hello</div>'
+        assert result == "<div>Hello</div>"
 
     def test_normalize_escapes_text(self):
         """Test that text is properly escaped."""
@@ -40,7 +40,7 @@ class TestNormalizer:
         assert "&#38;" in result  # &
         assert "&#60;" in result  # <
         assert "&#62;" in result  # >
-        assert result == '<div>&#38;&#60;&#62;</div>'
+        assert result == "<div>&#38;&#60;&#62;</div>"
 
     def test_normalize_preserves_attributes(self):
         """Test that attributes are preserved."""
@@ -63,7 +63,7 @@ class TestNormalizer:
         assert "text" in result
         assert "</p>" in result
         assert "</div>" in result
-        assert result == '<div><p>text</p></div>'
+        assert result == "<div><p>text</p></div>"
 
     def test_normalize_with_tail_text(self):
         """Test handling text after child elements."""
@@ -73,7 +73,7 @@ class TestNormalizer:
         result = norm.get_html()
         assert "<b>bold</b>" in result
         assert "normal" in result
-        assert result == '<div><b>bold</b> normal</div>'
+        assert result == "<div><b>bold</b> normal</div>"
 
     def test_normalize_empty_input(self):
         """Test normalizing empty input."""
@@ -97,7 +97,7 @@ class TestNormalizer:
         result = norm.get_html()
         assert "<div>" in result.lower()
         assert "</div>" in result.lower()
-        assert result == '<div>text</div>'
+        assert result == "<div>text</div>"
 
     def test_normalize_special_chars_in_attributes(self):
         """Test special characters in attributes."""
@@ -116,7 +116,7 @@ class TestNormalizer:
         norm.write("<div>مرحبا</div>")
         result = norm.get_html()
         assert "مرحبا" in result
-        assert result == '<div>مرحبا</div>'
+        assert result == "<div>مرحبا</div>"
 
 
 class TestNormalizeFunction:

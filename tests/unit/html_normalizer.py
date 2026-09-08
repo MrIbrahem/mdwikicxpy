@@ -1,8 +1,9 @@
-"""
-"""
+""" """
 
 import re
+
 from python.lib.lineardoc import normalize
+
 
 def normalize_test(html: str, sort_attrs: bool = True) -> str:
     """Normalize HTML using normalizer module."""
