@@ -6,6 +6,8 @@ import re
 
 from python.lib.processor import process_html
 
+# from tests.unit.html_normalizer import normalize_test
+
 
 def normalize_test(html: str) -> str:
     """ """

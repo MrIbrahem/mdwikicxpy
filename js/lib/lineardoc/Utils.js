@@ -36,7 +36,7 @@ function find_all(text, regex, callback) {
  * @return {string} Escaped version of the string
  */
 function esc(str) {
-	return str.replace(/[&<>]/g, (ch) => '&#' + ch.char_code_at(0) + ';');
+	return str.replace(/[&<>]/g, (ch) => '&#' + ch.charCodeAt(0) + ';');
 }
 
 /**
@@ -47,7 +47,7 @@ function esc(str) {
  * @return {string} Escaped version of the string
  */
 function esc_attr(str) {
-	return str.replace(/["'&<>]/g, (ch) => '&#' + ch.char_code_at(0) + ';');
+	return str.replace(/["'&<>]/g, (ch) => '&#' + ch.charCodeAt(0) + ';');
 }
 
 /**
@@ -192,11 +192,11 @@ function is_reference_list(tag) {
 function is_external_link(tag) {
 	return tag.name === 'a' && tag.attributes &&
 		tag.attributes.rel &&
-		// We add the spaces before and after to ensure matching on the "word" mw:Ext_link
+		// We add the spaces before and after to ensure matching on the "word" mw:ExtLink
 		// without additional content. This is technically not necessary (we don't generate
-		// mw:Ext_link_something_else) nor entirely correct (attributes values could be separated by other
+		// mw:ExtLinkSomethingElse) nor entirely correct (attributes values could be separated by other
 		// characters than 0x20), but provides a bit of future-proofing.
-		(' ' + tag.attributes.rel + ' ').includes(' mw:Ext_link ');
+		(' ' + tag.attributes.rel + ' ').includes(' mw:ExtLink ');
 }
 
 /**
@@ -366,9 +366,9 @@ function set_link_ids_in_place(text_chunks, get_next_id) {
 				tag.name === 'a' &&
 				tag.attributes.href !== undefined &&
 				tag.attributes.rel &&
-				// We add the spaces before and after to ensure matching on the "word" mw:Wiki_link
-				// without additional content to avoid matching on mw:Wiki_link/Interwiki and mw:Wiki_link/ISBN.
-				(' ' + tag.attributes.rel + ' ').includes(' mw:Wiki_link ') &&
+				// We add the spaces before and after to ensure matching on the "word" mw:WikiLink
+				// without additional content to avoid matching on mw:WikiLink/Interwiki and mw:WikiLink/ISBN.
+				(' ' + tag.attributes.rel + ' ').includes(' mw:WikiLink ') &&
 				tag.attributes['data-linkid'] === undefined
 			) {
 				// Hack: copy href, then remove it, then re-add it, so that
