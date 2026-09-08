@@ -12,9 +12,7 @@ import logging
 import re
 from typing import Any
 
-from lxml import etree
-
-from .elements import VOID_ELEMENTS
+from .sax_html_parser import SaxHTMLParser
 from .utils import Utils
 
 logger = logging.getLogger(__name__)
@@ -36,72 +34,6 @@ class Normalizer:
         """
         self.doc = []
         self.tags: list[dict] = []
-
-    def write(self, html: str) -> None:
-        """
-        Parse and normalize HTML.
-
-        Args:
-            html: HTML string to normalize
-        """
-        parser = etree.HTMLParser(
-            encoding="utf-8",
-            remove_blank_text=False,
-            remove_comments=False,
-            remove_pis=False,
-            no_network=True,
-            recover=True,
-            compact=True,
-            default_doctype=True,
-            collect_ids=True,
-            huge_tree=False,
-        )
-        try:
-            root = etree.fromstring(html, parser)
-            self._process_element(root)
-        except Exception as exc:
-            logger.error("Failed to parse HTML error: %s", str(exc))
-            # Try with wrapping
-            try:
-                root = etree.fromstring(f"<div>{html}</div>", parser)
-                for child in root:
-                    self._process_element(child)
-            except Exception as e:
-                raise Exception(f"Failed to parse HTML: {e}") from e
-
-    def _process_element(self, element: etree._Element | Any, tag_name: str | None = None) -> None:
-        """
-        Process an element and its children recursively.
-        """
-        if element is None:
-            return
-
-        if tag_name is None:
-            tag_name = element.tag  # pyright: ignore[reportAssignmentType]
-
-        if tag_name and self.lowercase:
-            tag_name = tag_name.lower()
-
-        # Create tag dict
-        tag = {"name": tag_name, "attributes": dict(element.attrib)}
-
-        # Mark HTML void elements as self-closing
-        tag["isSelfClosing"] = tag_name in VOID_ELEMENTS
-
-        self.on_open_tag(tag)
-
-        # Process text content
-        if element.text:
-            self.on_text(element.text)
-
-        # Process children
-        for child in element:
-            self._process_element(child)
-            # Process tail text after child
-            if child.tail:
-                self.on_text(child.tail)
-
-        self.on_close_tag(tag_name)  # pyright: ignore[reportArgumentType]
 
     def on_open_tag(self, tag: dict[str, Any]) -> None:
         """
@@ -136,6 +68,9 @@ class Normalizer:
         """
         self.doc.append(Utils.esc(text))
 
+    def on_script(self, text: str) -> None:
+        """Handle script text."""
+
     def get_html(self) -> str:
         """
         Get the normalized HTML.
@@ -144,6 +79,17 @@ class Normalizer:
             Normalized HTML string
         """
         return "".join(self.doc)
+
+    def write(self, html: str) -> None:
+        """
+        Parse HTML into the document.
+
+        Args:
+            html: HTML string to parse
+        """
+        parser = SaxHTMLParser(self, html)
+        parser.feed(html)
+        parser.close()
 
 
 def normalize(html: str, sort_attrs: bool = True) -> str:
