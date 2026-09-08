@@ -1,20 +1,8 @@
 """
 """
 
-import re
-from python.lib.lineardoc import normalize
 from python.lib.mw.mw_page_loader import MWPageLoader
-
-def normalize_test(html: str, sort_attrs: bool = True) -> str:
-    """Normalize HTML using normalizer module."""
-    cleaned = re.sub(r"<span[^>]*class=\"Z3988\"[^>]*>.*?</span>", "", html, flags=re.DOTALL)
-    cleaned = cleaned.strip()
-
-    cleaned = re.sub(r">\s+<", "><", cleaned)
-    cleaned = cleaned.replace("&nbsp;", "\u00a0")
-    cleaned = cleaned.strip()
-    cleaned = normalize(cleaned, sort_attrs=sort_attrs)
-    return cleaned
+from tests.unit.html_normalizer import normalize_test
 
 def test_cx_segmenter_2():
     source_text = """
@@ -43,6 +31,17 @@ def test_cx_segmenter_2():
     normalized_result = normalize_test(result, sort_attrs=sort_attrs)
 
     expected_text = """
+        <p id="0">
+            <span class="cx-segment" data-segmentid="1"> Tewodros <a class="cx-link" data-linkid="2" href="/wiki/January_6"
+                    rel="mw:WikiLink" title="January 6">January 6</a> date <a class="new" href="/w/index.php?title=1811"
+                    title="1811 (page not yet written)">1811</a>
+                <a class="cx-link" data-linkid="3" href="/w/index.php?title=Haylu_Wolde_Georgis" rel="mw:WikiLink"
+                    title="Haylu Wolde Giorgis">Haylu Wolde Giorgis</a> was the ruler of Qara. </span>
+            <span class="cx-segment" data-segmentid="4">After receiving a priestly education as a child, Emperor Tewodros became
+                the minister of his uncle and later, for a short time, of <a class="cx-link" data-linkid="5"
+                    href="/w/index.php?title=1839" rel="mw:WikiLink" title="1839">1839</a> AD. </span>
+            <span class="cx-segment" data-segmentid="6">in Weizero </span>
+        </p>
     """
     expected_result_data = normalize_test(expected_text, sort_attrs=sort_attrs)
 

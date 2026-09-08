@@ -12,6 +12,9 @@ import re
 from collections.abc import Callable
 from typing import Any
 
+import html
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+
 from . import util as cxutil
 
 # from .doc import Doc
@@ -392,33 +395,88 @@ class Utils:
         """
         for t_chunk in text_chunks:
             for tag in t_chunk.tags:
+                attributes = tag.get("attributes", {})
                 if (
-                    tag["name"] == "a"
-                    and tag.get("attributes", {}).get("href") is not None
-                    and tag.get("attributes", {}).get("rel")
-                    and f" {tag['attributes']['rel']} ".find(" mw:WikiLink ") != -1
-                    and tag.get("attributes", {}).get("data-linkid") is None
+                    tag["name"] == "a" and
+                    attributes.get("href") is not None and
+                    attributes.get("rel") is not None and
+                    # We add the spaces before and after to ensure matching on the "word" mw:WikiLink
+                    # without additional content to avoid matching on mw:WikiLink/Interwiki and mw:WikiLink/ISBN.
+                    f" {attributes['rel']} ".find(" mw:WikiLink ") != -1 and
+                    attributes.get("data-linkid") is None
                 ):
 
-                    # Copy href, then remove it, then re-add it
-                    href = tag["attributes"]["href"]
+                    # Hack: copy href, then remove it, then re-add it, so that
+                    # attributes appear in alphabetical order (ugh)
+
+                    """
+                    # Original code like Utils.js
+                    # -----------------------------------
+                    href = tag['attributes']['href']
+                    if 'href' in tag['attributes']:
+                        del tag['attributes']['href']
+                    tag['attributes']['class'] = ' '.join([tag['attributes'].get('class', ''), 'cx-link']).strip()
+                    tag['attributes']['data-linkid'] = get_next_id('link')
+                    tag['attributes']['href'] = href
+                    # -----------------------------------
+                    """
+                    href = attributes["href"]
+                    # -----------------------------------
+                    # by Ibrahem Qasim - start
                     # split href before ?
                     if "?" in href:
-                        href = href.split("?")[0]
+                        href = Utils.remove_action_and_redlink_from_url(href)
 
                     tag["attributes"].pop("typeof", None)
                     tag["attributes"].pop("href", None)
                     tag["attributes"].pop("data-mw-i18n", None)
-                    # by Ibrahem Qasim - start
-                    existing_cls = tag["attributes"].get("class", "").strip()
-                    if existing_cls:
-                        tag["attributes"]["class"] = f"{existing_cls} cx-link"
-                    else:
-                        tag["attributes"]["class"] = "cx-link"
 
-                    # by Ibrahem Qasim - end
+                    # existing_cls = tag["attributes"].get("class", "").strip()
+                    # if existing_cls:
+                    #     tag["attributes"]["class"] = f"{existing_cls} cx-link"
+                    # else:
+                    # remove clsses like: mw-redirect, mw-disambig
+                    tag["attributes"]["class"] = "cx-link"
+
                     tag["attributes"]["data-linkid"] = get_next_id("link")
                     tag["attributes"]["href"] = href
+                    # by Ibrahem Qasim - end
+                    # -----------------------------------
+
+    @staticmethod
+    def remove_action_and_redlink_from_url(href: str) -> str:
+        # /w/index.php?title=1839&action=edit&redlink=1
+        # /w/index.php?title=1839&#38;action=edit&#38;redlink=1
+        # /w/index.php?title=1839&amp;action=edit&amp;redlink=1
+        # Unescape HTML entities (e.g., &amp; -> &, &#38; -> &)
+        clean_url = html.unescape(href)
+
+        # Quick check: return original input if targeted parameters are not present
+        if "action=" not in clean_url and "redlink=" not in clean_url:
+            return href
+
+        # Split the URL into components (handles absolute, relative, and protocol-relative URLs)
+        url_parts = urlsplit(clean_url)
+
+        if not url_parts.query:
+            return href
+
+        # Parse query parameters into a list of key-value pairs
+        query_params = parse_qsl(url_parts.query, keep_blank_values=True)
+
+        # Filter out 'action' and 'redlink' parameters
+        filtered_params = [
+            (key, val)
+            for key, val in query_params
+            if key not in ("action", "redlink")
+        ]
+
+        # Reconstruct the query string
+        new_query = urlencode(filtered_params)
+
+        # Rebuild the final URL preserving scheme, netloc, path, and fragment (#)
+        new_url_parts = url_parts._replace(query=new_query)
+        return urlunsplit(new_url_parts)
 
     @staticmethod
     def is_closing_template_match(
