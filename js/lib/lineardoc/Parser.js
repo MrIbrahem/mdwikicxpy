@@ -43,7 +43,7 @@ class Parser extends sax.SAXParser {
 	 * @param {Contextualizer} contextualizer Tag contextualizer
 	 * @param {Object} options Options
 	 */
-	constructor(contextualizer, options) {
+	constructor(contextualizer, options={}) {
 		super(false, {
 			lowercase: true
 		});
