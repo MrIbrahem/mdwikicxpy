@@ -200,18 +200,16 @@ def get_chunk_about_values(chunk: TextChunk) -> list[str]:
     """
     values = []
     for tag in chunk.tags:
-        # attributes = tag.get("attributes") if isinstance(tag, dict) else getattr(tag, "attributes", None)
-        # if attributes and isinstance(attributes, dict) and "about" in attributes:
         about = get_prop(["attributes", "about"], tag)
         if about:
             values.append(about)
 
     inline = chunk.inline_content
     if inline:
-        # attributes = inline.get("attributes") if isinstance(inline, dict) else getattr(inline, "attributes", None)
-        # if attributes and isinstance(attributes, dict) and "about" in attributes:
-        #     values.append(attributes["about"])
         about = get_prop(["attributes", "about"], inline)
+
+        # if not about and getattr(inline, "wrapper_tag", None): about = get_prop(["attributes", "about"], inline.wrapper_tag)
+
         if about:
             values.append(about)
 

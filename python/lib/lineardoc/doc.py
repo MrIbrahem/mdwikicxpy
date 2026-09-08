@@ -324,7 +324,6 @@ class Doc:
 
             if new_item_name != "section":
                 tag_name = get_prop(["item", "name"], tag)
-                # tag_name = ( item.item.get("name") if isinstance(item.item, dict) else getattr(item.item, "name", "unknown") )
                 raise Exception(f"Sectionwrap: Attempting to remove a non-section tag: {tag_name}")
 
             # Undo last section close
