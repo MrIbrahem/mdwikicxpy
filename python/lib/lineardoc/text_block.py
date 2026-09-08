@@ -372,7 +372,13 @@ class TextBlock:
 
         def push_empty_text_chunks(offset, chunks):
             for chunk in chunks:
-                text_chunks.append({"start": offset, "length": 0, "t_chunk": chunk})
+                text_chunks.append(
+                    {
+                        "start": offset,
+                        "length": 0,
+                        "text_chunk": chunk,
+                    }
+                )
 
         # Create map of empty text chunks, by offset
         for i, t_chunk in enumerate(self.text_chunks):

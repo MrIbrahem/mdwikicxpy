@@ -131,6 +131,7 @@ class MwContextualizer(Contextualizer):
         types = tag.get("attributes", {}).get("typeof", "").split()
         rels = tag.get("attributes", {}).get("rel", "").split()
         rdfa = types + rels
+
         for removable_rdfa in removable_sections.get("rdfa", []):
             # Make sure that the rdfa value matches
             if removable_rdfa in rdfa and len(rdfa) == 1:

@@ -1,0 +1,5 @@
+pytest==9.0.2
+pytest_socket==0.8.0
+pytest-cov
+pytest-mock
+pywikibot
