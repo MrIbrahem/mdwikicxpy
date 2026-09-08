@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 from python.lib.lineardoc import Doc, MwContextualizer, Parser, normalize
-from python.lib.mw.mw_page_loader import removable_sections, MWPageLoader
+from python.lib.mw.mw_page_loader import MWPageLoader, removable_sections
 from python.lib.segmentation import CXSegmenter
 
 cx_segmenter_tests_path = Path(__file__).parent / "SegmentationTests.json"
@@ -27,6 +27,7 @@ def normalize_test(html: str) -> str:
     cleaned = cleaned.replace("&nbsp;", "\u00a0")
     return normalize(cleaned)
 
+
 def normalize_test1(html: str) -> str:
     """ """
     # html = normalize(html)
@@ -40,6 +41,7 @@ def normalize_test1(html: str) -> str:
     cleaned = re.sub(r"\s*/>", "/>", cleaned)
     cleaned = re.sub(r">\s*<", ">\n<", cleaned)
     return cleaned
+
 
 def get_parsed_doc(content, config=None, options=None) -> Doc:
     parser = Parser(MwContextualizer(config=config), options=options)
