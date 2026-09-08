@@ -34,7 +34,7 @@ class MWPageLoader:
         )
 
         parser.init()
-        parser.write_fragments(source_html)
+        parser.write(source_html)
         return parser.builder.doc
 
     def get_page(

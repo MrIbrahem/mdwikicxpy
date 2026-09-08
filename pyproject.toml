@@ -39,8 +39,8 @@ include_trailing_comma = true
 ensure_newline_before_comments = true
 
 # Project paths
-src_paths = "ArWikiCats"
-known_first_party = "ArWikiCats"
+src_paths = "python"
+known_first_party = "python, tests"
 skip = [
     ".env",
     "env",
@@ -195,7 +195,7 @@ reportIncompatibleMethodOverride = "none"
 pythonVersion = "3.13"
 stubPath = "typings"
 # Paths to include and exclude from checking
-include = ["src", "src/new"]
+include = ["src", "tests"]
 exclude = [
     # System & Version Control
     "**/$RECYCLE.BIN/**",

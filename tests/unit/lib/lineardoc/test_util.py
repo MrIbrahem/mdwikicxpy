@@ -5,6 +5,22 @@ Unit tests for lineardoc/util.py module.
 from python.lib.lineardoc.util import get_prop
 
 
+def get_prop_old(obj):
+    attributes = obj.get("attributes") if isinstance(obj, dict) else getattr(obj, "attributes", None)
+    if attributes and isinstance(attributes, dict) and "about" in attributes:
+        return attributes["about"]
+
+
+def test_get_prop():
+    """Test retrieving numeric values."""
+    obj = {"attributes": {"about": "test"}}
+
+    result1 = get_prop(["attributes", "about"], obj)
+    result2 = get_prop_old(obj)
+    assert result1 == "test"
+    assert result1 == result2
+
+
 class TestGetProp:
     """Test get_prop utility function."""
 

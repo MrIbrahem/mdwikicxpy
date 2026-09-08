@@ -13,6 +13,7 @@ from collections.abc import Callable
 from typing import Any
 
 from .text_chunk import TextChunk
+from .util import get_prop
 from .utils import Utils
 
 # Placeholder characters used when a text block is flattened to a plain
@@ -198,15 +199,18 @@ def get_chunk_about_values(chunk: TextChunk) -> list[str]:
     """
     values = []
     for tag in chunk.tags:
-        attributes = tag.get("attributes") if isinstance(tag, dict) else getattr(tag, "attributes", None)
-        if attributes and isinstance(attributes, dict) and "about" in attributes:
-            values.append(attributes["about"])
+        about = get_prop(["attributes", "about"], tag)
+        if about:
+            values.append(about)
 
     inline = chunk.inline_content
     if inline:
-        attributes = inline.get("attributes") if isinstance(inline, dict) else getattr(inline, "attributes", None)
-        if attributes and isinstance(attributes, dict) and "about" in attributes:
-            values.append(attributes["about"])
+        about = get_prop(["attributes", "about"], inline)
+
+        # if not about and getattr(inline, "wrapper_tag", None): about = get_prop(["attributes", "about"], inline.wrapper_tag)
+
+        if about:
+            values.append(about)
 
     return values
 
@@ -258,7 +262,8 @@ def suppress_about_group_boundaries(boundaries: list[int], text_chunks: list[Tex
         j = i - 1
         while j >= 0:
             before_abouts.extend(get_chunk_about_values(text_chunks[j]))
-            if len(text_chunks[j].text) > 0:
+            # if len(text_chunks[j].text) > 0:
+            if text_chunks[j].text.strip():
                 break
             j -= 1
 
