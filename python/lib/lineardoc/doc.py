@@ -319,10 +319,13 @@ class Doc:
 
         def insert_to_prev_section(item, doc: Doc):
             nonlocal curr_section, prev_section
-            new_item = new_doc.get_current_item()
+            new_item_name = new_doc.get_current_item_name()
 
-            if new_item and new_item["item"]["name"] != "section":
-                raise Exception(f"Sectionwrap: Attempting to remove a non-section tag: {item['name']}")
+            if new_item_name != "section":
+                tag_name = (
+                    item.item.get("name") if isinstance(item.item, dict) else getattr(item.item, "name", "unknown")
+                )
+                raise Exception(f"Sectionwrap: Attempting to remove a non-section tag: {tag_name}")
 
             # Undo last section close
             doc.undo_add_item()
@@ -367,8 +370,8 @@ class Doc:
 
             elif item_type == "blockspace" and isinstance(i_item, DocStr):
                 tag = i_item.item
-                new_item = new_doc.get_current_item()
-                if prev_section and new_item and new_item["item"]["name"] == "section":
+                new_item_name = new_doc.get_current_item_name()
+                if prev_section and new_item_name == "section":
                     insert_to_prev_section(i_item, new_doc)
                 else:
                     new_doc.add_blockspace_item(tag)
@@ -379,9 +382,9 @@ class Doc:
                 tag_for_id = text_block.get_tag_for_id() or {}
 
                 if not tag_for_id and not curr_section:
-                    new_item = new_doc.get_current_item()
+                    new_item_name = new_doc.get_current_item_name()
                     # Textblock with no tag identifier. Add it to the previous section
-                    if prev_section and new_item and new_item["item"]["name"] == "section":
+                    if prev_section and new_item_name == "section":
                         insert_to_prev_section(i_item, new_doc)
                         continue
 
