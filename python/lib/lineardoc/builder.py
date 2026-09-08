@@ -223,6 +223,8 @@ class Builder:
         if whitespace_only:
             self.doc.add_blockspace_item("".join(whitespace))
         else:
+            # new part by Ibrahem qasim - start
+            """
             while (
                 self.text_chunks
                 and not self.text_chunks[0].text.strip()
@@ -237,15 +239,18 @@ class Builder:
                 and not self.text_chunks[-1].tags
             ):
                 self.doc.add_blockspace_item(self.text_chunks.pop().text)
+            """
 
-            if self.text_chunks:
-                self.doc.add_textblock_item(
-                    TextBlock(
-                        self.text_chunks,
-                        self.is_block_segmentable,
-                        sort_attrs=self.sort_attrs,
-                    ),
-                )
+            # new part by Ibrahem qasim - end
+
+            # if self.text_chunks:
+            self.doc.add_textblock_item(
+                TextBlock(
+                    self.text_chunks,
+                    self.is_block_segmentable,
+                    sort_attrs=self.sort_attrs,
+                ),
+            )
 
         self.text_chunks = []
         self.is_block_segmentable = True
