@@ -6,6 +6,7 @@ from python.lib.lineardoc import normalize
 
 import pywikibot
 
+
 def show_html_diff(result: str, expected_result: str) -> None:
     if result != expected_result:
         result2 = re.sub(r">\s*<", ">\n<", result)

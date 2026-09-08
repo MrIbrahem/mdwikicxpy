@@ -2,6 +2,7 @@
 """
 Copied from SectionWrap.test.js
 """
+
 import pytest
 
 from python.lib.lineardoc import MwContextualizer
@@ -11,12 +12,13 @@ from tests.unit.html_normalizer import normalize_test, show_html_diff
 
 removable_sections = load_removable_sections()
 
+
 def get_parsed_doc(source_html: str) -> Doc:
     parser = Parser(
         contextualizer=MwContextualizer(
             config={"removableSections": removable_sections},
         ),
-        options={ 'sort_attrs': True },
+        options={"sort_attrs": True},
     )
 
     parser.init()
@@ -464,82 +466,82 @@ sectionWithTemplateStylesFragmentResult = """
 
 tests = [
     {
-        'desc': 'section has common pattern of elements',
-        'source': sourceHTML,
-        'result': expectedSectionWrappedHTML,
-        'categories': 1
+        "desc": "section has common pattern of elements",
+        "source": sourceHTML,
+        "result": expectedSectionWrappedHTML,
+        "categories": 1,
     },
     {
-        'desc': 'section has categories to be extracted',
-        'source': sectionWithCategories,
-        'result': sectionWithCategoriesExpectedHtml,
-        'categories': 2
+        "desc": "section has categories to be extracted",
+        "source": sectionWithCategories,
+        "result": sectionWithCategoriesExpectedHtml,
+        "categories": 2,
     },
     {
-        'desc': 'content has nested sections and tricky transclusion context',
-        'source': nestedSectionsWithTransclusion,
-        'result': nestedSectionsWithTransclusionExpected,
-        'categories': 0
+        "desc": "content has nested sections and tricky transclusion context",
+        "source": nestedSectionsWithTransclusion,
+        "result": nestedSectionsWithTransclusionExpected,
+        "categories": 0,
     },
     {
-        'desc': 'content has blank template and then an unrelated table',
-        'source': sectionWithBlankTemplate,
-        'result': sectionWithBlankTemplateExpected,
-        'categories': 0
+        "desc": "content has blank template and then an unrelated table",
+        "source": sectionWithBlankTemplate,
+        "result": sectionWithBlankTemplateExpected,
+        "categories": 0,
     },
     {
-        'desc': 'content is complete page content with html, head tags and body having two templates with fragments',
-        'source': wholeBodySource,
-        'result': wholeBodyResult,
-        'categories': 0
+        "desc": "content is complete page content with html, head tags and body having two templates with fragments",
+        "source": wholeBodySource,
+        "result": wholeBodyResult,
+        "categories": 0,
     },
     {
-        'desc': 'Content has self closing meta tag',
-        'source': sectionWithMeta,
-        'result': sectionWithMetaResult,
-        'categories': 0
+        "desc": "Content has self closing meta tag",
+        "source": sectionWithMeta,
+        "result": sectionWithMetaResult,
+        "categories": 0,
     },
     {
-        'desc': 'Content has template fragments and one fragment is a section candidate. Section has categories too',
-        'source': sectionWithFigureInlineTemplate,
-        'result': sectionWithFigureInlineTemplateResult,
-        'categories': 2
+        "desc": "Content has template fragments and one fragment is a section candidate. Section has categories too",
+        "source": sectionWithFigureInlineTemplate,
+        "result": sectionWithFigureInlineTemplateResult,
+        "categories": 2,
     },
     {
-        'desc': 'Content has transclusion and one of its fragment get removed since it is ignorable.',
-        'source': sectionWithIgnorableTransclusionFragment,
-        'result': sectionWithIgnorableTransclusionFragmentResult,
-        'categories': 0
+        "desc": "Content has transclusion and one of its fragment get removed since it is ignorable.",
+        "source": sectionWithIgnorableTransclusionFragment,
+        "result": sectionWithIgnorableTransclusionFragmentResult,
+        "categories": 0,
     },
     {
-        'desc': 'Content has transclusion and same element is removable templatestyle. So do not remove',
-        'source': sectionWithTemplateAndTemplateStyles,
-        'result': sectionWithTemplateAndTemplateStylesResult,
-        'categories': 0
+        "desc": "Content has transclusion and same element is removable templatestyle. So do not remove",
+        "source": sectionWithTemplateAndTemplateStyles,
+        "result": sectionWithTemplateAndTemplateStylesResult,
+        "categories": 0,
     },
     {
-        'desc': 'Content has templatestyles block containing a fragment of the previous section transclusion',
-        'source': sectionWithTemplateStylesFragment,
-        'result': sectionWithTemplateStylesFragmentResult,
-        'categories': 0
-    }
+        "desc": "Content has templatestyles block containing a fragment of the previous section transclusion",
+        "source": sectionWithTemplateStylesFragment,
+        "result": sectionWithTemplateStylesFragmentResult,
+        "categories": 0,
+    },
 ]
 
 
 class TestSectionWrap:
-    @pytest.mark.parametrize('test', tests, ids=lambda t: t['desc'])
+    @pytest.mark.parametrize("test", tests, ids=lambda t: t["desc"])
     def test_parse_correctly(self, test):
-        parsed_doc = get_parsed_doc(test['source'])
+        parsed_doc = get_parsed_doc(test["source"])
         wrapped_section_doc = parsed_doc.wrap_sections()
         result = normalize_test(wrapped_section_doc.get_html())
-        expected_result_data = normalize_test(test['result'])
+        expected_result_data = normalize_test(test["result"])
 
         assert result == expected_result_data, show_html_diff(result, expected_result_data)
 
-    @pytest.mark.parametrize('test', tests, ids=lambda t: t['desc'])
+    @pytest.mark.parametrize("test", tests, ids=lambda t: t["desc"])
     def test_extract_correct_number_of_categories(self, test):
-        parsed_doc = get_parsed_doc(test['source'])
+        parsed_doc = get_parsed_doc(test["source"])
 
         parsed_doc.wrap_sections()
 
-        assert len(parsed_doc.categories) == test['categories']
+        assert len(parsed_doc.categories) == test["categories"]
