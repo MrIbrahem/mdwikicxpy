@@ -2,23 +2,10 @@
 Unit tests for processor.py module.
 """
 
-import re
-
 from python.lib.lineardoc import MwContextualizer, Parser
 from python.lib.processor import process_html
 from python.lib.segmentation import CXSegmenter
-
-# from tests.unit.html_normalizer import normalize_test
-
-
-def normalize_test(html: str) -> str:
-    """ """
-    html = html.strip()
-    # Remove tabs, carriage returns, and newlines
-    html = re.sub(r"[\t\r\n]+", "", html)
-    html = re.sub(r"\s+", " ", html)
-    html = re.sub(r">\s+<", "><", html)
-    return html
+from tests.unit.html_normalizer import normalize_test
 
 
 def test_process_html_simple():
