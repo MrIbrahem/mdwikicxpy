@@ -24,6 +24,7 @@ from .doc_item import (
     DocStr,
     DocTextBlock,
 )
+from .util import get_prop
 from .text_block import TextBlock
 from .utils import Utils
 
@@ -322,9 +323,8 @@ class Doc:
             new_item_name = new_doc.get_current_item_name()
 
             if new_item_name != "section":
-                tag_name = (
-                    item.item.get("name") if isinstance(item.item, dict) else getattr(item.item, "name", "unknown")
-                )
+                tag_name = get_prop(["item", "name"], tag)
+                # tag_name = ( item.item.get("name") if isinstance(item.item, dict) else getattr(item.item, "name", "unknown") )
                 raise Exception(f"Sectionwrap: Attempting to remove a non-section tag: {tag_name}")
 
             # Undo last section close
