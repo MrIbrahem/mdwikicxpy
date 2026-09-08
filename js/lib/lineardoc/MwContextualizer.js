@@ -15,7 +15,7 @@ class MwContextualizer extends Contextualizer {
 	 *  Tags matching these classes or rdfa values will be marked as removable.
 	 *  See config in removableSections
 	 */
-	constructor(config) {
+	constructor(config={}) {
 		super(config);
 		// Array holding transclusion fragment ids(about attribute values)
 		this.removable_transclusion_fragments = [];
