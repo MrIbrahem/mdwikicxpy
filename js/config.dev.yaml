@@ -1,0 +1,80 @@
+name: cxserver-dev
+port: 8080
+logging:
+  level: debug
+  format: ecs
+# private_key: path to private key file for enabling https
+# certificate: path to certificate file for enabling https
+# interface: localhost # uncomment to only listen on localhost
+# More per-service config settings
+# The location of the spec, defaults to spec.yaml if not specified
+# spec: ./spec.yaml
+# allow cross-domain requests to the API (default *)
+cors: "*"
+# to disable use:
+# cors: false
+# to restrict to a particular domain, use:
+# cors: restricted.domain.org
+# URL of the outbound proxy to use (complete with protocol)
+# proxy: http://my.proxy.org:8080
+# the list of domains for which not to use the proxy defined above
+# no_proxy_list:
+#   - domain1.com
+#   - domain2.org
+user_agent: wmf/cxserver (language-product-localization@wikimedia.org)
+# MediaWiki host name. Example {lang}.wikisource.org which get expanded internally to
+# es.wikisource.org in a spanish language context.
+# Do not prefix with http or https://
+# mw_host: '{lang}.wikipedia.org'
+mwapi_req:
+  body: "{{request.body}}"
+  query: "{{ default(request.query, {}) }}"
+  headers:
+    host: "{{request.params.domain}}"
+    user-agent: "{{user-agent}}"
+    content-type: "{{content-type}}"
+  method: "{{request.method}}"
+  uri: "https://{{domain}}/w/api.php"
+restbase_req:
+  method: "{{request.method}}"
+  uri: https://{{domain}}/w/rest.php/v1/{+path}
+  query: "{{ default(request.query, {}) }}"
+  headers: "{{request.headers}}"
+  body: "{{request.body}}"
+jwt:
+  secret: ""
+  algorithms:
+    - HS256
+ratelimiter_key: x-client-ip # The request header field that uniquely identify a request source
+ratelimiter_rate: 10
+languages: config/languages.yaml
+referencePunctuation: config/reference-punctuation.yaml
+templatemapping:
+  database: config/templatemapping.db
+sectionmapping:
+  database: config/cx-section-titles-aligned.db
+  type: sqlite
+mt:
+  Apertium:
+    api: https://apertium.wmcloud.org
+    # For packaging reasons use separate configuration
+    languages: config/Apertium.yaml
+  Elia:
+    api: https://mt-api.elhuyar.eus/translate_string
+    languages: config/Elia.yaml
+    key: null
+    apiId: null
+  Google:
+    api: https://www.googleapis.com/language/translate/v2
+    key: null
+    languages: config/Google.yaml
+  LingoCloud:
+    api: https://api.interpreter.caiyunai.com/v1
+    account: wikimedia
+    key: null
+    languages: config/LingoCloud.yaml
+  MinT:
+    api: https://translate.wmcloud.org/api/translate
+    languages: config/MinT.yaml
+  TestClient:
+    languages: config/TestClient.yaml
