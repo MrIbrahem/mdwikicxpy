@@ -12,16 +12,19 @@ import yaml
 from ..lineardoc import Doc, MwContextualizer, Parser
 from ..segmentation import CXSegmenter
 
-# Load configuration
-config_path = Path(__file__).parent.parent.parent / "config" / "MWPageLoader.yaml"
+def load_removable_sections() -> dict[str, list[str]]:
+    # Load configuration
+    config_path = Path(__file__).parent.parent.parent / "config" / "MWPageLoader.yaml"
 
-with open(config_path, "r", encoding="utf-8") as f:
-    pageloader_config = yaml.safe_load(f)
+    with open(config_path, "r", encoding="utf-8") as f:
+        pageloader_config = yaml.safe_load(f)
 
-removable_sections = pageloader_config.get("removableSections", {})
-if not removable_sections:
-    raise ValueError("removableSections must be defined in config")
+    removable_sections = pageloader_config.get("removableSections", {})
+    if not removable_sections:
+        raise ValueError("removableSections must be defined in config")
+    return removable_sections
 
+removable_sections = load_removable_sections()
 
 class MWPageLoader:
 

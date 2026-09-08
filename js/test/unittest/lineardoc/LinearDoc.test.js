@@ -10,21 +10,27 @@ import {
 import { is_ignorable_block } from '../../../lib/lineardoc/Utils.js';
 import transTests from './translate.test.json' with { type: 'json' };
 
-const dirname = new URL('.', import.meta.url).pathname;
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+// Convert file URL to a valid path compatible with Windows
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 function normalize(html) {
 	const normalizer = new Normalizer();
 	normalizer.init();
 	normalizer.write(html.replace(/(\r\n|\n|\t|\r)/gm, ''));
-	return normalizer.get_html();
+	return normalizer.getHtml();
 }
 
 describe('LinearDoc', () => {
 	it('should be possible to linearise all kind of HTML inputs', () => {
 		const numTests = 8;
 		for (let i = 1; i <= numTests; i++) {
-			const testXhtmlFile = dirname + '/data/test' + i + '.xhtml';
-			const resultXmlFile = dirname + '/data/test' + i + '-result.xml';
-			const resultXhtmlFile = dirname + '/data/test' + i + '-result.xhtml';
+			const testXhtmlFile = path.join(__dirname, '/data/test' + i + '.xhtml');
+			const resultXmlFile = path.join(__dirname, '/data/test' + i + '-result.xml');
+			const resultXhtmlFile = path.join(__dirname, '/data/test' + i + '-result.xhtml');
 			const testXhtml = readFileSync(testXhtmlFile, 'utf8').replace(
 				/^\s+|\s+$/,
 				''
@@ -50,7 +56,7 @@ describe('LinearDoc', () => {
 				'Linearised structure'
 			);
 			deepEqual(
-				normalize(parser.builder.doc.get_html()),
+				normalize(parser.builder.doc.getHtml()),
 				normalize(expectedXhtml),
 				'Reconstructed XHTML'
 			);
@@ -64,17 +70,17 @@ describe('LinearDoc', () => {
 			parser.init();
 			parser.write('<div>' + test.source + '</div>');
 			const textBlock1 = parser.builder.doc.items[1].item;
-			deepEqual(textBlock1.get_html(), test.source, 'Reconstructed source HTML');
+			deepEqual(textBlock1.getHtml(), test.source, 'Reconstructed source HTML');
 			const textBlock2 = textBlock1.translateTags(
 				test.targetText,
 				test.rangeMappings
 			);
-			deepEqual(textBlock2.get_html(), test.expect, 'Translated HTML');
+			deepEqual(textBlock2.getHtml(), test.expect, 'Translated HTML');
 		}
 	});
 
 	it('should be possible to reduce and expand a document', () => {
-		const testXhtmlFile = dirname + '/data/test-figure-inline.html';
+		const testXhtmlFile = path.join(__dirname, '/data/test-figure-inline.html');
 		const contentForReduce = readFileSync(testXhtmlFile, 'utf8').replace(
 			/^\s+|\s+$/,
 			''
@@ -90,14 +96,14 @@ describe('LinearDoc', () => {
 		);
 		const expandedDoc = reducedDoc.expand(extractedData);
 		deepEqual(
-			normalize(expandedDoc.get_html()),
+			normalize(expandedDoc.getHtml()),
 			normalize(contentForReduce),
 			'Restored the original html after reduce and expand.'
 		);
 	});
 
 	it('test HTML compaction roundtrip with inline chunks', () => {
-		const testXhtmlFile = dirname + '/data/test-chunks-inline.html';
+		const testXhtmlFile = path.join(__dirname, '/data/test-chunks-inline.html');
 		const contentForReduce = readFileSync(testXhtmlFile, 'utf8').replace(
 			/^\s+|\s+$/,
 			''
@@ -113,7 +119,7 @@ describe('LinearDoc', () => {
 		);
 		const expandedDoc = reducedDoc.expand(extractedData);
 		deepEqual(
-			normalize(expandedDoc.get_html()),
+			normalize(expandedDoc.getHtml()),
 			normalize(contentForReduce),
 			'Restored the original html after reduce and expand.'
 		);
@@ -139,7 +145,7 @@ describe('LinearDoc', () => {
 		parser.write(corruptedDoc);
 		const expandedDoc = parser.builder.doc.expand(extractedData);
 		deepEqual(
-			normalize(expandedDoc.get_html()),
+			normalize(expandedDoc.getHtml()),
 			normalize(sanitizedExpandedDoc),
 			'Expanded the corrupted document by removing all externally inserted attributes.'
 		);
@@ -153,8 +159,9 @@ describe('LinearDoc', () => {
 			'/data/test-block-template-section-4.html'
 		];
 		for (let i = 0; i < testFiles.length; i++) {
+			const filepath = path.join(__dirname, testFiles[i]);
 			const contentForTest = readFileSync(
-				dirname + testFiles[i],
+				filepath,
 				'utf8'
 			).replace(/^\s+|\s+$/, '');
 			const parser = new Parser(new MwContextualizer());
@@ -168,8 +175,9 @@ describe('LinearDoc', () => {
 	});
 
 	it('should not ignore a section that begins with an inline template but has translatable prose', () => {
+		const filepath = path.join(__dirname, '/data/test-inline-template-section.html');
 		const contentForTest = readFileSync(
-			dirname + '/data/test-inline-template-section.html',
+			filepath,
 			'utf8'
 		).replace(/^\s+|\s+$/, '');
 		const parser = new Parser(new MwContextualizer());
@@ -222,7 +230,7 @@ describe('LinearDoc', () => {
 		parser.write(sourceDoc);
 		const { reducedDoc, extractedData } = parser.builder.doc.reduce();
 		deepEqual(
-			normalize(reducedDoc.get_html()),
+			normalize(reducedDoc.getHtml()),
 			normalize(expectedReducedDoc),
 			'Expanded the corrupted document by removing all externally inserted attributes.'
 		);
@@ -251,15 +259,14 @@ describe('LinearDoc', () => {
 		parser.write(corruptedMTInput);
 		const expandedDoc = parser.builder.doc.expand(extractedData);
 		deepEqual(
-			normalize(expandedDoc.get_html()),
+			normalize(expandedDoc.getHtml()),
 			normalize(sanitizedExpandedDoc),
 			'Expanded the corrupted document by ignoring modified style and script content'
 		);
 	});
 
 	it('test HTML compaction roundtrip with template with empty content', () => {
-		const testXhtmlFile =
-			dirname + '/data/text-inline-template-empty-content.html';
+		const testXhtmlFile = path.join(__dirname, '/data/text-inline-template-empty-content.html');
 		const contentForReduce = readFileSync(testXhtmlFile, 'utf8').replace(
 			/^\s+|\s+$/,
 			''
@@ -270,7 +277,7 @@ describe('LinearDoc', () => {
 		const { reducedDoc, extractedData } = parser.builder.doc.reduce();
 		const reducedParser = new Parser(new MwContextualizer());
 		reducedParser.init();
-		reducedParser.write(reducedDoc.get_html());
+		reducedParser.write(reducedDoc.getHtml());
 		deepEqual(
 			Object.keys(extractedData).length,
 			6,
@@ -278,7 +285,7 @@ describe('LinearDoc', () => {
 		);
 		const expandedDoc = reducedParser.builder.doc.expand(extractedData);
 		deepEqual(
-			normalize(expandedDoc.get_html()),
+			normalize(expandedDoc.getHtml()),
 			normalize(contentForReduce),
 			'Restored the original html after reduce and expand.'
 		);

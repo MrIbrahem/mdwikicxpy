@@ -73,7 +73,7 @@ function HtmltoSegments(source_HTML) {
 
 	const segmented_doc = new CXSegmenter().segment(parsed_doc, "en");
 
-	const result = segmented_doc.get_html();
+	const result = segmented_doc.getHtml();
 
 	return result;
 }

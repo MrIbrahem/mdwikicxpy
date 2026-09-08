@@ -10,7 +10,7 @@ function normalize(html) {
 	const normalizer = new Normalizer();
 	normalizer.init();
 	normalizer.write(html.replace(/(\r\n|\n|\t|\r)/gm, ''));
-	return normalizer.get_html();
+	return normalizer.getHtml();
 }
 
 function parse(html) {
@@ -128,8 +128,8 @@ describe('Reference punctuation adaptation', () => {
 		it(msg, () => {
 			const result = parse(source).adaptReferencePunctuation(opts);
 			deepEqual(
-				normalize(result.get_html()),
-				normalize(parse(expected).get_html()),
+				normalize(result.getHtml()),
+				normalize(parse(expected).getHtml()),
 				msg
 			);
 		});

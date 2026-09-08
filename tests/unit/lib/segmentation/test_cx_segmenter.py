@@ -9,9 +9,11 @@ from pathlib import Path
 import pytest
 
 from python.lib.lineardoc import Doc, MwContextualizer, Parser
-from python.lib.mw.mw_page_loader import MWPageLoader, removable_sections
+from python.lib.mw.mw_page_loader import MWPageLoader, load_removable_sections
 from python.lib.segmentation import CXSegmenter
 from tests.unit.html_normalizer import normalize_test_base
+
+removable_sections = load_removable_sections()
 
 cx_segmenter_tests_path = Path(__file__).parent / "SegmentationTests.json"
 

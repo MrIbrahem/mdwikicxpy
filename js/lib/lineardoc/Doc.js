@@ -208,7 +208,7 @@ class Doc {
 	 *
 	 * @return {string} HTML document
 	 */
-	get_html() {
+	getHtml() {
 		const html = [];
 
 		if (this.wrapper_tag) {
@@ -234,7 +234,7 @@ class Doc {
 			} else if (type === 'textblock') {
 				const textblock = item;
 				// textblock html list may be quite long, so concatenate now
-				html.push(textblock.get_html());
+				html.push(textblock.getHtml());
 			} else {
 				throw new Error(`Unknown item type: ${type}`);
 			}
@@ -465,7 +465,7 @@ class Doc {
 				continue;
 			}
 			const textblock = this.items[i].item;
-			segments.push(textblock.get_html());
+			segments.push(textblock.getHtml());
 		}
 
 		return segments;

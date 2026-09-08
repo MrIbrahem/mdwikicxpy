@@ -63,7 +63,7 @@ class MWPage_loader {
 		const segmented_doc = new CXSegmenter().segment(parsed_doc, "en");
 
 		return {
-			content: segmented_doc.get_html(),
+			content: segmented_doc.getHtml(),
 		};
 	}
 

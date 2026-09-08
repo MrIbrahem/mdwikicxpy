@@ -455,7 +455,7 @@ class TextBlock {
 	 *
 	 * @return {string} Plain text representation
 	 */
-	get_html() {
+	getHtml() {
 		const html = [];
 		// Start with no tags open
 		let old_tags = [];
@@ -484,9 +484,9 @@ class TextBlock {
 			// Now add text and inline content
 			html.push(esc(text_chunk.text));
 			if (text_chunk.inline_content) {
-				if (text_chunk.inline_content.get_html) {
+				if (text_chunk.inline_content.getHtml) {
 					// a sub-doc
-					html.push(text_chunk.inline_content.get_html());
+					html.push(text_chunk.inline_content.getHtml());
 				} else {
 					// an empty inline tag
 					html.push(get_open_tag_html(text_chunk.inline_content));

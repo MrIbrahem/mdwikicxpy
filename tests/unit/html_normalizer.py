@@ -4,6 +4,14 @@ import re
 
 from python.lib.lineardoc import normalize
 
+import pywikibot
+
+def show_html_diff(result: str, expected_result_data: str) -> None:
+    if result != expected_result_data:
+        result2 = re.sub(r">\s+<", "><", result)
+        expected2 = re.sub(r">\s+<", "><", expected_result_data)
+        pywikibot.showDiff(expected2, result2)
+
 
 def normalize_test_base(cleaned: str, sort_attrs: bool = True) -> str:
     """Normalize HTML using normalizer module."""

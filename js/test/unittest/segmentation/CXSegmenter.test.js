@@ -9,13 +9,18 @@ import {
 import Segmenter from '../../../../js/lib/segmentation/CXSegmenter.js';
 import allTests from './SegmentationTests.json' with { type: 'json' };
 
-const dirname = new URL('.', import.meta.url).pathname;
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+// Convert file URL to a valid path compatible with Windows
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function normalize(html) {
 	const normalizer = new Normalizer();
 	normalizer.init();
 	normalizer.write(html.replace(/[\t\r\n]+/gm, ''));
-	return normalizer.get_html();
+	return normalizer.getHtml();
 }
 
 function getParsedDoc(content) {
@@ -26,13 +31,16 @@ function getParsedDoc(content) {
 }
 
 function runTest(test, lang) {
-	const testData = readFileSync(dirname + '/data/' + test.source, 'utf8');
+	const sourcePath = path.join(__dirname, 'data', test.source);
+	const resultPath = path.join(__dirname, 'data', test.result);
+
+	const testData = readFileSync(sourcePath, 'utf8');
 	const parsedDoc = getParsedDoc(testData);
 	const segmenter = new Segmenter();
 	const segmentedLinearDoc = segmenter.segment(parsedDoc, lang);
-	const result = normalize(segmentedLinearDoc.get_html());
+	const result = normalize(segmentedLinearDoc.getHtml());
 	const expectedResultData = normalize(
-		readFileSync(dirname + '/data/' + test.result, 'utf8')
+		readFileSync(resultPath, 'utf8')
 	);
 	it('should not have any errors when: ' + test.desc, () => {
 		deepEqual(result, expectedResultData, test.source + ': ' + test.desc || '');

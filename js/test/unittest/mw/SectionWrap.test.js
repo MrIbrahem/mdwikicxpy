@@ -9,17 +9,24 @@ import {
 	Parser
 } from '../../../lib/lineardoc/index.js';
 
-const dirname = new URL('.', import.meta.url).pathname;
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+// Convert file URL to a valid path compatible with Windows
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 function normalize(html) {
 	const normalizer = new Normalizer();
 	normalizer.init();
 	normalizer.write(html.replace(/[\t\r\n]+/g, ''));
-	return normalizer.get_html();
+	return normalizer.getHtml();
 }
 
 function getParsedDoc(content) {
+	const filepath = path.join(__dirname, '/../../../config/MWPageLoader.yaml');
 	const pageloaderConfig = load(
-		readFileSync(dirname + '/../../../config/MWPageLoader.yaml')
+		readFileSync(filepath)
 	);
 	const parser = new Parser(
 		new MwContextualizer({
@@ -528,7 +535,7 @@ describe('Section wrap tests', () => {
 	forEach(tests, (test) => {
 		const parsedDoc = getParsedDoc(test.source);
 		const wrappedSectionDoc = parsedDoc.wrapSections();
-		const result = normalize(wrappedSectionDoc.get_html());
+		const result = normalize(wrappedSectionDoc.getHtml());
 		const expectedResultData = normalize(test.result);
 		it('should parse correctly when ' + test.desc, () => {
 			deepEqual(result, expectedResultData);
