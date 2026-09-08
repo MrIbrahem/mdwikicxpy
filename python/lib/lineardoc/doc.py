@@ -99,6 +99,23 @@ class Doc:
 
         return item
 
+    def get_current_item_name(self) -> None | str:
+        """
+        Get the top item in the linear array of items.
+
+        Returns:
+            Current item
+        """
+        new_item = self.get_current_item()
+
+        if not new_item or not isinstance(new_item, dict):
+            return None
+
+        if not isinstance(new_item.get("item"), dict):
+            return None
+
+        return new_item["item"].get("name")
+
     def get_root_item(self) -> None | dict[str, Any]:
         """
         Get the root item in the doc.
