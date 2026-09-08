@@ -80,7 +80,8 @@ class TestLinearDoc:
         parser.init()
         parser.write(content_for_reduce)
 
-        reduced_doc, extracted_data = parser.builder.doc.reduce()
+        data = parser.builder.doc.reduce()
+        reduced_doc, extracted_data = data["reduced_doc"], data["extracted_data"]
 
         deep_equal(len(extracted_data.keys()), 16, "Attributes for 16 tags extracted.")
 
@@ -100,7 +101,8 @@ class TestLinearDoc:
         parser.init()
         parser.write(content_for_reduce)
 
-        reduced_doc, extracted_data = parser.builder.doc.reduce()
+        data = parser.builder.doc.reduce()
+        reduced_doc, extracted_data = data["reduced_doc"], data["extracted_data"]
 
         deep_equal(len(extracted_data.keys()), 22, "Attributes for 22 tags extracted.")
 
@@ -142,10 +144,10 @@ class TestLinearDoc:
 
     def test_if_the_content_is_block_level_template(self):
         test_files = [
-            "./data/test-block-template-section-1.html",
-            "./data/test-block-template-section-2.html",
-            "./data/test-block-template-section-3.html",
-            "./data/test-block-template-section-4.html",
+            "test-block-template-section-1.html",
+            "test-block-template-section-2.html",
+            "test-block-template-section-3.html",
+            "test-block-template-section-4.html",
         ]
 
         for file_path_rel in test_files:
@@ -215,7 +217,8 @@ class TestLinearDoc:
         parser.init()
         parser.write(source_doc)
 
-        reduced_doc, extracted_data = parser.builder.doc.reduce()
+        data = parser.builder.doc.reduce()
+        reduced_doc, extracted_data = data["reduced_doc"], data["extracted_data"]
 
         deep_equal(
             normalize(reduced_doc.get_html()),
@@ -247,7 +250,8 @@ class TestLinearDoc:
         parser.init()
         parser.write(content_for_reduce)
 
-        reduced_doc, extracted_data = parser.builder.doc.reduce()
+        data = parser.builder.doc.reduce()
+        reduced_doc, extracted_data = data["reduced_doc"], data["extracted_data"]
 
         reduced_parser = Parser(MwContextualizer())
         reduced_parser.init()
