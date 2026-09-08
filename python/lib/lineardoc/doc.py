@@ -24,8 +24,8 @@ from .doc_item import (
     DocStr,
     DocTextBlock,
 )
-from .util import get_prop
 from .text_block import TextBlock
+from .util import get_prop
 from .utils import Utils
 
 DOC_ITEM_VARS = DocTextBlock | DocDict | DocStr

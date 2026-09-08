@@ -12,9 +12,8 @@ import re
 from collections.abc import Callable
 from typing import Any
 
-from .util import get_prop
-
 from .text_chunk import TextChunk
+from .util import get_prop
 from .utils import Utils
 
 # Placeholder characters used when a text block is flattened to a plain

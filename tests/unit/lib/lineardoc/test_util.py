@@ -10,6 +10,7 @@ def get_prop_old(obj):
     if attributes and isinstance(attributes, dict) and "about" in attributes:
         return attributes["about"]
 
+
 def test_get_prop():
     """Test retrieving numeric values."""
     obj = {"attributes": {"about": "test"}}
@@ -18,6 +19,7 @@ def test_get_prop():
     result2 = get_prop_old(obj)
     assert result1 == "test"
     assert result1 == result2
+
 
 class TestGetProp:
     """Test get_prop utility function."""
